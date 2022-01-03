@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use the SUS Analysis Toolkit for your research, please cite it as follows:"
+authors:
+- family-names: "Blattgerste"
+  given-names: "Jonas"
+  orcid:
+- family-names: "Behrends"
+  given-names: "Jan"
+  orcid:
+- family-names: "Pfeiffer"
+  given-names: "Thies"
+  orcid: "https://orcid.org/0000-0001-6619-749X"
+title: "A Web-Based Analysis Toolkit for the System Usability Scale"
+version: 1.0.0
+doi: 
+date-released: 2022-01-01
+url: "https://github.com/jblattgerste/sus-analysis-toolkit"

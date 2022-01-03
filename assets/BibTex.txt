@@ -1,0 +1,6 @@
+@misc{sus-analysis-toolkit,
+title  = {A Web-Based Analysis Toolkit for the System Usability Scale},
+author = {Blattgerste, Jonas and Behrends, Jan and Pfeiffer, Thies},
+note   = {https://sus.mixality.de/},
+year   = {2022},
+}
