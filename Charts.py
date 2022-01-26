@@ -274,15 +274,14 @@ def CreateMainplot(SUSData, SUSIds, boxpoints, scaleValue, orientationValue, plo
 
     if orientationValue == 'vertical':
         for study in SUSData.SUSStuds:
-            if study.date in SUSIds:
-                if plotStyle == 'mainplot' or plotStyle == 'notched':
-                    fig.add_trace(
-                        go.Box(y=study.getAllSUSScores(), name=study.date, boxpoints=boxpoints, boxmean=mean_sdValue,
-                               notched=notchedValue))
-                elif plotStyle == 'per-question-chart':
-                    fig.add_trace(
-                        go.Bar(y=[study.Score], name=study.date, x=[study.date],
-                               error_y=dict(type='data', array=[study.standardDevOverall])))
+            if plotStyle == 'mainplot' or plotStyle == 'notched':
+                fig.add_trace(
+                    go.Box(y=study.getAllSUSScores(), name=study.date, boxpoints=boxpoints, boxmean=mean_sdValue,
+                           notched=notchedValue))
+            elif plotStyle == 'per-question-chart':
+                fig.add_trace(
+                    go.Bar(y=[study.Score], name=study.date, x=[study.date],
+                           error_y=dict(type='data', array=[study.standardDevOverall])))
 
         #fig.add_traces(scales[scaleValue](orientationValue))
 
@@ -333,15 +332,14 @@ def CreateMainplot(SUSData, SUSIds, boxpoints, scaleValue, orientationValue, plo
         fig.layout.yaxis.fixedrange = True
     else:
         for study in SUSData.SUSStuds:
-            if study.date in SUSIds:
-                if plotStyle == 'mainplot' or plotStyle == 'notched':
-                    fig.add_trace(
-                        go.Box(x=study.getAllSUSScores(), name=study.date, boxpoints=boxpoints, boxmean=mean_sdValue,
-                               notched=notchedValue))
-                elif plotStyle == 'per-question-chart':
-                    fig.add_trace(
-                        go.Bar(x=[study.Score], name=study.date, y=[study.date], orientation='h',
-                               error_x=dict(type='data', array=[study.standardDevOverall])))
+            if plotStyle == 'mainplot' or plotStyle == 'notched':
+                fig.add_trace(
+                    go.Box(x=study.getAllSUSScores(), name=study.date, boxpoints=boxpoints, boxmean=mean_sdValue,
+                           notched=notchedValue))
+            elif plotStyle == 'per-question-chart':
+                fig.add_trace(
+                    go.Bar(x=[study.Score], name=study.date, y=[study.date], orientation='h',
+                           error_x=dict(type='data', array=[study.standardDevOverall])))
 
         #fig.add_traces(scales[scaleValue](orientationValue))
         # annotations = Annotations.determineHorizontalScale(scaleValue)

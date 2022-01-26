@@ -138,7 +138,7 @@ def CreateMainPlotLayout(SUSData, systemList):
         value.append(system)
     fig = Charts.CreateMainplot(SUSData, value, 'outliers', 'adjectiveScale', 'vertical', 'mainplot', 'mean', "")
     #
-    tableContent = createMainplotTable(SUSData, systemList, 'adjectiveScale')
+    tableContent = createMainplotTable(SUSData, 'adjectiveScale')
     #
     # conclusivenessFigure = Charts.CreateConclusivenessChart(SUSData)
 
@@ -154,7 +154,8 @@ def CreateMainPlotLayout(SUSData, systemList):
                     ],
                     style=styles.graph_div_style
                 ),
-                tableContent
+                html.Div([tableContent], id='mainplot-table-div'),
+
 
             ], style=styles.main_content_style
             ),
@@ -746,7 +747,7 @@ def CreateSingleStudyChartLayout(SUSData):
     return graphContent
 
 
-def createMainplotDataframe(SUSData, systems):
+def createMainplotDataframe(SUSData):
     mins = []
     firstQuartiles = []
     medians = []
@@ -807,8 +808,8 @@ def createMainplotDataframe(SUSData, systems):
     return df
 
 
-def createMainplotTable(SUSData, systems, scaleType):
-    df = createMainplotDataframe(SUSData, systems)
+def createMainplotTable(SUSData,  scaleType):
+    df = createMainplotDataframe(SUSData)
     dataframeConditions = Helper.dataFrameConditions[scaleType]
     table = html.Div(
         [
