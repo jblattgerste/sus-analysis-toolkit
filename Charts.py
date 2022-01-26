@@ -45,7 +45,7 @@ def CreateRadarChart(SUSData, questionsTicked, SUSIds):
             removeIdxs.append(idx)
 
     for study in SUSData.SUSStuds:
-        if study.date in SUSIds:
+        if study.name in SUSIds:
             plotData = []
 
             for questionScore in study.avgScorePerQuestion:
@@ -63,7 +63,7 @@ def CreateRadarChart(SUSData, questionsTicked, SUSIds):
                 r=filteredPlotData,
                 theta=filteredQuestions,
                 fill='toself',
-                name=study.date,
+                name=study.name,
                 hovertext=filteredHover,
 
             ))
@@ -276,11 +276,11 @@ def CreateMainplot(SUSData, SUSIds, boxpoints, scaleValue, orientationValue, plo
         for study in SUSData.SUSStuds:
             if plotStyle == 'mainplot' or plotStyle == 'notched':
                 fig.add_trace(
-                    go.Box(y=study.getAllSUSScores(), name=study.date, boxpoints=boxpoints, boxmean=mean_sdValue,
+                    go.Box(y=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
                            notched=notchedValue))
             elif plotStyle == 'per-question-chart':
                 fig.add_trace(
-                    go.Bar(y=[study.Score], name=study.date, x=[study.date],
+                    go.Bar(y=[study.Score], name=study.name, x=[study.name],
                            error_y=dict(type='data', array=[study.standardDevOverall])))
 
         #fig.add_traces(scales[scaleValue](orientationValue))
@@ -334,11 +334,11 @@ def CreateMainplot(SUSData, SUSIds, boxpoints, scaleValue, orientationValue, plo
         for study in SUSData.SUSStuds:
             if plotStyle == 'mainplot' or plotStyle == 'notched':
                 fig.add_trace(
-                    go.Box(x=study.getAllSUSScores(), name=study.date, boxpoints=boxpoints, boxmean=mean_sdValue,
+                    go.Box(x=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
                            notched=notchedValue))
             elif plotStyle == 'per-question-chart':
                 fig.add_trace(
-                    go.Bar(x=[study.Score], name=study.date, y=[study.date], orientation='h',
+                    go.Bar(x=[study.Score], name=study.name, y=[study.name], orientation='h',
                            error_x=dict(type='data', array=[study.standardDevOverall])))
 
         #fig.add_traces(scales[scaleValue](orientationValue))
@@ -417,7 +417,7 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
 
     if orientationValue == 'vertical':
         for study in SUSData.SUSStuds:
-            if study.date in SUSIds:
+            if study.name in SUSIds:
                 plotData = []
 
                 for questionScore in study.avgScorePerQuestion:
@@ -425,7 +425,7 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
                 filteredErrorBars = [i for j, i in enumerate(study.standardDevPerQuestion) if j not in removeIdxs]
                 filteredQuestions = [i for j, i in enumerate(questions) if j not in removeIdxs]
                 filteredHover = [i for j, i in enumerate(hovertext) if j not in removeIdxs]
-                fig.add_trace(go.Bar(name=study.date, y=plotData, x=filteredQuestions, hovertext=filteredHover,
+                fig.add_trace(go.Bar(name=study.name, y=plotData, x=filteredQuestions, hovertext=filteredHover,
                                      error_y=dict(type='data', array=filteredErrorBars)))
 
         fig.update_layout(
@@ -448,7 +448,7 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
         )
     else:
         for study in SUSData.SUSStuds:
-            if study.date in SUSIds:
+            if study.name in SUSIds:
                 plotData = []
 
                 for questionScore in study.avgScorePerQuestion:
@@ -458,7 +458,7 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
                 filteredQuestions = [i for j, i in enumerate(questions) if j not in removeIdxs]
                 filteredHover = [i for j, i in enumerate(hovertext) if j not in removeIdxs]
                 fig.add_trace(
-                    go.Bar(name=study.date, x=plotData, y=filteredQuestions, hovertext=filteredHover, orientation='h',
+                    go.Bar(name=study.name, x=plotData, y=filteredQuestions, hovertext=filteredHover, orientation='h',
                            error_x=dict(type='data', array=filteredErrorBars)))
 
         fig.update_layout(
@@ -494,7 +494,7 @@ def CreateConclusivenessChart(SUSData):
         else:
             sampleSize = len(study.Results)
 
-        studySampleSizes[study.date] = sampleSize
+        studySampleSizes[study.name] = sampleSize
 
     studySamples = []
     annotations = []
@@ -558,11 +558,11 @@ def CreatePercentilePlot(SUSData, systems):
 
     fig.add_trace(go.Scatter(x=x, y=y, showlegend=False))
     for i, study in enumerate(SUSData.SUSStuds):
-        if study.date in systems:
+        if study.name in systems:
             fig.add_trace(go.Scatter(x=[study.Score], y=[parametrizePercentile(study.Score)],
                                      marker=dict(size=12, color=defaultPlotlyColors[i]),
                                      mode='markers',
-                                     name=study.date))
+                                     name=study.name))
     return fig
 
 

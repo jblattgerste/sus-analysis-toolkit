@@ -426,7 +426,7 @@ def generateSingleStudyPreset4(singleStudy):
 
 
 def getSingleStudyBoxPlotTraces(singleStudy):
-    return go.Box(y=singleStudy.getAllSUSScores(), name=singleStudy.date, boxmean='sd')
+    return go.Box(y=singleStudy.getAllSUSScores(), name=singleStudy.name, boxmean='sd')
 
 
 def getSingleStudyPercentilePlotTraces(singleStudy, xaxis, yaxis):
@@ -451,7 +451,7 @@ def getSingleStudyRadarChartTraces(singleStudy):
         r=plotData,
         theta=questions,
         fill='toself',
-        name=singleStudy.date,
+        name=singleStudy.name,
         hovertext=Helper.SUSQuestionsTexts,
     )
 

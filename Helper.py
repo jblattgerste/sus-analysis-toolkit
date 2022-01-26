@@ -237,7 +237,7 @@ def createSUSDataFromJSON(jsonData):
 
 def filterSUSStuds(SUSData, systemsToPlot):
     studies = SUSData.SUSStuds
-    SUSData.SUSStuds = list(filter(lambda study: study.date in systemsToPlot, studies))
+    SUSData.SUSStuds = list(filter(lambda study: study.name in systemsToPlot, studies))
     return SUSData
 
 

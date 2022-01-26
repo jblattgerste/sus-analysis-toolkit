@@ -46,7 +46,7 @@ class SUSDataset:
 
     def sortBy(self, sortKey):
         if sortKey == 'alphabetically':
-            sortedStuds = sorted(self.SUSStuds, key=operator.attrgetter('date'))
+            sortedStuds = sorted(self.SUSStuds, key=operator.attrgetter('name'))
             self.SUSStuds = sortedStuds
             return
         elif sortKey == 'mean':
@@ -61,12 +61,12 @@ class SUSDataset:
     def getAllStudNames(self):
         studies = []
         for study in self.SUSStuds:
-            studies.append(study.date)
+            studies.append(study.name)
         return studies
 
     def getIndividualStudyData(self, name):
         for study in self.SUSStuds:
-            if study.date == name:
+            if study.name == name:
                 return study
 
     def getAllResults(self):

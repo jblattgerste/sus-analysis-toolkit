@@ -444,7 +444,7 @@ def generateConclusivenessAnnotationSingleStudy(singleStudy, xaxis, yaxis):
     annotation = dict(
         x=XAnnotationVal,
         y=YAnnotationsVal,
-        text=singleStudy.date,
+        text=singleStudy.name,
         ayref=yaxis,
         yref = yaxis,
         xref = xaxis,

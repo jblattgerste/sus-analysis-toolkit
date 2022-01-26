@@ -771,7 +771,7 @@ def createMainplotDataframe(SUSData):
         OverallScores.append(round(study.Score, 2))
         susScores = study.getAllSUSScores()
         mins.append(min(susScores))
-        systemList.append(study.date)
+        systemList.append(study.name)
         try:
             firstQuartiles.append(statistics.quantiles(susScores)[0])
         except statistics.StatisticsError:
@@ -841,8 +841,8 @@ def createPerItemDataFrame(SUSData):
     data = {'Items': questions}
 
     for study in SUSData.SUSStuds:
-        data[study.date + ' Contribution'] = [round(score, 2) for score in study.avgScorePerQuestion]
-        data[study.date + ' SD'] = [round(score, 2) for score in study.standardDevPerQuestion]
+        data[study.name + ' Contribution'] = [round(score, 2) for score in study.avgScorePerQuestion]
+        data[study.name + ' SD'] = [round(score, 2) for score in study.standardDevPerQuestion]
     df = pd.DataFrame(data)
     return df
 
