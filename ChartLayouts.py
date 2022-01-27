@@ -844,16 +844,19 @@ def createPerItemDataFrame(SUSData):
         data[study.name + ' Contribution'] = [round(score, 2) for score in study.avgScorePerQuestion]
         data[study.name + ' SD'] = [round(score, 2) for score in study.standardDevPerQuestion]
     df = pd.DataFrame(data)
+
+    df.set_index('Items', inplace=True)
+    df.transpose()
+    df.reset_index(inplace=True)
     return df
 
 
 def createPerItemTable(SUSData):
     df = createPerItemDataFrame(SUSData)
-
     table = html.Div(
         [
             dash_table.DataTable(
-                columns=[{"name": i, "id": i} for i in df.columns],
+                columns=[{"name": str(i), "id": str(i)} for i in df.columns],
                 data=df.to_dict('records'),
                 style_table={'overflowX': 'auto'
                              },
