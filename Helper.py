@@ -541,9 +541,23 @@ dataframeNPSConditions = [
     },
 ]
 
+dataFrameNoScale = [
+{
+        'if': {
+            'column_id': 'SUS Score (mean) '
+        },
+        'fontWeight': 'bold'
+    },
+    {
+        'if': {'row_index': 'odd'},
+        'backgroundColor': 'rgb(248, 248, 248)'
+    }
+]
+
 dataFrameConditions = {'acceptabilityScale': dataframeAcceptabilityConditions,
                        'adjectiveScale': dataframeAdjectiveConditions,
                        'gradeScale': dataframeGradeConditions,
                        'quartileScale': dataframeQuartileConditions,
-                       'promoterScale': dataframeNPSConditions
+                       'promoterScale': dataframeNPSConditions,
+                       'none': dataFrameNoScale
                        }

@@ -256,7 +256,7 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
     return fig
 
 
-def CreateMainplot(SUSData, SUSIds, boxpoints, scaleValue, orientationValue, plotStyle, mean_sdValue, axis_title):
+def CreateMainplot(SUSData, boxpoints, scaleValue, orientationValue, plotStyle, mean_sdValue, axis_title):
 
     mean_sdValue = determineMean_sdValue(mean_sdValue)
     fig = go.Figure()
@@ -270,8 +270,6 @@ def CreateMainplot(SUSData, SUSIds, boxpoints, scaleValue, orientationValue, plo
     if boxpoints == 'False':
         boxpoints = False
 
-
-
     if orientationValue == 'vertical':
         for study in SUSData.SUSStuds:
             if plotStyle == 'mainplot' or plotStyle == 'notched':
@@ -283,51 +281,68 @@ def CreateMainplot(SUSData, SUSIds, boxpoints, scaleValue, orientationValue, plo
                     go.Bar(y=[study.Score], name=study.name, x=[study.name],
                            error_y=dict(type='data', array=[study.standardDevOverall])))
 
-        #fig.add_traces(scales[scaleValue](orientationValue))
-
-        # fig.update_layout(annotations=annotations)
-
-        fig.update_layout(
-            yaxis_range=[0, 100],
-            xaxis_title=axis_title,
-            yaxis_title="SUS Score",
-            uniformtext=dict(mode="show", minsize=9),
-            margin=dict(
-                l=0,
-                r=0,
-                b=12,
-                t=12,
-            ),
-            legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="right",
-                x=1
-            ),
-            barmode='stack',
-            xaxis=dict(
-                domain=[0, 0.9],
-            ),
-            yaxis=dict(
-                domain=[0, 1],
-                range=[0, 100]
-            ),
-            xaxis2=dict(
-                domain=[0.9, 1],
-                anchor='y2',
-                range=[-0.5, 0.5],
-                showgrid=False,
-                showticklabels=False
-            ),
-            yaxis2=dict(
-                domain=[0, 1],
-                anchor='x2',
-                showgrid=False,
-                range=[0, 100],
-                showticklabels=False
-            ),
-        )
+        if scaleValue == 'none':
+            fig.update_layout(
+                yaxis_range=[0, 100],
+                xaxis_title=axis_title,
+                yaxis_title="SUS Score",
+                uniformtext=dict(mode="show", minsize=9),
+                margin=dict(
+                    l=0,
+                    r=0,
+                    b=12,
+                    t=12,
+                ),
+                legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1
+                ),
+            )
+        else:
+            fig.update_layout(
+                yaxis_range=[0, 100],
+                xaxis_title=axis_title,
+                yaxis_title="SUS Score",
+                uniformtext=dict(mode="show", minsize=9),
+                margin=dict(
+                    l=0,
+                    r=0,
+                    b=12,
+                    t=12,
+                ),
+                legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1
+                ),
+                barmode='stack',
+                xaxis=dict(
+                    domain=[0, 0.9],
+                ),
+                yaxis=dict(
+                    domain=[0, 1],
+                    range=[0, 100]
+                ),
+                xaxis2=dict(
+                    domain=[0.9, 1],
+                    anchor='y2',
+                    range=[-0.5, 0.5],
+                    showgrid=False,
+                    showticklabels=False
+                ),
+                yaxis2=dict(
+                    domain=[0, 1],
+                    anchor='x2',
+                    showgrid=False,
+                    range=[0, 100],
+                    showticklabels=False
+                ),
+            )
 
         fig.layout.yaxis.fixedrange = True
     else:
@@ -341,52 +356,68 @@ def CreateMainplot(SUSData, SUSIds, boxpoints, scaleValue, orientationValue, plo
                     go.Bar(x=[study.Score], name=study.name, y=[study.name], orientation='h',
                            error_x=dict(type='data', array=[study.standardDevOverall])))
 
-        #fig.add_traces(scales[scaleValue](orientationValue))
-        # annotations = Annotations.determineHorizontalScale(scaleValue)
-
-        # fig.update_layout(annotations=annotations)
-
-        fig.update_layout(
-            yaxis_title=axis_title,
-            xaxis_title="SUS Score",
-            xaxis_range=[0, 100],
-            barmode='stack',
-            margin=dict(
-                l=0,
-                r=0,
-                b=12,
-                t=12,
-            ),
-            yaxis=dict(
-                domain=[0, 0.8],
-            ),
-            xaxis=dict(
-                domain=[0, 1],
-                range=[0, 100],
-                tickmode='linear',
-                tick0=0,
-                dtick=10,
-            ),
-            yaxis2=dict(
-                domain=[0.8, 1],
-                anchor='x2',
-                range=[-0.5, 0.5],
-                showgrid=False,
-                showticklabels=False
-            ),
-            xaxis2=dict(
-                domain=[0, 1],
-                anchor='y2',
-                showgrid=False,
-                range=[0, 100],
-                showticklabels=False
-            ),
-
-        )
+        if scaleValue == 'none':
+            fig.update_layout(
+                yaxis_title=axis_title,
+                xaxis_title="SUS Score",
+                xaxis_range=[0, 100],
+                barmode='stack',
+                margin=dict(
+                    l=0,
+                    r=0,
+                    b=12,
+                    t=12,
+                ),
+                xaxis=dict(
+                    domain=[0, 1],
+                    range=[0, 100],
+                    tickmode='linear',
+                    tick0=0,
+                    dtick=10,
+                )
+            )
+        else:
+            fig.update_layout(
+                yaxis_title=axis_title,
+                xaxis_title="SUS Score",
+                xaxis_range=[0, 100],
+                barmode='stack',
+                margin=dict(
+                    l=0,
+                    r=0,
+                    b=12,
+                    t=12,
+                ),
+                yaxis=dict(
+                    domain=[0, 0.8],
+                ),
+                xaxis=dict(
+                    domain=[0, 1],
+                    range=[0, 100],
+                    tickmode='linear',
+                    tick0=0,
+                    dtick=10,
+                ),
+                yaxis2=dict(
+                    domain=[0.8, 1],
+                    anchor='x2',
+                    range=[-0.5, 0.5],
+                    showgrid=False,
+                    showticklabels=False
+                ),
+                xaxis2=dict(
+                    domain=[0, 1],
+                    anchor='y2',
+                    showgrid=False,
+                    range=[0, 100],
+                    showticklabels=False
+                ),
+            )
         fig.layout.xaxis.fixedrange = True
 
-    # Add contextualization Scales
-    fig.add_traces(scales[scaleValue](orientationValue))
+    # If enabled, add contextualization Scales
+    if scaleValue != 'none':
+        fig.add_traces(scales[scaleValue](orientationValue))
 
     return fig
 
@@ -757,6 +788,10 @@ def getPromoterScaleTraces(orientation, xaxis='x2', yaxis='y2'):
     return traces
 
 
+def getEmptyScaleTraces(orientation):
+    return []
+
+
 # noinspection PyTypeChecker
 def getQuartileScaleTraces(orientation, xaxis='x2', yaxis='y2'):
     if orientation == 'vertical':
@@ -791,5 +826,6 @@ scales = {
     'gradeScale': getGradeScaleTraces,
     'acceptabilityScale': getAcceptabilityScaleTraces,
     'promoterScale': getPromoterScaleTraces,
-    'quartileScale': getQuartileScaleTraces
+    'quartileScale': getQuartileScaleTraces,
+    'none': getEmptyScaleTraces
 }

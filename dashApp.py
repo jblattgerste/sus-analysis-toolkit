@@ -166,7 +166,7 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
 
     filteredSUSData = Helper.filterSUSStuds(SUSData, systemsToPlot)
     mainplot_table = ChartLayouts.createMainplotTable(filteredSUSData, scaleValue)
-    fig = Charts.CreateMainplot(filteredSUSData, systemsToPlot, datapointsValues, scaleValue, orientationValue, plotStyle,
+    fig = Charts.CreateMainplot(filteredSUSData, datapointsValues, scaleValue, orientationValue, plotStyle,
                                 mean_sdValue, axis_title)
     if plotStyle == 'per-question-chart':
         datapointsLabelStyle = styles.disabledStyle

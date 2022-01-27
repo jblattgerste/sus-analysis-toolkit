@@ -136,7 +136,7 @@ def CreateMainPlotLayout(SUSData, systemList):
     for system in systemList:
         options.append({'label': system, 'value': system})
         value.append(system)
-    fig = Charts.CreateMainplot(SUSData, value, 'outliers', 'adjectiveScale', 'vertical', 'mainplot', 'mean', "")
+    fig = Charts.CreateMainplot(SUSData, 'outliers', 'adjectiveScale', 'vertical', 'mainplot', 'mean', "")
     #
     tableContent = createMainplotTable(SUSData, 'adjectiveScale')
     #
