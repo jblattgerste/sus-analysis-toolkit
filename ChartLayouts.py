@@ -690,6 +690,7 @@ def CreateSingleStudyChartLayout(SUSData):
                     html.Tr([html.Td('Standard Dev. '), html.Td(round(singleStudy.standardDevOverall, 2))]),
                     html.Tr([html.Td('Adjective: '), html.Td(Helper.getAdjectiveValue(singleStudy.Score))]),
                     html.Tr([html.Td('Grade: '), html.Td(Helper.getGradeScaleValue(singleStudy.Score))]),
+                    html.Tr([html.Td('Acceptability: '), html.Td(Helper.getAcceptabilityValue(singleStudy.Score))]),
                     html.Tr([html.Td('Quartile: '), html.Td(Helper.getQuartileScaleValue(singleStudy.Score))]),
 
                 ],
