@@ -736,9 +736,29 @@ def CreateSingleStudyChartLayout(SUSData):
                        'padding': '10px 10px 10px 10px'
                        },
             ),
+            html.Label([
+                "Contextualization Scales ",
+                html.Label(['Adjective Scale: '], style={'font-size': 'medium',
+                                                         'font-weight': 'normal'}),
+                html.P(Helper.scaleInfoTexts['adjectiveScale'],
+                       style=styles.editorInfoTextStyle),
+                html.Label(['Grade Scale: '], style={'font-size': 'medium',
+                                                         'font-weight': 'normal'}),
+                html.P(Helper.scaleInfoTexts['gradeScale'],
+                       style=styles.editorInfoTextStyle),
+                html.Label(['Acceptability Scale: '], style={'font-size': 'medium',
+                                                    'font-weight': 'normal'}),
+                html.P(Helper.scaleInfoTexts['acceptabilityScale'],
+                       style=styles.editorInfoTextStyle)
+            ],
+                style={'display': 'block',
+                       'font-weight': 'bold',
+                       'padding': '10px 10px 10px 10px'
+                       },
+            ),
             html.Div(id="download-single-study-chart",
                      children=[],
-                     style=styles.download_div_style, ),
+                     style=styles.download_div_style,),
         ],
             className='editor'
         ),
