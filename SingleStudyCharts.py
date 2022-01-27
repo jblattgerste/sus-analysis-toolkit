@@ -426,7 +426,7 @@ def generateSingleStudyPreset4(singleStudy):
 
 
 def getSingleStudyBoxPlotTraces(singleStudy):
-    return go.Box(y=singleStudy.getAllSUSScores(), name=singleStudy.name, boxmean='sd')
+    return go.Box(y=singleStudy.getAllSUSScores(), name=singleStudy.name, boxmean='sd', boxpoints='all')
 
 
 def getSingleStudyPercentilePlotTraces(singleStudy, xaxis, yaxis):
