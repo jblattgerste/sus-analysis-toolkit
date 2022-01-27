@@ -442,6 +442,8 @@ def getSingleStudyRadarChartTraces(singleStudy):
     plotData = []
     questions = Helper.SUSQuestions
     questions.append(Helper.SUSQuestions[0])
+    questionText = Helper.SUSQuestionsTexts
+    questionText.append(Helper.SUSQuestionsTexts[0])
     for questionScore in singleStudy.avgScorePerQuestion:
         plotData.append(questionScore)
     plotData.append(plotData[0])
@@ -452,7 +454,7 @@ def getSingleStudyRadarChartTraces(singleStudy):
         theta=questions,
         fill='toself',
         name=singleStudy.name,
-        hovertext=Helper.SUSQuestionsTexts,
+        hovertext=questionText,
     )
 
 
