@@ -67,12 +67,12 @@ def downloadChartContentSingleStudy(fig):
 
 
 def downloadChartContent(fig, download_format):
-    if download_format == "narrowPlot":
-        img_bytes = fig.to_image(format="png", width=900, height=500)
+    if download_format == "defaultPlot":
+        img_bytes = fig.to_image(format="png", width=1600, height=750)
     elif download_format == "widePlot":
-        img_bytes = fig.to_image(format="png", width=1600, height=500)
-    else:
-        img_bytes = fig.to_image(format="png")
+        img_bytes = fig.to_image(format="png", width=2400, height=750)
+    elif download_format == 'narrowPlot':
+        img_bytes = fig.to_image(format="png", width=1050, height=750)
 
     encoding = base64.b64encode(img_bytes).decode()
     img_b64 = "data:image/png;base64," + encoding
