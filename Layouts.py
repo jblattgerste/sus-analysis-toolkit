@@ -103,7 +103,7 @@ def getMainContent(app):
                             ' The open source SUS Analysis Toolkit is licensed under the MIT license and can be used, extended and redistributed for commercial and non-commercial applications without attribtution. The ownership of generated calculations, interpretations, tables, and plots fully remain with the user of the tool. '
                             'If you use this toolkit in the scientific context, we would appreciate an acknowledgement in form of a ',
 			    html.A('citation to our tool', href=app.get_asset_url('BibTex.txt'), download='BibTex.txt'),
-			    '.',
+			    ' and recommend citing the primary sources for the insights utilized.',
 			    html.Br(),
                         ]),
                         html.P([
