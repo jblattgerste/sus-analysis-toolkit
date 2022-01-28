@@ -159,7 +159,7 @@ scaleInfoTexts = {
             html.A('Sauro et al. 2016',
                    href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=rmiLIsYAAAAJ&citation_for_view=rmiLIsYAAAAJ:Mojj43d5GZwC',
                    target="_blank"),
-            '. Note: There is multiple interpretations of the grade scale, e.g. the one proposed by',
+            '. Note: There is multiple interpretations of the grade scale, e.g. the one proposed by ',
             html.A('Bangor et al. 2009',
                    href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=BD7BLDgAAAAJ&citation_for_view=BD7BLDgAAAAJ:d1gkVwhDpl0C',
                    target="_blank"),
@@ -172,13 +172,13 @@ scaleInfoTexts = {
                          target="_blank"),
                   '). It can be used to contextualize and compare SUS study scores against the scores in the dataset.']),
     'acceptabilityScale': html.P(children=[
-        'The acceptability scale contextualizes SUS study scores on descriptions ranging from \"Not Acceptable\" over \"Marginally accaptable\" to \"Acceptable\". This scale is based on data from',
+        'The acceptability scale contextualizes SUS study scores on descriptions ranging from \"Not Acceptable\" over \"Marginally accaptable\" to \"Acceptable\". This scale is based on data from ',
         html.A('Bangor et al. 2008',
                href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=BD7BLDgAAAAJ&citation_for_view=BD7BLDgAAAAJ:u5HHmVD_uO8C',
                target="_blank"),
         ' and derived from implications of the grading and adjective scales.']),
     'promoterScale': html.P(children=[
-        'The Net Promoter score scale describes how likely users of a product are to recommend the System to others. It is based on data from',
+        'The Net Promoter score scale describes how likely users of a product are to recommend the System to others. It is based on data from ',
         html.A('Sauro et al. 2012', href='https://measuringu.com/nps-sus/', target="_blank"),
         '.']),
     'none': ""
