@@ -162,7 +162,7 @@ def CreateMainPlotLayout(SUSData, systemList):
             html.Div([
                 html.Label([
                     html.P(children=[
-                        'Each System Usability Scale (SUS) study score represents an average perceived usability scores between 0 - 100 calculated based on the formula from ',
+                        'Each System Usability Scale (SUS) study score represents an average perceived usability score between 0 - 100 calculated based on the formula from ',
                         html.A('Brooke et al. 1996',
                                href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=qjAGPUcAAAAJ&citation_for_view=qjAGPUcAAAAJ:u5HHmVD_uO8C',
                                target="_blank"),
