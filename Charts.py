@@ -115,12 +115,15 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
               {'question': 'I needed to learn a lot of things before<br> I could get going with this system.',
                'positiveWording': False}]
 
-    top_labels = ['Strongly<br>agree', 'Agree', 'Neutral', 'Disagree',
-                  'Strongly<br>disagree']
+    #top_labels = ['Strongly<br>agree', 'Agree', 'Neutral', 'Disagree',
+     #             'Strongly<br>disagree']
 
-    colors = ['#8FD14F', '#CEE741',
-              '#FEF445', '#FAC710',
-              '#F24726']
+    #colors = ['#8FD14F', '#CEE741',
+    #          '#FEF445', '#FAC710',
+    #          '#F24726']
+
+    colors = ['#F24726', '#FAC710','#FEF445', '#CEE741', '#8FD14F']
+    top_labels = ['Strongly<br>disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly<br>agree']
 
     x_data = [[],
               [],
@@ -140,7 +143,7 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
             removeIdxs.append(idx)
 
     for i, questionResults in enumerate(SUSData.rawResultPerQuestion):
-        for j in range(1, 6):
+        for j in range(5, 0, -1):
             x_data[i].append(questionResults.count(j) / len(SUSData.rawResultPerQuestion[0]) * 100)
         # x_data_strings[i].append(round(questionResults.count(j)/len(questionResults)*100))
 
