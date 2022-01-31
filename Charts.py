@@ -5,7 +5,6 @@ import plotly.graph_objects as go
 import pandas as pd
 import Annotations
 import plotly.io as pio
-from plotly.subplots import make_subplots
 
 import Helper
 

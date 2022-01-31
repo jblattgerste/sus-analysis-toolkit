@@ -3,7 +3,8 @@ import plotly.graph_objects as go
 import Annotations
 import Charts
 import Helper
-
+import plotly.io as pio
+pio.templates.default = 'seaborn'
 
 def generateSingleStudyPreset1(singleStudy):
     traces = []
@@ -108,7 +109,7 @@ def generateSingleStudyPreset1(singleStudy):
             b=12,
             t=40,
         ),
-        paper_bgcolor='#FAFAFA'
+    paper_bgcolor='#FAFAFA'
     )
 
     # Add Annotations of comparison scales as well as the marker for the conclusiveness chart.
