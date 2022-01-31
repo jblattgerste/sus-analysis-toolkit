@@ -25,8 +25,7 @@ per_question_context = html.Div([
         html.Dd("I needed to learn a lot of things before I could get going with this system."),
     ])],
     style={
-        'float': 'left',
-    'width':'40%'},
+        'float': 'left'},
     id='per-question-context',
 )
 
