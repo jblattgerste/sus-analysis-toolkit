@@ -52,6 +52,7 @@ def stringListToFloat(stringList):
 
 
 def downloadChartContentSingleStudy(fig):
+    fig = copy.copy(fig)
     fig.update_layout(
         paper_bgcolor='rgba(255,255,255,255)',
     )
@@ -67,12 +68,16 @@ def downloadChartContentSingleStudy(fig):
 
 
 def downloadChartContent(fig, download_format):
-    if download_format == "narrowPlot":
-        img_bytes = fig.to_image(format="png", width=900, height=500)
+    fig = copy.copy(fig)
+    fig.update_layout(
+        paper_bgcolor='rgba(255,255,255,255)',
+    )
+    if download_format == "defaultPlot":
+        img_bytes = fig.to_image(format="png", width=1600, height=750)
     elif download_format == "widePlot":
-        img_bytes = fig.to_image(format="png", width=1600, height=500)
-    else:
-        img_bytes = fig.to_image(format="png")
+        img_bytes = fig.to_image(format="png", width=2400, height=750)
+    elif download_format == 'narrowPlot':
+        img_bytes = fig.to_image(format="png", width=1050, height=750)
 
     encoding = base64.b64encode(img_bytes).decode()
     img_b64 = "data:image/png;base64," + encoding
@@ -147,7 +152,7 @@ scaleInfoTexts = {
     'adjectiveScale': html.P(children=[
         'The adjective scale contextualizes SUS study scores on descriptive adjectives ranging from \"Worst Imaginable\" to \"Best Imaginable\". It is based on ',
         html.A('Sauro et al. 2018', href='https://measuringu.com/interpret-sus-score', target="_blank"),
-        's interpretation of the primary data by ',
+        '\'s interpretation of the primary data by ',
         html.A('Bangor et al. 2009',
                href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=BD7BLDgAAAAJ&citation_for_view=BD7BLDgAAAAJ:d1gkVwhDpl0C',
                target="_blank"),
@@ -235,6 +240,12 @@ def createSUSDataFromJSON(jsonData):
     return SUSData
 
 
+def filterSUSStuds(SUSData, systemsToPlot):
+    studies = SUSData.SUSStuds
+    SUSData.SUSStuds = list(filter(lambda study: study.name in systemsToPlot, studies))
+    return SUSData
+
+
 def getAdjectiveValue(score):
     if score < 25.1:
         return "Worst Imaginable"
@@ -319,7 +330,7 @@ dataframeQuartileConditions = [
             # 'column_id': 'SUS Score (mean) '
         },
         'color': 'black',
-        'backgroundColor': '#8FD14F'
+        'backgroundColor': '#CEE741'
     },
     {
         'if': {
@@ -535,9 +546,23 @@ dataframeNPSConditions = [
     },
 ]
 
+dataFrameNoScale = [
+{
+        'if': {
+            'column_id': 'SUS Score (mean) '
+        },
+        'fontWeight': 'bold'
+    },
+    {
+        'if': {'row_index': 'odd'},
+        'backgroundColor': 'rgb(248, 248, 248)'
+    }
+]
+
 dataFrameConditions = {'acceptabilityScale': dataframeAcceptabilityConditions,
                        'adjectiveScale': dataframeAdjectiveConditions,
                        'gradeScale': dataframeGradeConditions,
                        'quartileScale': dataframeQuartileConditions,
-                       'promoterScale': dataframeNPSConditions
+                       'promoterScale': dataframeNPSConditions,
+                       'none': dataFrameNoScale
                        }

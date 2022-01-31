@@ -5,7 +5,6 @@ import plotly.graph_objects as go
 import pandas as pd
 import Annotations
 import plotly.io as pio
-from plotly.subplots import make_subplots
 
 import Helper
 
@@ -45,7 +44,7 @@ def CreateRadarChart(SUSData, questionsTicked, SUSIds):
             removeIdxs.append(idx)
 
     for study in SUSData.SUSStuds:
-        if study.date in SUSIds:
+        if study.name in SUSIds:
             plotData = []
 
             for questionScore in study.avgScorePerQuestion:
@@ -63,7 +62,7 @@ def CreateRadarChart(SUSData, questionsTicked, SUSIds):
                 r=filteredPlotData,
                 theta=filteredQuestions,
                 fill='toself',
-                name=study.date,
+                name=study.name,
                 hovertext=filteredHover,
 
             ))
@@ -115,12 +114,15 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
               {'question': 'I needed to learn a lot of things before<br> I could get going with this system.',
                'positiveWording': False}]
 
-    top_labels = ['Strongly<br>agree', 'Agree', 'Neutral', 'Disagree',
-                  'Strongly<br>disagree']
+    #top_labels = ['Strongly<br>agree', 'Agree', 'Neutral', 'Disagree',
+     #             'Strongly<br>disagree']
 
-    colors = ['#8FD14F', '#CEE741',
-              '#FEF445', '#FAC710',
-              '#F24726']
+    #colors = ['#8FD14F', '#CEE741',
+    #          '#FEF445', '#FAC710',
+    #          '#F24726']
+
+    colors = ['#F24726', '#FAC710','#FEF445', '#CEE741', '#8FD14F']
+    top_labels = ['Strongly<br>disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly<br>agree']
 
     x_data = [[],
               [],
@@ -140,7 +142,7 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
             removeIdxs.append(idx)
 
     for i, questionResults in enumerate(SUSData.rawResultPerQuestion):
-        for j in range(1, 6):
+        for j in range(5, 0, -1):
             x_data[i].append(questionResults.count(j) / len(SUSData.rawResultPerQuestion[0]) * 100)
         # x_data_strings[i].append(round(questionResults.count(j)/len(questionResults)*100))
 
@@ -256,7 +258,7 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
     return fig
 
 
-def CreateMainplot(SUSData, SUSIds, boxpoints, scaleValue, orientationValue, plotStyle, mean_sdValue, axis_title):
+def CreateMainplot(SUSData, boxpoints, scaleValue, orientationValue, plotStyle, mean_sdValue, axis_title):
 
     mean_sdValue = determineMean_sdValue(mean_sdValue)
     fig = go.Figure()
@@ -270,125 +272,154 @@ def CreateMainplot(SUSData, SUSIds, boxpoints, scaleValue, orientationValue, plo
     if boxpoints == 'False':
         boxpoints = False
 
-
-
     if orientationValue == 'vertical':
         for study in SUSData.SUSStuds:
-            if study.date in SUSIds:
-                if plotStyle == 'mainplot' or plotStyle == 'notched':
-                    fig.add_trace(
-                        go.Box(y=study.getAllSUSScores(), name=study.date, boxpoints=boxpoints, boxmean=mean_sdValue,
-                               notched=notchedValue))
-                elif plotStyle == 'per-question-chart':
-                    fig.add_trace(
-                        go.Bar(y=[study.Score], name=study.date, x=[study.date],
-                               error_y=dict(type='data', array=[study.standardDevOverall])))
+            if plotStyle == 'mainplot' or plotStyle == 'notched':
+                fig.add_trace(
+                    go.Box(y=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
+                           notched=notchedValue))
+            elif plotStyle == 'per-question-chart':
+                fig.add_trace(
+                    go.Bar(y=[study.Score], name=study.name, x=[study.name],
+                           error_y=dict(type='data', array=[study.standardDevOverall])))
 
-        #fig.add_traces(scales[scaleValue](orientationValue))
-
-        # fig.update_layout(annotations=annotations)
-
-        fig.update_layout(
-            yaxis_range=[0, 100],
-            xaxis_title=axis_title,
-            yaxis_title="SUS Score",
-            uniformtext=dict(mode="show", minsize=9),
-            margin=dict(
-                l=0,
-                r=0,
-                b=12,
-                t=12,
-            ),
-            legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="right",
-                x=1
-            ),
-            barmode='stack',
-            xaxis=dict(
-                domain=[0, 0.9],
-            ),
-            yaxis=dict(
-                domain=[0, 1],
-                range=[0, 100]
-            ),
-            xaxis2=dict(
-                domain=[0.9, 1],
-                anchor='y2',
-                range=[-0.5, 0.5],
-                showgrid=False,
-                showticklabels=False
-            ),
-            yaxis2=dict(
-                domain=[0, 1],
-                anchor='x2',
-                showgrid=False,
-                range=[0, 100],
-                showticklabels=False
-            ),
-        )
+        if scaleValue == 'none':
+            fig.update_layout(
+                yaxis_range=[0, 100],
+                xaxis_title=axis_title,
+                yaxis_title="SUS Score",
+                uniformtext=dict(mode="show", minsize=9),
+                margin=dict(
+                    l=0,
+                    r=0,
+                    b=12,
+                    t=12,
+                ),
+                legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1
+                ),
+            )
+        else:
+            fig.update_layout(
+                yaxis_range=[0, 100],
+                xaxis_title=axis_title,
+                yaxis_title="SUS Score",
+                uniformtext=dict(mode="show", minsize=9),
+                margin=dict(
+                    l=0,
+                    r=0,
+                    b=12,
+                    t=12,
+                ),
+                legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1
+                ),
+                barmode='stack',
+                xaxis=dict(
+                    domain=[0, 0.9],
+                ),
+                yaxis=dict(
+                    domain=[0, 1],
+                    range=[0, 100]
+                ),
+                xaxis2=dict(
+                    domain=[0.9, 1],
+                    anchor='y2',
+                    range=[-0.5, 0.5],
+                    showgrid=False,
+                    showticklabels=False
+                ),
+                yaxis2=dict(
+                    domain=[0, 1],
+                    anchor='x2',
+                    showgrid=False,
+                    range=[0, 100],
+                    showticklabels=False
+                ),
+            )
 
         fig.layout.yaxis.fixedrange = True
     else:
         for study in SUSData.SUSStuds:
-            if study.date in SUSIds:
-                if plotStyle == 'mainplot' or plotStyle == 'notched':
-                    fig.add_trace(
-                        go.Box(x=study.getAllSUSScores(), name=study.date, boxpoints=boxpoints, boxmean=mean_sdValue,
-                               notched=notchedValue))
-                elif plotStyle == 'per-question-chart':
-                    fig.add_trace(
-                        go.Bar(x=[study.Score], name=study.date, y=[study.date], orientation='h',
-                               error_x=dict(type='data', array=[study.standardDevOverall])))
+            if plotStyle == 'mainplot' or plotStyle == 'notched':
+                fig.add_trace(
+                    go.Box(x=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
+                           notched=notchedValue))
+            elif plotStyle == 'per-question-chart':
+                fig.add_trace(
+                    go.Bar(x=[study.Score], name=study.name, y=[study.name], orientation='h',
+                           error_x=dict(type='data', array=[study.standardDevOverall])))
 
-        #fig.add_traces(scales[scaleValue](orientationValue))
-        # annotations = Annotations.determineHorizontalScale(scaleValue)
-
-        # fig.update_layout(annotations=annotations)
-
-        fig.update_layout(
-            yaxis_title=axis_title,
-            xaxis_title="SUS Score",
-            xaxis_range=[0, 100],
-            barmode='stack',
-            margin=dict(
-                l=0,
-                r=0,
-                b=12,
-                t=12,
-            ),
-            yaxis=dict(
-                domain=[0, 0.8],
-            ),
-            xaxis=dict(
-                domain=[0, 1],
-                range=[0, 100],
-                tickmode='linear',
-                tick0=0,
-                dtick=10,
-            ),
-            yaxis2=dict(
-                domain=[0.8, 1],
-                anchor='x2',
-                range=[-0.5, 0.5],
-                showgrid=False,
-                showticklabels=False
-            ),
-            xaxis2=dict(
-                domain=[0, 1],
-                anchor='y2',
-                showgrid=False,
-                range=[0, 100],
-                showticklabels=False
-            ),
-
-        )
+        if scaleValue == 'none':
+            fig.update_layout(
+                yaxis_title=axis_title,
+                xaxis_title="SUS Score",
+                xaxis_range=[0, 100],
+                barmode='stack',
+                margin=dict(
+                    l=0,
+                    r=0,
+                    b=12,
+                    t=12,
+                ),
+                xaxis=dict(
+                    domain=[0, 1],
+                    range=[0, 100],
+                    tickmode='linear',
+                    tick0=0,
+                    dtick=10,
+                )
+            )
+        else:
+            fig.update_layout(
+                yaxis_title=axis_title,
+                xaxis_title="SUS Score",
+                xaxis_range=[0, 100],
+                barmode='stack',
+                margin=dict(
+                    l=0,
+                    r=0,
+                    b=12,
+                    t=12,
+                ),
+                yaxis=dict(
+                    domain=[0, 0.8],
+                ),
+                xaxis=dict(
+                    domain=[0, 1],
+                    range=[0, 100],
+                    tickmode='linear',
+                    tick0=0,
+                    dtick=10,
+                ),
+                yaxis2=dict(
+                    domain=[0.8, 1],
+                    anchor='x2',
+                    range=[-0.5, 0.5],
+                    showgrid=False,
+                    showticklabels=False
+                ),
+                xaxis2=dict(
+                    domain=[0, 1],
+                    anchor='y2',
+                    showgrid=False,
+                    range=[0, 100],
+                    showticklabels=False
+                ),
+            )
         fig.layout.xaxis.fixedrange = True
 
-    # Add contextualization Scales
-    fig.add_traces(scales[scaleValue](orientationValue))
+    # If enabled, add contextualization Scales
+    if scaleValue != 'none':
+        fig.add_traces(scales[scaleValue](orientationValue))
 
     return fig
 
@@ -419,7 +450,7 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
 
     if orientationValue == 'vertical':
         for study in SUSData.SUSStuds:
-            if study.date in SUSIds:
+            if study.name in SUSIds:
                 plotData = []
 
                 for questionScore in study.avgScorePerQuestion:
@@ -427,7 +458,7 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
                 filteredErrorBars = [i for j, i in enumerate(study.standardDevPerQuestion) if j not in removeIdxs]
                 filteredQuestions = [i for j, i in enumerate(questions) if j not in removeIdxs]
                 filteredHover = [i for j, i in enumerate(hovertext) if j not in removeIdxs]
-                fig.add_trace(go.Bar(name=study.date, y=plotData, x=filteredQuestions, hovertext=filteredHover,
+                fig.add_trace(go.Bar(name=study.name, y=plotData, x=filteredQuestions, hovertext=filteredHover,
                                      error_y=dict(type='data', array=filteredErrorBars)))
 
         fig.update_layout(
@@ -450,7 +481,7 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
         )
     else:
         for study in SUSData.SUSStuds:
-            if study.date in SUSIds:
+            if study.name in SUSIds:
                 plotData = []
 
                 for questionScore in study.avgScorePerQuestion:
@@ -460,7 +491,7 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
                 filteredQuestions = [i for j, i in enumerate(questions) if j not in removeIdxs]
                 filteredHover = [i for j, i in enumerate(hovertext) if j not in removeIdxs]
                 fig.add_trace(
-                    go.Bar(name=study.date, x=plotData, y=filteredQuestions, hovertext=filteredHover, orientation='h',
+                    go.Bar(name=study.name, x=plotData, y=filteredQuestions, hovertext=filteredHover, orientation='h',
                            error_x=dict(type='data', array=filteredErrorBars)))
 
         fig.update_layout(
@@ -496,7 +527,7 @@ def CreateConclusivenessChart(SUSData):
         else:
             sampleSize = len(study.Results)
 
-        studySampleSizes[study.date] = sampleSize
+        studySampleSizes[study.name] = sampleSize
 
     studySamples = []
     annotations = []
@@ -560,11 +591,11 @@ def CreatePercentilePlot(SUSData, systems):
 
     fig.add_trace(go.Scatter(x=x, y=y, showlegend=False))
     for i, study in enumerate(SUSData.SUSStuds):
-        if study.date in systems:
+        if study.name in systems:
             fig.add_trace(go.Scatter(x=[study.Score], y=[parametrizePercentile(study.Score)],
                                      marker=dict(size=12, color=defaultPlotlyColors[i]),
                                      mode='markers',
-                                     name=study.date))
+                                     name=study.name))
     return fig
 
 
@@ -759,6 +790,10 @@ def getPromoterScaleTraces(orientation, xaxis='x2', yaxis='y2'):
     return traces
 
 
+def getEmptyScaleTraces(orientation):
+    return []
+
+
 # noinspection PyTypeChecker
 def getQuartileScaleTraces(orientation, xaxis='x2', yaxis='y2'):
     if orientation == 'vertical':
@@ -793,5 +828,6 @@ scales = {
     'gradeScale': getGradeScaleTraces,
     'acceptabilityScale': getAcceptabilityScaleTraces,
     'promoterScale': getPromoterScaleTraces,
-    'quartileScale': getQuartileScaleTraces
+    'quartileScale': getQuartileScaleTraces,
+    'none': getEmptyScaleTraces
 }

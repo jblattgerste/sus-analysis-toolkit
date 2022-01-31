@@ -146,6 +146,7 @@ def update_SingleStudyMainplot(data_single, presetValue):
     Output('mean_sdValue-label', 'style'),
     Output('scaletype-info', 'children'),
     Output('plotstyle-info', 'children'),
+    Output('mainplot-table-div', 'children'),
     Input('systems-mainplot', 'value'),
     Input('sessionPlotData-multi', 'children'),
     Input('datapoints-mainplot', 'value'),
@@ -162,9 +163,11 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
     df = pd.read_json(data, orient='split')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
-    fig = Charts.CreateMainplot(SUSData, systemsToPlot, datapointsValues, scaleValue, orientationValue, plotStyle,
-                                mean_sdValue, axis_title)
 
+    filteredSUSData = Helper.filterSUSStuds(SUSData, systemsToPlot)
+    mainplot_table = ChartLayouts.createMainplotTable(filteredSUSData, scaleValue)
+    fig = Charts.CreateMainplot(filteredSUSData, datapointsValues, scaleValue, orientationValue, plotStyle,
+                                mean_sdValue, axis_title)
     if plotStyle == 'per-question-chart':
         datapointsLabelStyle = styles.disabledStyle
         mean_sdValueLabelStyle = styles.disabledStyle
@@ -173,7 +176,7 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
         mean_sdValueLabelStyle = styles.defaultEditorLabel
 
     return fig, Helper.downloadChartContent(fig, download_format), datapointsLabelStyle, mean_sdValueLabelStyle, \
-           Helper.scaleInfoTexts[scaleValue], Helper.plotStyleInfoTexts[plotStyle]
+           Helper.scaleInfoTexts[scaleValue], Helper.plotStyleInfoTexts[plotStyle], mainplot_table
 
 
 @app.callback(

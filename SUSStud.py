@@ -5,11 +5,11 @@ import statistics
 class SUSStud:
     # Class for calculating and handling a whole dataset of SUS-Scores.
 
-    def __init__(self, results, date):
+    def __init__(self, results, name):
         self.Results = results
         self.Score = self.calcSUS()
         self.avgScorePerQuestion, self.scoresPerQuestion = self.calcSUSScorePerQuestion()
-        self.date = date
+        self.name = name
         self.standardDevPerQuestion = self.calcStandardDevPerQuestion()
         self.standardDevOverall = self.calcStandardDev()
         self.median = self.calcMedian()

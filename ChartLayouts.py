@@ -136,9 +136,9 @@ def CreateMainPlotLayout(SUSData, systemList):
     for system in systemList:
         options.append({'label': system, 'value': system})
         value.append(system)
-    fig = Charts.CreateMainplot(SUSData, value, 'outliers', 'adjectiveScale', 'vertical', 'mainplot', 'mean', "")
+    fig = Charts.CreateMainplot(SUSData, 'outliers', 'adjectiveScale', 'vertical', 'mainplot', 'mean', "")
     #
-    tableContent = createMainplotTable(SUSData, systemList, 'adjectiveScale')
+    tableContent = createMainplotTable(SUSData, 'adjectiveScale')
     #
     # conclusivenessFigure = Charts.CreateConclusivenessChart(SUSData)
 
@@ -154,7 +154,8 @@ def CreateMainPlotLayout(SUSData, systemList):
                     ],
                     style=styles.graph_div_style
                 ),
-                tableContent
+                html.Div([tableContent], id='mainplot-table-div'),
+
 
             ], style=styles.main_content_style
             ),
@@ -689,6 +690,7 @@ def CreateSingleStudyChartLayout(SUSData):
                     html.Tr([html.Td('Standard Dev. '), html.Td(round(singleStudy.standardDevOverall, 2))]),
                     html.Tr([html.Td('Adjective: '), html.Td(Helper.getAdjectiveValue(singleStudy.Score))]),
                     html.Tr([html.Td('Grade: '), html.Td(Helper.getGradeScaleValue(singleStudy.Score))]),
+                    html.Tr([html.Td('Acceptability: '), html.Td(Helper.getAcceptabilityValue(singleStudy.Score))]),
                     html.Tr([html.Td('Quartile: '), html.Td(Helper.getQuartileScaleValue(singleStudy.Score))]),
 
                 ],
@@ -735,9 +737,29 @@ def CreateSingleStudyChartLayout(SUSData):
                        'padding': '10px 10px 10px 10px'
                        },
             ),
+            html.Label([
+                "Contextualization Scales ",
+                html.Label(['Adjective Scale: '], style={'font-size': 'medium',
+                                                         'font-weight': 'normal'}),
+                html.P(Helper.scaleInfoTexts['adjectiveScale'],
+                       style=styles.editorInfoTextStyle),
+                html.Label(['Grade Scale: '], style={'font-size': 'medium',
+                                                         'font-weight': 'normal'}),
+                html.P(Helper.scaleInfoTexts['gradeScale'],
+                       style=styles.editorInfoTextStyle),
+                html.Label(['Acceptability Scale: '], style={'font-size': 'medium',
+                                                    'font-weight': 'normal'}),
+                html.P(Helper.scaleInfoTexts['acceptabilityScale'],
+                       style=styles.editorInfoTextStyle)
+            ],
+                style={'display': 'block',
+                       'font-weight': 'bold',
+                       'padding': '10px 10px 10px 10px'
+                       },
+            ),
             html.Div(id="download-single-study-chart",
                      children=[],
-                     style=styles.download_div_style, ),
+                     style=styles.download_div_style,),
         ],
             className='editor'
         ),
@@ -746,7 +768,7 @@ def CreateSingleStudyChartLayout(SUSData):
     return graphContent
 
 
-def createMainplotDataframe(SUSData, systems):
+def createMainplotDataframe(SUSData):
     mins = []
     firstQuartiles = []
     medians = []
@@ -770,7 +792,7 @@ def createMainplotDataframe(SUSData, systems):
         OverallScores.append(round(study.Score, 2))
         susScores = study.getAllSUSScores()
         mins.append(min(susScores))
-        systemList.append(study.date)
+        systemList.append(study.name)
         try:
             firstQuartiles.append(statistics.quantiles(susScores)[0])
         except statistics.StatisticsError:
@@ -807,8 +829,8 @@ def createMainplotDataframe(SUSData, systems):
     return df
 
 
-def createMainplotTable(SUSData, systems, scaleType):
-    df = createMainplotDataframe(SUSData, systems)
+def createMainplotTable(SUSData,  scaleType):
+    df = createMainplotDataframe(SUSData)
     dataframeConditions = Helper.dataFrameConditions[scaleType]
     table = html.Div(
         [
@@ -840,19 +862,22 @@ def createPerItemDataFrame(SUSData):
     data = {'Items': questions}
 
     for study in SUSData.SUSStuds:
-        data[study.date + ' Contribution'] = [round(score, 2) for score in study.avgScorePerQuestion]
-        data[study.date + ' SD'] = [round(score, 2) for score in study.standardDevPerQuestion]
+        data[study.name + ' Contribution'] = [round(score, 2) for score in study.avgScorePerQuestion]
+        data[study.name + ' SD'] = [round(score, 2) for score in study.standardDevPerQuestion]
     df = pd.DataFrame(data)
+
+    df.set_index('Items', inplace=True)
+    df.transpose()
+    df.reset_index(inplace=True)
     return df
 
 
 def createPerItemTable(SUSData):
     df = createPerItemDataFrame(SUSData)
-
     table = html.Div(
         [
             dash_table.DataTable(
-                columns=[{"name": i, "id": i} for i in df.columns],
+                columns=[{"name": str(i), "id": str(i)} for i in df.columns],
                 data=df.to_dict('records'),
                 style_table={'overflowX': 'auto'
                              },

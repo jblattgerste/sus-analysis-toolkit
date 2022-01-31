@@ -3,7 +3,8 @@ import plotly.graph_objects as go
 import Annotations
 import Charts
 import Helper
-
+import plotly.io as pio
+pio.templates.default = 'seaborn'
 
 def generateSingleStudyPreset1(singleStudy):
     traces = []
@@ -108,7 +109,7 @@ def generateSingleStudyPreset1(singleStudy):
             b=12,
             t=40,
         ),
-        paper_bgcolor='#FAFAFA'
+    paper_bgcolor='#FAFAFA'
     )
 
     # Add Annotations of comparison scales as well as the marker for the conclusiveness chart.
@@ -123,9 +124,8 @@ def generateSingleStudyPreset2(singleStudy):
                  'Question 7', 'Question 8', 'Question 9',
                  'Question 10']
     traces = []
-    tick_labels_likertScale = ['Strongly<br>agree', 'Agree', 'Neutral', 'Disagree',
-                               'Strongly<br>disagree']
 
+    tick_labels_likertScale = ['Strongly<br>disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly<br>agree']
     # Add the trace for the SUS Boxplot
     traces.append(getSingleStudyBoxPlotTraces(singleStudy))
 
@@ -426,7 +426,7 @@ def generateSingleStudyPreset4(singleStudy):
 
 
 def getSingleStudyBoxPlotTraces(singleStudy):
-    return go.Box(y=singleStudy.getAllSUSScores(), name=singleStudy.date, boxmean='sd')
+    return go.Box(y=singleStudy.getAllSUSScores(), name=singleStudy.name, boxmean='sd', boxpoints='all')
 
 
 def getSingleStudyPercentilePlotTraces(singleStudy, xaxis, yaxis):
@@ -442,6 +442,8 @@ def getSingleStudyRadarChartTraces(singleStudy):
     plotData = []
     questions = Helper.SUSQuestions
     questions.append(Helper.SUSQuestions[0])
+    questionText = Helper.SUSQuestionsTexts
+    questionText.append(Helper.SUSQuestionsTexts[0])
     for questionScore in singleStudy.avgScorePerQuestion:
         plotData.append(questionScore)
     plotData.append(plotData[0])
@@ -451,8 +453,8 @@ def getSingleStudyRadarChartTraces(singleStudy):
         r=plotData,
         theta=questions,
         fill='toself',
-        name=singleStudy.date,
-        hovertext=Helper.SUSQuestionsTexts,
+        name=singleStudy.name,
+        hovertext=questionText,
     )
 
 
@@ -487,9 +489,8 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
               {'question': 'Question 10',
                'positiveWording': False}]
 
-    colors = ['#8FD14F', '#CEE741',
-              '#FEF445', '#FAC710',
-              '#F24726']
+
+    colors = ['#F24726', '#FAC710','#FEF445', '#CEE741', '#8FD14F']
 
     x_data = [[],
               [],
@@ -503,7 +504,7 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
               []]
 
     for i, questionResults in enumerate(singleStudy.rawResultPerQuestion):
-        for j in range(1, 6):
+        for j in range(5, 0, -1):
             x_data[i].append(questionResults.count(j) / len(singleStudy.rawResultPerQuestion[0]) * 100)
         # x_data_strings[i].append(round(questionResults.count(j)/len(questionResults)*100))
 
