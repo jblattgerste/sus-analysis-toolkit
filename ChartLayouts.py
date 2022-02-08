@@ -156,7 +156,6 @@ def CreateMainPlotLayout(SUSData, systemList):
                 ),
                 html.Div([tableContent], id='mainplot-table-div'),
 
-
             ], style=styles.main_content_style
             ),
             # html.Img(src='/assets/adjective_scale.JPG'),
@@ -707,8 +706,9 @@ def CreateSingleStudyChartLayout(SUSData):
             html.Label([
                 "Per Question Scores: ",
                 html.P(
-                       children=['The per item values are normalized values between 0-10 representing their contribution to the SUS study scores and not the Likert scale values in the questionnaire where odd numbered question are formulated negatively.'],
-                       style=styles.editorInfoTextStyle),
+                    children=[
+                        'The per item values are normalized values between 0-10 representing their contribution to the SUS study scores and not the Likert scale values in the questionnaire where odd numbered question are formulated negatively.'],
+                    style=styles.editorInfoTextStyle),
                 html.Table(
                     questionTable
                     ,
@@ -744,11 +744,11 @@ def CreateSingleStudyChartLayout(SUSData):
                 html.P(Helper.scaleInfoTexts['adjectiveScale'],
                        style=styles.editorInfoTextStyle),
                 html.Label(['Grade Scale: '], style={'font-size': 'medium',
-                                                         'font-weight': 'normal'}),
+                                                     'font-weight': 'normal'}),
                 html.P(Helper.scaleInfoTexts['gradeScale'],
                        style=styles.editorInfoTextStyle),
                 html.Label(['Acceptability Scale: '], style={'font-size': 'medium',
-                                                    'font-weight': 'normal'}),
+                                                             'font-weight': 'normal'}),
                 html.P(Helper.scaleInfoTexts['acceptabilityScale'],
                        style=styles.editorInfoTextStyle)
             ],
@@ -759,7 +759,7 @@ def CreateSingleStudyChartLayout(SUSData):
             ),
             html.Div(id="download-single-study-chart",
                      children=[],
-                     style=styles.download_div_style,),
+                     style=styles.download_div_style, ),
         ],
             className='editor'
         ),
@@ -829,7 +829,7 @@ def createMainplotDataframe(SUSData):
     return df
 
 
-def createMainplotTable(SUSData,  scaleType):
+def createMainplotTable(SUSData, scaleType):
     df = createMainplotDataframe(SUSData)
     dataframeConditions = Helper.dataFrameConditions[scaleType]
     table = html.Div(
@@ -862,13 +862,15 @@ def createPerItemDataFrame(SUSData):
     data = {'Items': questions}
 
     for study in SUSData.SUSStuds:
-        data[study.name + ' Contribution'] = [round(score, 2) for score in study.avgScorePerQuestion]
-        data[study.name + ' SD'] = [round(score, 2) for score in study.standardDevPerQuestion]
+        data[study.name + ' Contribution (SD)'] = [str(round(score, 2)) + ' (' + str(round(stdDev, 2)) + ')'
+                                                   for score, stdDev in
+                                                   zip(study.avgScorePerQuestion, study.standardDevPerQuestion)]
     df = pd.DataFrame(data)
 
     df.set_index('Items', inplace=True)
-    df.transpose()
+    df = df.transpose()
     df.reset_index(inplace=True)
+    df.rename(columns={'index': 'Variable'}, inplace=True)
     return df
 
 
