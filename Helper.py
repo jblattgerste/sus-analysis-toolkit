@@ -547,7 +547,7 @@ dataframeNPSConditions = [
 ]
 
 dataFrameNoScale = [
-{
+    {
         'if': {
             'column_id': 'SUS Score (mean) '
         },
@@ -566,3 +566,19 @@ dataFrameConditions = {'acceptabilityScale': dataframeAcceptabilityConditions,
                        'promoterScale': dataframeNPSConditions,
                        'none': dataFrameNoScale
                        }
+
+percentileIntoText = html.P(children=[
+    'SUS study scores do not follow a uniform or normal distribution. Bar charts and boxplots can therefore sometimes be deceiving for comparing the difference between SUS scores. The percentile curve, derived from over 5000 SUS study scores by ',
+    html.A('Sauro et al. 2016',
+           href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=rmiLIsYAAAAJ&citation_for_view=rmiLIsYAAAAJ:Mojj43d5GZwC',
+           target="_blank"),
+    ', visualizes SUS study scores on the cumulative percentile curve of the dataset.'
+])
+
+conclusivenessInfoText = html.P(children=[
+    'The conclusiveness chart visualizes how conclusive each system/variables SUS study score is based on the number of participants. This graph is based on data from ',
+    html.A('Tullis et al. 2006',
+           href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=TXoUczoAAAAJ&citation_for_view=TXoUczoAAAAJ:PyEswDtIyv0C',
+           target="_blank"),
+    '.'
+])

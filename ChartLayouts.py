@@ -50,13 +50,7 @@ def CreatePercentilePlotLayout(SUSData, systemList):
             ),
             html.Div([
                 html.Label([
-                    html.P(children=[
-                        'SUS study scores do not follow a uniform or normal distribution. Bar charts and boxplots can therefore sometimes be deceiving for comparing the difference between SUS scores. The percentile curve, derived from over 5000 SUS study scores by ',
-                        html.A('Sauro et al. 2016',
-                               href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=rmiLIsYAAAAJ&citation_for_view=rmiLIsYAAAAJ:Mojj43d5GZwC',
-                               target="_blank"),
-                        ', visualizes SUS study scores on the cumulative percentile curve of the dataset.'
-                    ]),
+                    Helper.percentileIntoText,
                 ],
                     style={'display': 'block',
                            'padding': '10px 10px 0px 10px'
@@ -589,13 +583,7 @@ def CreateCocnlusivenessChartLayout(SUSData):
             # html.Img(src='/assets/adjective_scale.JPG'),
             html.Div([
                 html.Label([
-                    html.P(children=[
-                        'The conclusiveness chart visualizes how conclusive each system/variables SUS study score is based on the number of participants. This graph is based on data from ',
-                        html.A('Tullis et al. 2006',
-                               href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=TXoUczoAAAAJ&citation_for_view=TXoUczoAAAAJ:PyEswDtIyv0C',
-                               target="_blank"),
-                        '.'
-                    ]),
+                    Helper.conclusivenessInfoText,
                 ],
                     style={'display': 'block',
                            'padding': '10px 10px 0px 10px'
@@ -752,6 +740,16 @@ def CreateSingleStudyChartLayout(SUSData):
                 html.Details([html.Summary(['Acceptability Scale'], style={'font-size': 'medium',
                                                                      'font-weight': 'normal'}),
                               html.P(Helper.scaleInfoTexts['acceptabilityScale'],
+                                     style=styles.editorInfoTextStyle)],
+                             ),
+                html.Details([html.Summary(['Percentile-Curve'], style={'font-size': 'medium',
+                                                                           'font-weight': 'normal'}),
+                              html.P(Helper.percentileIntoText,
+                                     style=styles.editorInfoTextStyle)],
+                             ),
+                html.Details([html.Summary(['Conslusiveness Chart'], style={'font-size': 'medium',
+                                                                        'font-weight': 'normal'}),
+                              html.P(Helper.conclusivenessInfoText,
                                      style=styles.editorInfoTextStyle)],
                              ),
             ],
