@@ -50,13 +50,7 @@ def CreatePercentilePlotLayout(SUSData, systemList):
             ),
             html.Div([
                 html.Label([
-                    html.P(children=[
-                        'SUS study scores do not follow a uniform or normal distribution. Bar charts and boxplots can therefore sometimes be deceiving for comparing the difference between SUS scores. The percentile curve, derived from over 5000 SUS study scores by ',
-                        html.A('Sauro et al. 2016',
-                               href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=rmiLIsYAAAAJ&citation_for_view=rmiLIsYAAAAJ:Mojj43d5GZwC',
-                               target="_blank"),
-                        ', visualizes SUS study scores on the cumulative percentile curve of the dataset.'
-                    ]),
+                    Helper.percentileIntoText,
                 ],
                     style={'display': 'block',
                            'padding': '10px 10px 0px 10px'
@@ -155,7 +149,6 @@ def CreateMainPlotLayout(SUSData, systemList):
                     style=styles.graph_div_style
                 ),
                 html.Div([tableContent], id='mainplot-table-div'),
-
 
             ], style=styles.main_content_style
             ),
@@ -590,13 +583,7 @@ def CreateCocnlusivenessChartLayout(SUSData):
             # html.Img(src='/assets/adjective_scale.JPG'),
             html.Div([
                 html.Label([
-                    html.P(children=[
-                        'The conclusiveness chart visualizes how conclusive each system/variables SUS study score is based on the number of participants. This graph is based on data from ',
-                        html.A('Tullis et al. 2006',
-                               href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=TXoUczoAAAAJ&citation_for_view=TXoUczoAAAAJ:PyEswDtIyv0C',
-                               target="_blank"),
-                        '.'
-                    ]),
+                    Helper.conclusivenessInfoText,
                 ],
                     style={'display': 'block',
                            'padding': '10px 10px 0px 10px'
@@ -707,8 +694,9 @@ def CreateSingleStudyChartLayout(SUSData):
             html.Label([
                 "Per Question Scores: ",
                 html.P(
-                       children=['The per item values are normalized values between 0-10 representing their contribution to the SUS study scores and not the Likert scale values in the questionnaire where odd numbered question are formulated negatively.'],
-                       style=styles.editorInfoTextStyle),
+                    children=[
+                        'The per item values are normalized values between 0-10 representing their contribution to the SUS study scores and not the Likert scale values in the questionnaire where odd numbered question are formulated negatively.'],
+                    style=styles.editorInfoTextStyle),
                 html.Table(
                     questionTable
                     ,
@@ -738,19 +726,32 @@ def CreateSingleStudyChartLayout(SUSData):
                        },
             ),
             html.Label([
-                "Contextualization Scales ",
-                html.Label(['Adjective Scale: '], style={'font-size': 'medium',
-                                                         'font-weight': 'normal'}),
-                html.P(Helper.scaleInfoTexts['adjectiveScale'],
-                       style=styles.editorInfoTextStyle),
-                html.Label(['Grade Scale: '], style={'font-size': 'medium',
-                                                         'font-weight': 'normal'}),
-                html.P(Helper.scaleInfoTexts['gradeScale'],
-                       style=styles.editorInfoTextStyle),
-                html.Label(['Acceptability Scale: '], style={'font-size': 'medium',
-                                                    'font-weight': 'normal'}),
-                html.P(Helper.scaleInfoTexts['acceptabilityScale'],
-                       style=styles.editorInfoTextStyle)
+                "Primary sources ",
+                html.Details([html.Summary(['Adjective Scale'], style={'font-size': 'medium',
+                                                                         'font-weight': 'normal'}),
+                              html.P(Helper.scaleInfoTexts['adjectiveScale'],
+                                     style=styles.editorInfoTextStyle)],
+                             ),
+                html.Details([html.Summary(['Grade Scale'], style={'font-size': 'medium',
+                                                                         'font-weight': 'normal'}),
+                              html.P(Helper.scaleInfoTexts['gradeScale'],
+                                     style=styles.editorInfoTextStyle)],
+                             ),
+                html.Details([html.Summary(['Acceptability Scale'], style={'font-size': 'medium',
+                                                                     'font-weight': 'normal'}),
+                              html.P(Helper.scaleInfoTexts['acceptabilityScale'],
+                                     style=styles.editorInfoTextStyle)],
+                             ),
+                html.Details([html.Summary(['Percentile-Curve'], style={'font-size': 'medium',
+                                                                           'font-weight': 'normal'}),
+                              html.P(Helper.percentileIntoText,
+                                     style=styles.editorInfoTextStyle)],
+                             ),
+                html.Details([html.Summary(['Conslusiveness Chart'], style={'font-size': 'medium',
+                                                                        'font-weight': 'normal'}),
+                              html.P(Helper.conclusivenessInfoText,
+                                     style=styles.editorInfoTextStyle)],
+                             ),
             ],
                 style={'display': 'block',
                        'font-weight': 'bold',
@@ -759,7 +760,7 @@ def CreateSingleStudyChartLayout(SUSData):
             ),
             html.Div(id="download-single-study-chart",
                      children=[],
-                     style=styles.download_div_style,),
+                     style=styles.download_div_style, ),
         ],
             className='editor'
         ),
@@ -829,7 +830,7 @@ def createMainplotDataframe(SUSData):
     return df
 
 
-def createMainplotTable(SUSData,  scaleType):
+def createMainplotTable(SUSData, scaleType):
     df = createMainplotDataframe(SUSData)
     dataframeConditions = Helper.dataFrameConditions[scaleType]
     table = html.Div(
@@ -862,13 +863,15 @@ def createPerItemDataFrame(SUSData):
     data = {'Items': questions}
 
     for study in SUSData.SUSStuds:
-        data[study.name + ' Contribution'] = [round(score, 2) for score in study.avgScorePerQuestion]
-        data[study.name + ' SD'] = [round(score, 2) for score in study.standardDevPerQuestion]
+        data[study.name + ' Contribution (SD)'] = [str(round(score, 2)) + ' (' + str(round(stdDev, 2)) + ')'
+                                                   for score, stdDev in
+                                                   zip(study.avgScorePerQuestion, study.standardDevPerQuestion)]
     df = pd.DataFrame(data)
 
     df.set_index('Items', inplace=True)
-    df.transpose()
+    df = df.transpose()
     df.reset_index(inplace=True)
+    df.rename(columns={'index': 'Variable'}, inplace=True)
     return df
 
 
