@@ -10,6 +10,6 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-EXPOSE 8050
+EXPOSE 80
 
 CMD ["python", "./dashApp.py", "--host=0.0.0.0"]
