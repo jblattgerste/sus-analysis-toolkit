@@ -431,6 +431,6 @@ def download_csv_conclusiveness(n_clicks, data):
 
 if __name__ == '__main__':
     if debugMode:
-        app.run_server(debug=True)
+        app.run_server(port=80,host='0.0.0.0', debug=True)
     else:
-        app.run_server(host='0.0.0.0')
+        app.run_server(port=80,host='0.0.0.0')
