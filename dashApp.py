@@ -18,6 +18,8 @@ import zipfile
 import tempfile
 
 app = dash.Dash(__name__)
+app.title = 'SUS Analysis Toolkit'
+app._favicon = ("assets/favicon.ico")
 app.config.suppress_callback_exceptions = True
 app.layout = Layouts.getMainContent(app)
 
