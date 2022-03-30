@@ -89,7 +89,14 @@ def getMainContent(app):
 			    html.A('Download', href=app.get_asset_url('studyData.csv'), download='studyData.csv'),
 			    ' and the single variable CSV file: ',
 			    html.A('Download', href=app.get_asset_url('singleStudyData.csv'), download='studyData.csv'),
-                            '). After the successfull upload, SUS scores, per-item contribution, the studies conclusiveness and contextualization onto meta-analysis are calcualted and plotted. The interactive plots can be viewed and customized with a multitude of available options. After the analysis and customization, individual charts, tables or the whole analysis can be downloaded and used.'
+			    '. You can utilize them using a text editor or CSV editors like: ',
+			    html.A('CsvTextEditor', href='https://github.com/WildGums/CsvTextEditor'),
+                            ', ',
+			    html.A('CSV-Editor', href='https://github.com/ritsrivastava01/CSV-Editor'),
+                            ' or ',
+			    html.A('Table Tool', href='https://github.com/jakob/TableTool'),
+                            'on macOS). ',
+			    'After the successfull upload, SUS scores, per-item contribution, the studies conclusiveness and contextualization onto meta-analysis are calcualted and plotted. The interactive plots can be viewed and customized with a multitude of available options. After the analysis and customization, individual charts, tables or the whole analysis can be downloaded and used.'
                         ]), 
 			html.Div([
         		    html.Img(src=app.get_asset_url('SUSToolFlow.png'),style={'width': '75%'})
