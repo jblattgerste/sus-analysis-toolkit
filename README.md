@@ -1,10 +1,19 @@
 # System Usability Scale Analysis Toolkit
 
-The System Usability Scale (SUS) Analysis Toolkit is a web-based python application that provides a compilation of useful insights and contextualisation approaches based on findings from the scientific literature for the System Usability Scale questionnaire that was originally developed by John Brooke. It allows researchers and practisionaires to calculate comparative, iterative and singular SUS usability study datasets. Furthermore, it provides utility to contextualize the meaning of calculated scores, compare them against scores gathered in meta-analyses, calculate SUS scores conclusiveness and analysing the contribution of specific questions of the 10-item questionnaire to the SUS study scores.
+The [System Usability Scale (SUS) Analysis Toolkit](https://sus.mixality.de/) is a web-based python application that provides a compilation of useful insights and contextualisation approaches based on findings from the scientific literature for the System Usability Scale questionnaire that was originally developed by John Brooke. It allows researchers and practisionaires to calculate comparative, iterative and singular SUS usability study datasets. Furthermore, it provides utility to contextualize the meaning of calculated scores, compare them against scores gathered in meta-analyses, calculate SUS scores conclusiveness and analysing the contribution of specific questions of the 10-item questionnaire to the SUS study scores.
 
+### Preview: Multi-Variable SUS Analysis
+
+![Preview Example of the multi-variable SUS analysis](/assets/PreviewMultiStudy.png)
+
+### Preview: Single-Variable Usability Benchmarking
+
+![Preview Example of the single-variable SUS usability benchmarking dashboard](/assets/PreviewSingleStudy.png)
+
+## Using the SUS Analysis Toolkit
 **An online version of the SUS Analysis Toolkit is hosted at: https://sus.mixality.de/**
 
-  ![Example usage animation of the multi variable analysis](/assets/UsageExampleAnimation.gif)
+ ![Example usage animation of the multi variable analysis](/assets/UsageExampleAnimation.gif)
 
 
 ## Quickstart - Running the SUS Analysis Toolkit locally
