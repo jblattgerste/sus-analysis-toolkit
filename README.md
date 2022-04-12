@@ -1,6 +1,8 @@
 # System Usability Scale Analysis Toolkit
 
-The [System Usability Scale (SUS) Analysis Toolkit](https://sus.mixality.de/) is a web-based python application that provides a compilation of useful insights and contextualisation approaches based on findings from the scientific literature for the System Usability Scale questionnaire that was originally developed by John Brooke. It allows researchers and practisionaires to calculate comparative, iterative and singular SUS usability study datasets. Furthermore, it provides utility to contextualize the meaning of calculated scores, compare them against scores gathered in meta-analyses, calculate SUS scores conclusiveness and analysing the contribution of specific questions of the 10-item questionnaire to the SUS study scores.
+The [System Usability Scale (SUS) Analysis Toolkit](https://sus.mixality.de/) is a web-based python application that provides a compilation of useful insights and contextualisation approaches based on findings from the scientific literature for the System Usability Scale questionnaire that was originally developed by John Brooke. It allows researchers and practisionaires to calculate comparative, iterative and benchmarking SUS usability study datasets. Furthermore, it provides utility to contextualize the meaning of calculated scores, compare them against scores gathered in meta-analyses, calculate SUS scores conclusiveness and analysing the contribution of specific questions of the 10-item questionnaire to the SUS study scores.
+
+An in-depth explanation of the toolkits features and their scientific basis can be found in our conference publication about the initial release and preliminary evaluation of the toolkit. It is also included in the repository: ["A Web-Based Analysis Toolkit for the System Usability Scale" - Blattgerste et al. (2022)](https://github.com/jblattgerste/sus-analysis-toolkit/blob/main/assets/Blattgerste%202022%20-%20A%20Web-Based%20Analysis%20Toolkit%20for%20the%20System%20Usability%20Scale.pdf)
 
 ### Preview: Multi-Variable SUS Analysis
 
@@ -57,10 +59,16 @@ As the SUS Analysis Toolkit is an ongoing project, we are happy to receive feedb
 The tool is freely accesible for commercial and non-commercial use under the MIT license and does not require acknowledgement. Nonetheless, if you use our tool for scientific publications or presentations, we would appreciate an acknowledgement in form of a citation to our tool:
 
 ```tex
-@misc{sus-analysis-toolkit,
-title  = {A Web-Based Analysis Toolkit for the System Usability Scale},
-author = {Blattgerste, Jonas and Behrends, Jan and Pfeiffer, Thies},
-note   = {https://sus.mixality.de/},
-year   = {2022},
+@inproceedings{sus-analysis-toolkit,
+  title={A Web-Based Analysis Toolkit for the System Usability Scale},
+  author={Blattgerste, Jonas and Behrends, Jan and Pfeiffer, Thies},
+  booktitle={The 15th International Conference on PErvasive Technologies Related to Assistive Environments (PETRA '22)},
+  year   = {2022},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://sus.mixality.de/},
+  doi = {10.1145/3529190.3529216},
+  location = {Corfu, Greece},
+  series = {PETRA '22}
 }
 ```
