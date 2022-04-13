@@ -695,7 +695,7 @@ def CreateSingleStudyChartLayout(SUSData):
                 "Per Question Scores: ",
                 html.P(
                     children=[
-                        'The per item values are normalized values between 0-10 representing their contribution to the SUS study scores and not the Likert scale values in the questionnaire where odd numbered question are formulated negatively.'],
+                        'The per item values are normalized values between 0-10 representing their contribution to the SUS study score and not the Likert scale values in the questionnaire where even numbered questions are formulated negatively.'],
                     style=styles.editorInfoTextStyle),
                 html.Table(
                     questionTable
