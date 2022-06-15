@@ -168,10 +168,11 @@ def CreateMainPlotLayout(SUSData, systemList):
                            },
                 ),
                 html.Label([
-                    "Plot type: ",
+                    html.Details([
+                    html.Summary("Plot type: "),
                     html.P(id="plotstyle-info",
                            children=[Helper.plotStyleInfoTexts['mainplot']],
-                           style=styles.editorInfoTextStyle),
+                           style=styles.editorInfoTextStyle)]),
                     dcc.Dropdown(id='plotstyle-mainplot',
                                  options=[{'label': 'Boxplot', 'value': 'mainplot'},
                                           {'label': 'Notched Boxplot', 'value': 'notched'},
@@ -187,10 +188,10 @@ def CreateMainPlotLayout(SUSData, systemList):
                            },
                 ),
                 html.Label([
-                    "Contextualization scale: ",
+                    html.Details([html.Summary("Contextualization scale: "),
                     html.P(id="scaletype-info",
                            children=[Helper.scaleInfoTexts['adjectiveScale']],
-                           style=styles.editorInfoTextStyle),
+                           style=styles.editorInfoTextStyle)]),
                     dcc.Dropdown(id='scale-mainplot',
                                  options=[{'label': 'Adjective Scale', 'value': 'adjectiveScale'},
                                           {'label': 'Grade Scale', 'value': 'gradeScale'},

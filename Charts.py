@@ -462,7 +462,6 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
                                      error_y=dict(type='data', array=filteredErrorBars)))
 
         fig.update_layout(
-            xaxis_title="System",
             yaxis_title="SUS Score",
             yaxis_range=[0, 10],
             margin=dict(
@@ -495,7 +494,6 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
                            error_x=dict(type='data', array=filteredErrorBars)))
 
         fig.update_layout(
-            yaxis_title="System",
             xaxis_title="SUS Score",
             xaxis_range=[0, 10],
             margin=dict(
