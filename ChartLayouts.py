@@ -477,7 +477,7 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
                     dcc.Dropdown(id='colorize-by-meaning',
                                  options=[{'label': 'Regular colors', 'value': 'regular'},
                                           {'label': 'Colorize by meaning', 'value': 'byMeaning'}],
-                                 value='regular',
+                                 value='byMeaning',
                                  style={'font-weight': 'normal',
                                         'margin-top': '10px',
                                         }
