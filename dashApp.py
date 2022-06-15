@@ -311,7 +311,7 @@ def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, 
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
 
     # Mainplot Dataframe
-    df_mainplot = ChartLayouts.createMainplotDataframe(SUSData, systemList)
+    df_mainplot = ChartLayouts.createMainplotDataframe(SUSData)
 
     # Per Question Dataframe
     df_per_question = ChartLayouts.createPerItemDataFrame(SUSData)
@@ -386,7 +386,7 @@ def download_csv_mainplot(n_clicks, data):
     df = pd.read_json(data, orient='split')
     systemList = set(df['System'])
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
-    df = ChartLayouts.createMainplotDataframe(SUSData, systemList)
+    df = ChartLayouts.createMainplotDataframe(SUSData)
     return dcc.send_data_frame(df.to_csv, "mainplot.csv", index=False)
 
 
@@ -433,6 +433,6 @@ def download_csv_conclusiveness(n_clicks, data):
 
 if __name__ == '__main__':
     if debugMode:
-        app.run_server(debug=True)
+        app.run_server(port=80,host='0.0.0.0',debug=True)
     else:
         app.run_server(port=80,host='0.0.0.0')
