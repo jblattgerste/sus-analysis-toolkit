@@ -53,7 +53,8 @@ perItemTableStyle = {
 
 mainPageSummaryHeaderStyle = {
                                 'font-size': '1.2em',
-                                'font-weight': 'bold'
+                                'font-weight': 'bold',
+                                'color': 'white'
                             }
 
 editorInfoTextStyle = {'font-weight': 'normal',
