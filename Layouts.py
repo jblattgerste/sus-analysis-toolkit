@@ -53,6 +53,7 @@ def getMainContent(app):
                     'margin-top': '10px',
                     'margin-bottom': '10px',
                     'border-radius': '5px',
+                    'box-shadow': '0 1rem 1rem -.5rem rgba(0, 0, 0, .4)'
                 }
             ),
                 html.Div(
@@ -70,19 +71,7 @@ def getMainContent(app):
                                         'Drag and Drop or ',
                                         html.A('click here to select CSV-file.')
                                     ]),
-                                    style={
-                                        'height': '100%',
-                                        'lineHeight': '100%',
-                                        'borderWidth': '1px',
-                                        'borderStyle': 'dashed',
-                                        'borderRadius': '5px',
-                                        'display': 'inline-block',
-                                        'padding': '30px',
-                                        'textAlign': 'center',
-                                        'background-color': '#BABFC4',
-                                        'box-shadow': '0 .5rem 1rem -.5rem rgba(0, 0, 0, .4)',
-                                        'font-weight': 'bold'
-                                    },
+                                    style=styles.mainPageDownloadPanelStyle,
                                     # Allow multiple files to be uploaded
                                     multiple=False
                                 ),
@@ -98,19 +87,7 @@ def getMainContent(app):
                                         'Drag and Drop or ',
                                         html.A('click here to select CSV-file.')
                                     ]),
-                                    style={
-                                        'height': '100%',
-                                        'lineHeight': '100%',
-                                        'borderWidth': '1px',
-                                        'borderStyle': 'dashed',
-                                        'borderRadius': '5px',
-                                        'display': 'inline-block',
-                                        'padding': '30px',
-                                        'textAlign': 'center',
-                                        'background-color': '#BABFC4',
-                                        'box-shadow': '0 .5rem 1rem -.5rem rgba(0, 0, 0, .4)',
-                                        'font-weight': 'bold'
-                                    },
+                                    style=styles.mainPageDownloadPanelStyle,
                                     # Allow multiple files to be uploaded
                                     multiple=False
                                 )
@@ -130,7 +107,7 @@ def getMainContent(app):
                                           ' questions, where participants responses range from \'Strongly disagree\' to '
                                           '\'Strongly agree\'. The results are then calculated into a single 0 - 100 score called the SUS score. Multiple SUS scores represent the SUS study score.'
                                           ' It is simple to apply, validated through years of its application, easy to understand for participants, available in multiple langauges, and can be used for any system that requires human interaction.',
-                                          ],open=False, className="mainPage")]),
+                                          ],open=False, className="mainPage")], style=styles.mainPageSummaryParagraph),
                         html.P([
                             html.Details([html.Summary(
                                 'What is the "SUS Analysis Toolkit"?', style=styles.mainPageSummaryHeaderStyle, className="mainPage"),
@@ -140,7 +117,7 @@ def getMainContent(app):
                             html.A('Mixality Research Group', href='https://mixality.de/sus-analysis-toolkit/'),
                             '. The toolkit provides a compilation of useful insights and contextualisation approaches based on findings from the scientific literature for the System Usability Scale questionnaire. It allows researchers and practisionaires to easily calculate and plot comparative, iterative and single variable SUS usability study datasets. Furthermore, it provides utility to contextualize the meaning of calculated scores, compare them against scores gathered in meta-analyses, calculate SUS scores conclusiveness and analysing the contribution of specific questions of the 10-item questionnaire towards the SUS study scores. A particular focus lies on producing camera-ready scientific figures and calculations to be directly used in scientific publications and presentations. ',
                             html.Br(),
-                        ],open=False, className="mainPage")]),
+                        ],open=False, className="mainPage")], style=styles.mainPageSummaryParagraph),
                         html.P([html.Details([
                             html.Summary(
                                 'How can i use the "SUS Analysis Toolkit"?',style=styles.mainPageSummaryHeaderStyle, className="mainPage"
@@ -161,7 +138,7 @@ def getMainContent(app):
                             html.A('Table Tool', href='https://github.com/jakob/TableTool'),
                             'on macOS). ',
                             'After the successfull upload, SUS scores, per-item contribution, the studies conclusiveness and contextualization onto meta-analysis are calcualted and plotted. The interactive plots can be viewed and customized with a multitude of available options. After the analysis and customization, individual charts, tables or the whole analysis can be downloaded and used.',
-                        ],open=False, className="mainPage")]),
+                        ],open=False, className="mainPage")],style=styles.mainPageSummaryParagraph),
 
                         html.P([
                             html.Details([html.Summary(
@@ -173,7 +150,7 @@ def getMainContent(app):
                             html.A('citation to our tool', href=app.get_asset_url('BibTex.txt'), download='BibTex.txt'),
                             ' and recommend citing the primary sources for the insights utilized.',
                             html.Br(),
-                        ], open=False, className="mainPage")]),
+                        ], open=False, className="mainPage")], style=styles.mainPageSummaryParagraph),
                         html.P([
 
                         ]),
@@ -183,11 +160,10 @@ def getMainContent(app):
 
 
                     ], id='landing-page', style={'display': 'block',
-                                                 'width': '80%',
                                                  'margin-left': 'auto',
                                                  'margin-right': 'auto'}),
 
-                html.Div(id='graph-content', style={'display': 'block', 'padding-bottom': '200px'}, children=[]),
+                html.Div(id='graph-content', style={'display': 'block', 'padding': '10px'}, children=[]),
 
                 # Hidden div inside the app that stores the SessionData value
                 html.Div(id='sessionPlotData-multi', style={'display': 'none'}),

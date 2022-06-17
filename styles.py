@@ -57,6 +57,8 @@ mainPageSummaryHeaderStyle = {
                                 'color': 'white'
                             }
 
+mainPageSummaryParagraph = {'width':'75%', 'margin-left': 'auto', 'margin-right':'auto'}
+
 editorInfoTextStyle = {'font-weight': 'normal',
                        'font-size': 'small'}
 
@@ -97,6 +99,21 @@ single_study_main_content_style = {'width': '70%'}
 
 per_item_main_content_style = {'display': 'block',
                                'width': '70%'}
+
+mainPageDownloadPanelStyle = {
+                                        'height': '100%',
+                                        'lineHeight': '100%',
+                                        'borderWidth': '1px',
+                                        'borderStyle': 'dashed',
+                                        'borderRadius': '5px',
+                                        'display': 'inline-block',
+                                        'padding': '30px',
+                                        'textAlign': 'center',
+                                        'background-color': '#6695A9',
+                                        'box-shadow': '0 .5rem 1rem -.5rem rgba(0, 0, 0, .4)',
+                                        'font-weight': 'bold',
+                                        'color': 'black'
+                                    }
 
 
 def changeGraphWidth(width):
