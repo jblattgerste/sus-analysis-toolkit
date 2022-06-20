@@ -43,7 +43,7 @@ def init_main_page(contents_multi, contents_single):
             if contents_multi is None:
                 raise PreventUpdate
             csvData = Helper.decodeContentToCSV(contents_multi)
-            csvData = Helper.checkUploadFile(csvData, False)
+            Helper.checkUploadFile(csvData, False)
             SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
             systemList = SUSData.getAllStudNames()
             graph = [
@@ -64,6 +64,10 @@ def init_main_page(contents_multi, contents_single):
                                 ),
                         dcc.Tab(label='Conclusiveness Chart',
                                 children=ChartLayouts.CreateCocnlusivenessChartLayout(SUSData),
+                                selected_style={'border-top': '3px solid #445262'}
+                                ),
+                        dcc.Tab(label='Editable Data Table',
+                                children=Layouts.CreateDataTableLayout(csvData),
                                 selected_style={'border-top': '3px solid #445262'}
                                 ),
                     ])
@@ -432,8 +436,16 @@ def download_csv_conclusiveness(n_clicks, data):
     return dcc.send_data_frame(df.to_csv, "conclusiveness.csv", index=False)
 
 
+@app.callback(
+    Output('sessionPlotData-multi', 'data'),
+    Input('editableDataTable', 'data')
+)
+def table_was_edited(tableData):
+    print(tableData)
+
+
 if __name__ == '__main__':
     if debugMode:
-        app.run_server(port=80,host='0.0.0.0',debug=True)
+        app.run_server(debug=True)
     else:
         app.run_server(port=80,host='0.0.0.0')

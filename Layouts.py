@@ -1,5 +1,7 @@
+import pandas as pd
 from dash import dcc
 from dash import html
+from dash import Dash, dash_table
 
 import styles
 
@@ -184,3 +186,13 @@ def getMainContent(app):
         }
     )
     return main_Content
+
+
+def CreateDataTableLayout(df):
+    return [dash_table.DataTable(
+        id='editable-table',
+        data=df.to_dict('records'),
+        columns=[{"name": i, "id": i} for i in df.columns],
+        editable=True
+    )]
+
