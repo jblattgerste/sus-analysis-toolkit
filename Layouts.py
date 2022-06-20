@@ -165,8 +165,8 @@ def getMainContent(app):
 
                 html.Div(id='graph-content', style={'display': 'block', 'padding': '10px'}, children=[]),
 
-                # Hidden div inside the app that stores the SessionData value
-                html.Div(id='sessionPlotData-multi', style={'display': 'none'}),
+                # This stores the session data
+                dcc.Store(id='sessionPlotData-multi'),
                 dcc.Store(id='sessionPlotData-single')
             ],
             style={

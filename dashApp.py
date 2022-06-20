@@ -29,7 +29,7 @@ debugMode = True
 @app.callback(
     Output('graph-content', component_property='children'),
     Output('landing-page', 'style'),
-    Output("sessionPlotData-multi", 'children'),
+    Output("sessionPlotData-multi", 'data'),
     Output("sessionPlotData-single", "data"),
     Input('upload-data-multi', 'contents'),
     Input('upload-data-single', 'contents')
@@ -127,6 +127,7 @@ def init_main_page(contents_multi, contents_single):
             return errorMessage, {'display': 'none'}, dash.no_update, dash.no_update
 
 
+
 @app.callback(
     Output('download-single-study-chart', 'children'),
     Output('single-study-chart', 'figure'),
@@ -150,7 +151,7 @@ def update_SingleStudyMainplot(data_single, presetValue):
     Output('plotstyle-info', 'children'),
     Output('mainplot-table-div', 'children'),
     Input('systems-mainplot', 'value'),
-    Input('sessionPlotData-multi', 'children'),
+    Input('sessionPlotData-multi', 'data'),
     Input('datapoints-mainplot', 'value'),
     Input('scale-mainplot', 'value'),
     Input('orientation-mainplot', 'value'),
@@ -192,7 +193,7 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
     Output('systems-label-radio', 'style'),
     Input('systems-per-question-chart', 'value'),
     Input('questions-per-question-chart', 'value'),
-    Input('sessionPlotData-multi', 'children'),
+    Input('sessionPlotData-multi', 'data'),
     Input('orientation-per-question-chart', 'value'),
     Input('plotstyle-per-question-chart', 'value'),
     Input('download-type-perquestion', 'value'),
@@ -252,7 +253,7 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
     Output('percentilePlot', 'figure'),
     Output('download-percentilePlot', 'children'),
     Input('systems-percentilePlot', 'value'),
-    Input('sessionPlotData-multi', 'children'),
+    Input('sessionPlotData-multi', 'data'),
     Input('download-type-percentile', 'value'),
     Input('sort-by-percentile', 'value')
 )
@@ -270,7 +271,7 @@ def update_PercentilePlot(systems, data, download_format, sort_value):
     Output('conclusivenessPlot', 'figure'),
     Output('download-conclusiveness', 'children'),
     Input('systems-percentilePlot', 'value'),
-    Input('sessionPlotData-multi', 'children'),
+    Input('sessionPlotData-multi', 'data'),
     Input('download-type-conclusiveness', 'value')
 )
 def update_Conclusiveness(systems, data, download_format):
@@ -300,7 +301,7 @@ def update_mainplot_table(scaleValue):
     State('per-question-chart', 'figure'),
     State('percentilePlot', 'figure'),
     State('conclusivenessPlot', 'figure'),
-    State('sessionPlotData-multi', 'children'),
+    State('sessionPlotData-multi', 'data'),
     prevent_initial_call=True,
 )
 def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, per_question, percentile,
@@ -379,7 +380,7 @@ def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, 
 @app.callback(
     Output('download-csv-mainplot', 'data'),
     Input('csv-mainplot-button', 'n_clicks'),
-    State('sessionPlotData-multi', 'children'),
+    State('sessionPlotData-multi', 'data'),
     prevent_initial_call=True
 )
 def download_csv_mainplot(n_clicks, data):
@@ -393,7 +394,7 @@ def download_csv_mainplot(n_clicks, data):
 @app.callback(
     Output('download-csv-per-question', 'data'),
     Input('csv-per-question-button', 'n_clicks'),
-    State('sessionPlotData-multi', 'children'),
+    State('sessionPlotData-multi', 'data'),
     prevent_initial_call=True
 )
 def download_csv_per_question(n_clicks, data):
@@ -406,7 +407,7 @@ def download_csv_per_question(n_clicks, data):
 @app.callback(
     Output('download-csv-percentile', 'data'),
     Input('csv-percentile-button', 'n_clicks'),
-    State('sessionPlotData-multi', 'children'),
+    State('sessionPlotData-multi', 'data'),
     prevent_initial_call=True
 )
 def download_csv_percentile(n_clicks, data):
@@ -420,7 +421,7 @@ def download_csv_percentile(n_clicks, data):
 @app.callback(
     Output('download-csv-conclusiveness', 'data'),
     Input('csv-conclusiveness-button', 'n_clicks'),
-    State('sessionPlotData-multi', 'children'),
+    State('sessionPlotData-multi', 'data'),
     prevent_initial_call=True
 )
 def download_csv_conclusiveness(n_clicks, data):
