@@ -27,14 +27,21 @@ debugMode = True
 
 
 @app.callback(
-    Output('graph-content', component_property='children'),
+    Output('graph-content', 'style'),
     Output('landing-page', 'style'),
     Output("sessionPlotData-multi", 'data'),
     Output("sessionPlotData-single", "data"),
+    Output('main-plot-tab','children'),
+    Output('percentile-plot-tab', 'children'),
+    Output('per-item-tab', 'children'),
+    Output('conclusiveness-tab', 'children'),
+    Output('editable-table', 'data'),
+    Output('editable-table', 'columns'),
     Input('upload-data-multi', 'contents'),
-    Input('upload-data-single', 'contents')
+    Input('upload-data-single', 'contents'),
+    Input('editable-table', 'data')
 )
-def init_main_page(contents_multi, contents_single):
+def init_main_page(contents_multi, contents_single, table_data):
     ctx = dash.callback_context
     upload_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
@@ -46,34 +53,8 @@ def init_main_page(contents_multi, contents_single):
             Helper.checkUploadFile(csvData, False)
             SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
             systemList = SUSData.getAllStudNames()
-            graph = [
-                html.Div([
-                    dcc.Download(id='download-all-charts-data'),
-
-                    dcc.Tabs([
-                        dcc.Tab(label='System Usability Scale',
-                                children=ChartLayouts.CreateMainPlotLayout(SUSData, systemList),
-                                selected_style={'border-top': '3px solid #445262'}),
-                        dcc.Tab(label='SUS Score on Percentile-Curve',
-                                children=ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList),
-                                selected_style={'border-top': '3px solid #445262'}
-                                ),
-                        dcc.Tab(label='Per Item Chart',
-                                children=ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList),
-                                selected_style={'border-top': '3px solid #445262'}
-                                ),
-                        dcc.Tab(label='Conclusiveness Chart',
-                                children=ChartLayouts.CreateCocnlusivenessChartLayout(SUSData),
-                                selected_style={'border-top': '3px solid #445262'}
-                                ),
-                        dcc.Tab(label='Editable Data Table',
-                                children=Layouts.CreateDataTableLayout(csvData),
-                                selected_style={'border-top': '3px solid #445262'}
-                                ),
-                    ])
-                ])
-            ]
-            return graph, {'display': 'none'}, csvData.to_json(date_format='iso', orient='split'), dash.no_update
+            columns = [{"name": i, "id": i} for i in csvData.columns]
+            return {'display': 'block', 'padding': '10px'}, {'display': 'none'}, csvData.to_json(date_format='iso', orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), csvData.to_dict('records'), columns
         except Helper.WrongUploadFileException as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -84,7 +65,7 @@ def init_main_page(contents_multi, contents_single):
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, {'display': 'none'}, dash.no_update, dash.no_update
+            return errorMessage, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         except Exception as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -97,7 +78,7 @@ def init_main_page(contents_multi, contents_single):
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
             return errorMessage, {'display': 'none'}, dash.no_update, dash.no_update
-    else:
+    elif upload_id == 'upload-data-single':
         if contents_single is None:
             raise PreventUpdate
         try:
@@ -105,7 +86,7 @@ def init_main_page(contents_multi, contents_single):
             csvData = Helper.checkUploadFile(csvData, True)
             SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
             graph = [ChartLayouts.CreateSingleStudyChartLayout(SUSData)]
-            return graph, {'display': 'none'}, dash.no_update, csvData.to_json(date_format='iso', orient='split')
+            return graph, {'display': 'none'}, dash.no_update, csvData.to_json(date_format='iso', orient='split'), dash.no_update, dash.no_update, dash.no_update, dash.no_update,dash.no_update
         except Helper.WrongUploadFileException as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -116,7 +97,7 @@ def init_main_page(contents_multi, contents_single):
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, {'display': 'none'}, dash.no_update, dash.no_update
+            return errorMessage, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         except Exception as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -128,8 +109,17 @@ def init_main_page(contents_multi, contents_single):
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, {'display': 'none'}, dash.no_update, dash.no_update
-
+            return errorMessage, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+    elif upload_id == 'editable-table':
+        print(table_data)
+        df = pd.DataFrame.from_dict(table_data)
+        df = df.sort_index(axis=1)
+        print(sorted(df.columns))
+        print(df)
+        return dash.no_update, dash.no_update, df.to_json(date_format='iso', orient='split'), dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update
+    else:
+        if contents_single is None and contents_multi is None:
+            raise PreventUpdate
 
 
 @app.callback(
@@ -307,10 +297,18 @@ def update_mainplot_table(scaleValue):
     State('conclusivenessPlot', 'figure'),
     State('sessionPlotData-multi', 'data'),
     prevent_initial_call=True,
+
+
 )
 def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, per_question, percentile,
                         conclusiveness, data):
+
+    # This is needed because prevent_initial_call=True doesnt't work, if the input component is generated by another callback
+    if n_clicks is None and n_clicks_2 is None and n_clicks_3 is None and n_clicks_4 is None:
+        return dash.no_update
+
     # Create Data Frames for the .csv files
+    print(dash.callback_context.triggered[0]['prop_id'].split('.')[0])
     df = pd.read_json(data, orient='split')
     systemList = set(df['System'])
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
@@ -436,12 +434,12 @@ def download_csv_conclusiveness(n_clicks, data):
     return dcc.send_data_frame(df.to_csv, "conclusiveness.csv", index=False)
 
 
-@app.callback(
-    Output('sessionPlotData-multi', 'data'),
-    Input('editableDataTable', 'data')
-)
-def table_was_edited(tableData):
-    print(tableData)
+# @app.callback(
+#     Output('sessionPlotData-multi', 'data'),
+#     Input('editableDataTable', 'data')
+# )
+# def table_was_edited(tableData):
+#     print(tableData)
 
 
 if __name__ == '__main__':

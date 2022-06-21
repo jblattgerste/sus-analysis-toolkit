@@ -43,6 +43,7 @@ def decodeContentToCSV(contents):
     content_type, csvData = contents.split(',')
     decoded = base64.b64decode(csvData)
     csvData = pd.read_csv(io.StringIO(decoded.decode("utf-8")), sep=';')
+    print(csvData)
     return csvData
 
 

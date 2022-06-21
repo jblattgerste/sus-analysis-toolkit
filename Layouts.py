@@ -3,6 +3,7 @@ from dash import dcc
 from dash import html
 from dash import Dash, dash_table
 
+import ChartLayouts
 import styles
 
 per_question_context = html.Div([
@@ -165,7 +166,40 @@ def getMainContent(app):
                                                  'margin-left': 'auto',
                                                  'margin-right': 'auto'}),
 
-                html.Div(id='graph-content', style={'display': 'block', 'padding': '10px'}, children=[]),
+                html.Div(id='graph-content', style={'display': 'none', 'padding': '10px'}, children=[
+
+                        html.Div([
+                            dcc.Download(id='download-all-charts-data'),
+
+                            dcc.Tabs([
+                                dcc.Tab(id='main-plot-tab',
+                                        label='System Usability Scale',
+                                        selected_style={'border-top': '3px solid #445262'}),
+                                dcc.Tab(id='percentile-plot-tab',
+                                        label='SUS Score on Percentile-Curve',
+                                        selected_style={'border-top': '3px solid #445262'}
+                                        ),
+                                dcc.Tab(id='per-item-tab',
+                                        label='Per Item Chart',
+                                        selected_style={'border-top': '3px solid #445262'}
+                                        ),
+                                dcc.Tab(id='conclusiveness-tab',
+                                        label='Conclusiveness Chart',
+                                        selected_style={'border-top': '3px solid #445262'}
+                                        ),
+                                dcc.Tab(id='editable-table-tab',
+                                        label='Editable Data Table',
+                                        children=[
+                                            dash_table.DataTable(
+                                                id='editable-table',
+                                               editable=True,
+                                            )
+                                        ],
+                                        selected_style={'border-top': '3px solid #445262'}
+                                        ),
+                            ])
+                        ])
+                ]),
 
                 # This stores the session data
                 dcc.Store(id='sessionPlotData-multi'),
@@ -188,7 +222,7 @@ def getMainContent(app):
     return main_Content
 
 
-def CreateDataTableLayout(df):
+def CreateDataTableLayout(df=pd.DataFrame()):
     return [dash_table.DataTable(
         id='editable-table',
         data=df.to_dict('records'),
