@@ -27,6 +27,7 @@ debugMode = True
 
 
 @app.callback(
+    Output('graph-content', 'children'),
     Output('graph-content', 'style'),
     Output('landing-page', 'style'),
     Output("sessionPlotData-multi", 'data'),
@@ -54,7 +55,8 @@ def init_main_page(contents_multi, contents_single, table_data):
             SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
             systemList = SUSData.getAllStudNames()
             columns = [{"name": i, "id": i} for i in csvData.columns]
-            return {'display': 'block', 'padding': '10px'}, {'display': 'none'}, csvData.to_json(date_format='iso', orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), csvData.to_dict('records'), columns
+
+            return dash.no_update, styles.graph_content_style, {'display': 'none'}, csvData.to_json(date_format='iso', orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), csvData.to_dict('records'), columns
         except Helper.WrongUploadFileException as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -65,7 +67,7 @@ def init_main_page(contents_multi, contents_single, table_data):
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         except Exception as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -77,7 +79,7 @@ def init_main_page(contents_multi, contents_single, table_data):
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, {'display': 'none'}, dash.no_update, dash.no_update
+            return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
     elif upload_id == 'upload-data-single':
         if contents_single is None:
             raise PreventUpdate
@@ -86,7 +88,7 @@ def init_main_page(contents_multi, contents_single, table_data):
             csvData = Helper.checkUploadFile(csvData, True)
             SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
             graph = [ChartLayouts.CreateSingleStudyChartLayout(SUSData)]
-            return graph, {'display': 'none'}, dash.no_update, csvData.to_json(date_format='iso', orient='split'), dash.no_update, dash.no_update, dash.no_update, dash.no_update,dash.no_update
+            return graph, styles.graph_content_style, {'display': 'none'}, dash.no_update, csvData.to_json(date_format='iso', orient='split'), dash.no_update, dash.no_update, dash.no_update, dash.no_update,dash.no_update, dash.no_update
         except Helper.WrongUploadFileException as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -97,7 +99,7 @@ def init_main_page(contents_multi, contents_single, table_data):
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         except Exception as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -109,14 +111,10 @@ def init_main_page(contents_multi, contents_single, table_data):
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
     elif upload_id == 'editable-table':
-        print(table_data)
-        df = pd.DataFrame.from_dict(table_data)
-        df = df.sort_index(axis=1)
-        print(sorted(df.columns))
-        print(df)
-        return dash.no_update, dash.no_update, df.to_json(date_format='iso', orient='split'), dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update
+        table_df = pd.DataFrame(data=table_data, columns=["Question 1", "Question 2", "Question 3", "Question 4", "Question 5", "Question 6", "Question 7", "Question 8", "Question 9", "Question 10", "System"])
+        return dash.no_update, dash.no_update, dash.no_update, table_df.to_json(date_format='iso', orient='split'), dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update
     else:
         if contents_single is None and contents_multi is None:
             raise PreventUpdate
@@ -157,7 +155,7 @@ def update_SingleStudyMainplot(data_single, presetValue):
 )
 def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientationValue, plotStyle, mean_sdValue,
                     axis_title, download_format, sort_value):
-    df = pd.read_json(data, orient='split')
+    df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
 
@@ -197,7 +195,7 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
 )
 def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationValue, plotStyle, download_format,
                             sort_value, colorizeByMeaning, systemToPlotRadio):
-    df = pd.read_json(data, orient='split')
+    df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
 
@@ -252,7 +250,7 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
     Input('sort-by-percentile', 'value')
 )
 def update_PercentilePlot(systems, data, download_format, sort_value):
-    df = pd.read_json(data, orient='split')
+    df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
     fig = Charts.CreatePercentilePlot(SUSData, systems)
@@ -269,7 +267,7 @@ def update_PercentilePlot(systems, data, download_format, sort_value):
     Input('download-type-conclusiveness', 'value')
 )
 def update_Conclusiveness(systems, data, download_format):
-    df = pd.read_json(data, orient='split')
+    df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     fig = Charts.CreateConclusivenessChart(SUSData)
 
@@ -297,8 +295,6 @@ def update_mainplot_table(scaleValue):
     State('conclusivenessPlot', 'figure'),
     State('sessionPlotData-multi', 'data'),
     prevent_initial_call=True,
-
-
 )
 def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, per_question, percentile,
                         conclusiveness, data):

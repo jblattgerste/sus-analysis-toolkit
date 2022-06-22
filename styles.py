@@ -18,6 +18,8 @@ tab_selected_style = {
     'padding': '6px'
 }
 
+graph_content_style={'display': 'block', 'padding': '10px'}
+
 graph_style = {'height': '50vh'
                }
 
