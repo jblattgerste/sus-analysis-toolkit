@@ -56,7 +56,8 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns):
             SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
             systemList = SUSData.getAllStudNames()
             columns = [{"name": i, "id": i} for i in csvData.columns]
-
+            for column in columns[0:9]:
+                column.update(Helper.editableTableTypeFormatting)
             return dash.no_update, styles.graph_content_style, {'display': 'none'}, csvData.to_json(date_format='iso', orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), csvData.to_dict('records'), columns
         except Helper.WrongUploadFileException as e:
             print(e)
@@ -114,13 +115,14 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns):
             ])]
             return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
     elif upload_id == 'editable-table':
-        print(table_columns)
         columns = []
         for item in table_columns:
             columns.append(item.get("name"))
-        print(columns)
         table_df = pd.DataFrame(data=table_data, columns=columns)
-        return dash.no_update, dash.no_update, dash.no_update, table_df.to_json(date_format='iso', orient='split'), dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update
+        SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(table_df))
+        systemList = SUSData.getAllStudNames()
+
+        return dash.no_update, dash.no_update, dash.no_update, table_df.to_json(date_format='iso', orient='split'), dash.no_update,ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData),dash.no_update,dash.no_update
     else:
         if contents_single is None and contents_multi is None:
             raise PreventUpdate
