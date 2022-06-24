@@ -40,9 +40,10 @@ debugMode = True
     Output('editable-table', 'columns'),
     Input('upload-data-multi', 'contents'),
     Input('upload-data-single', 'contents'),
-    Input('editable-table', 'data')
+    Input('editable-table', 'data'),
+    Input('editable-table', 'columns')
 )
-def init_main_page(contents_multi, contents_single, table_data):
+def init_main_page(contents_multi, contents_single, table_data, table_columns):
     ctx = dash.callback_context
     upload_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
@@ -113,7 +114,12 @@ def init_main_page(contents_multi, contents_single, table_data):
             ])]
             return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
     elif upload_id == 'editable-table':
-        table_df = pd.DataFrame(data=table_data, columns=["Question 1", "Question 2", "Question 3", "Question 4", "Question 5", "Question 6", "Question 7", "Question 8", "Question 9", "Question 10", "System"])
+        print(table_columns)
+        columns = []
+        for item in table_columns:
+            columns.append(item.get("name"))
+        print(columns)
+        table_df = pd.DataFrame(data=table_data, columns=columns)
         return dash.no_update, dash.no_update, dash.no_update, table_df.to_json(date_format='iso', orient='split'), dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update,dash.no_update
     else:
         if contents_single is None and contents_multi is None:

@@ -649,7 +649,6 @@ def CreateSingleStudyChartLayout(SUSData):
             style=styles.single_study_main_content_style
         ),
 
-        # html.Img(src='/assets/adjective_scale.JPG'),
         html.Div([
             html.Label([
                 "Plot type: ",

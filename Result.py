@@ -19,6 +19,8 @@ class Result:
         idx = 1
         for val in self.resultsRaw:
             #val = int(val)
+            if val is None:
+                print(self.resultsRaw)
             if val < 1 or val > 5:
                 raise Exception('SUS-Values must be between 1 and 5.')
             if idx % 2 == 0:
