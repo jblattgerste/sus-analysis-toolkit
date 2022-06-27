@@ -4,6 +4,8 @@ import pandas as pd
 from dash import html
 import io
 from dash import dcc
+from dash.dash_table.Format import Format, Scheme
+
 from Result import Result
 from SUSDataset import SUSDataset
 from SUSStud import SUSStud
@@ -558,6 +560,14 @@ dataFrameNoScale = [
         'backgroundColor': 'rgb(248, 248, 248)'
     }
 ]
+
+editableTableTypeFormatting = {
+            'type': 'numeric',
+            'format': Format(
+                precision=0,
+                scheme=Scheme.fixed,
+            ),
+}
 
 dataFrameConditions = {'acceptabilityScale': dataframeAcceptabilityConditions,
                        'adjectiveScale': dataframeAdjectiveConditions,
