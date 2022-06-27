@@ -62,44 +62,49 @@ def getMainContent(app):
                 html.Div(
                     [
                         html.Div([
-                            html.Img(src=app.get_asset_url('SUSToolFlow.png'), style={'width': '75%'})
-                        ], style={'textAlign': 'center', 'margin-top': '20px'}),
-                        #html.H2('CSV-File Upload', style={'textAlign': 'center'}),
-                        html.Div([
+                            html.Img(src=app.get_asset_url('SUSToolFlow.png'), style={'width': '75%'}),
                             html.Div([
-                                html.H3('Multi Variable Upload', style={'textAlign': 'center'}),
+                                html.H1('Multi Variable Upload', style={'textAlign': 'center'}),
                                 dcc.Upload(
                                     id='upload-data-multi',
                                     children=html.Div([
                                         'Drag and Drop or ',
                                         html.A('click here to select CSV-file.')
-                                    ]),
+                                    ], style={'line-height': '1.5',
+                                              'display': 'inline-block',
+                                              'vertical-align': 'middle'}),
                                     style=styles.mainPageDownloadPanelStyle,
                                     # Allow multiple files to be uploaded
                                     multiple=False
                                 ),
                             ],
                                 style={'display': 'inline-block',
-                                       'margin': '20px'
+                                       'width': '37.5%'
                                        }),
                             html.Div([
-                                html.H3('Single Variable Upload', style={'textAlign': 'center'}),
+                                html.H1('Single Variable Upload', style={'textAlign': 'center'}),
                                 dcc.Upload(
                                     id='upload-data-single',
                                     children=html.Div([
                                         'Drag and Drop or ',
                                         html.A('click here to select CSV-file.')
-                                    ]),
+                                    ], style={'line-height': '1.5',
+                                              'display': 'inline-block',
+                                              'vertical-align': 'middle'}),
                                     style=styles.mainPageDownloadPanelStyle,
                                     # Allow multiple files to be uploaded
                                     multiple=False
                                 )
                             ],
                                 style={'display': 'inline-block',
-                                       'margin': '20px'
+                                       'width': '37.5%'
                                        }),
-                        ], style={'display': 'flex',
-                                  'justify-content': 'center'}),
+                        ], style={'textAlign': 'center', 'margin-top': '20px'}),
+                        # html.H2('CSV-File Upload', style={'textAlign': 'center'}),
+                        html.Div([
+
+                        ], style={'text-align': 'center',
+                                  'width:': '75%'}),
                         html.P([
                             html.Details([html.Summary('What is the System Usability Scale (SUS)?',
                                                        style=styles.mainPageSummaryHeaderStyle, className="mainPage"),
@@ -110,20 +115,22 @@ def getMainContent(app):
                                           ' questions, where participants responses range from \'Strongly disagree\' to '
                                           '\'Strongly agree\'. The results are then calculated into a single 0 - 100 score called the SUS score. Multiple SUS scores represent the SUS study score.'
                                           ' It is simple to apply, validated through years of its application, easy to understand for participants, available in multiple langauges, and can be used for any system that requires human interaction.',
-                                          ],open=False, className="mainPage")], style=styles.mainPageSummaryParagraph),
+                                          ], open=False, className="mainPage")], style=styles.mainPageSummaryParagraph),
                         html.P([
                             html.Details([html.Summary(
-                                'What is the "SUS Analysis Toolkit"?', style=styles.mainPageSummaryHeaderStyle, className="mainPage"),
-                            'The SUS Analysis Toolkit is an ',
-                            html.A('open source', href='https://github.com/jblattgerste/sus-analysis-toolkit'),
-                            ' web-based toolkit for the analysis of single- and multivariable SUS usability studies developed by the ',
-                            html.A('Mixality Research Group', href='https://mixality.de/sus-analysis-toolkit/'),
-                            '. The toolkit provides a compilation of useful insights and contextualisation approaches based on findings from the scientific literature for the System Usability Scale questionnaire. It allows researchers and practisionaires to easily calculate and plot comparative, iterative and single variable SUS usability study datasets. Furthermore, it provides utility to contextualize the meaning of calculated scores, compare them against scores gathered in meta-analyses, calculate SUS scores conclusiveness and analysing the contribution of specific questions of the 10-item questionnaire towards the SUS study scores. A particular focus lies on producing camera-ready scientific figures and calculations to be directly used in scientific publications and presentations. ',
-                            html.Br(),
-                        ],open=False, className="mainPage")], style=styles.mainPageSummaryParagraph),
+                                'What is the "SUS Analysis Toolkit"?', style=styles.mainPageSummaryHeaderStyle,
+                                className="mainPage"),
+                                'The SUS Analysis Toolkit is an ',
+                                html.A('open source', href='https://github.com/jblattgerste/sus-analysis-toolkit'),
+                                ' web-based toolkit for the analysis of single- and multivariable SUS usability studies developed by the ',
+                                html.A('Mixality Research Group', href='https://mixality.de/sus-analysis-toolkit/'),
+                                '. The toolkit provides a compilation of useful insights and contextualisation approaches based on findings from the scientific literature for the System Usability Scale questionnaire. It allows researchers and practisionaires to easily calculate and plot comparative, iterative and single variable SUS usability study datasets. Furthermore, it provides utility to contextualize the meaning of calculated scores, compare them against scores gathered in meta-analyses, calculate SUS scores conclusiveness and analysing the contribution of specific questions of the 10-item questionnaire towards the SUS study scores. A particular focus lies on producing camera-ready scientific figures and calculations to be directly used in scientific publications and presentations. ',
+                                html.Br(),
+                            ], open=False, className="mainPage")], style=styles.mainPageSummaryParagraph),
                         html.P([html.Details([
                             html.Summary(
-                                'How can i use the "SUS Analysis Toolkit"?',style=styles.mainPageSummaryHeaderStyle, className="mainPage"
+                                'How can i use the "SUS Analysis Toolkit"?', style=styles.mainPageSummaryHeaderStyle,
+                                className="mainPage"
                             ),
                             'After conducting either an iterative, comparative or singular SUS study, questionnaire results have to be converted into a CSV file that consists of one column for each of the 10 questionnaire items in their original order'
                             ' and the last column as the identifier for the variable.',
@@ -141,26 +148,27 @@ def getMainContent(app):
                             html.A('Table Tool', href='https://github.com/jakob/TableTool'),
                             'on macOS). ',
                             'After the successfull upload, SUS scores, per-item contribution, the studies conclusiveness and contextualization onto meta-analysis are calcualted and plotted. The interactive plots can be viewed and customized with a multitude of available options. After the analysis and customization, individual charts, tables or the whole analysis can be downloaded and used.',
-                        ],open=False, className="mainPage")],style=styles.mainPageSummaryParagraph),
+                        ], open=False, className="mainPage")], style=styles.mainPageSummaryParagraph),
 
                         html.P([
                             html.Details([html.Summary(
-                                'Licensing and Acknowledgement', style=styles.mainPageSummaryHeaderStyle, className="mainPage"
+                                'Licensing and Acknowledgement', style=styles.mainPageSummaryHeaderStyle,
+                                className="mainPage"
                             ),
-                            ''
-                            ' The open source SUS Analysis Toolkit is licensed under the MIT license and can be used, extended and redistributed for commercial and non-commercial applications without attribtution. The ownership of generated calculations, interpretations, tables, and plots fully remain with the user of the tool. '
-                            'If you use this toolkit in the scientific context, we would appreciate an acknowledgement in form of a ',
-                            html.A('citation to our tool', href=app.get_asset_url('BibTex.txt'), download='BibTex.txt'),
-                            ' and recommend citing the primary sources for the insights utilized.',
-                            html.Br(),
-                        ], open=False, className="mainPage")], style=styles.mainPageSummaryParagraph),
+                                ''
+                                ' The open source SUS Analysis Toolkit is licensed under the MIT license and can be used, extended and redistributed for commercial and non-commercial applications without attribtution. The ownership of generated calculations, interpretations, tables, and plots fully remain with the user of the tool. '
+                                'If you use this toolkit in the scientific context, we would appreciate an acknowledgement in form of a ',
+                                html.A('citation to our tool', href=app.get_asset_url('BibTex.txt'),
+                                       download='BibTex.txt'),
+                                ' and recommend citing the primary sources for the insights utilized.',
+                                html.Br(),
+                            ], open=False, className="mainPage")], style=styles.mainPageSummaryParagraph),
                         html.P([
 
                         ]),
                         html.P([
 
                         ]),
-
 
                     ], id='landing-page', style={'display': 'block',
                                                  'margin-left': 'auto',
