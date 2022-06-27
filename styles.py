@@ -101,18 +101,20 @@ per_item_main_content_style = {'display': 'block',
                                'width': '70%'}
 
 mainPageDownloadPanelStyle = {
-                                        'height': '100%',
-                                        'lineHeight': '100%',
+
+                                        'height': '10em',
+                                        'width':'98%',
+                                        'line-height':'10em',
                                         'borderWidth': '1px',
                                         'borderStyle': 'dashed',
                                         'borderRadius': '5px',
                                         'display': 'inline-block',
-                                        'padding': '30px',
                                         'textAlign': 'center',
-                                        'background-color': '#6695A9',
+                                        'background-color': '#FFFFFF',
                                         'box-shadow': '0 .5rem 1rem -.5rem rgba(0, 0, 0, .4)',
                                         'font-weight': 'bold',
-                                        'color': 'black'
+                                        'font-size': 'x-large',
+                                        'color': 'black',
                                     }
 
 
