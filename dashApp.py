@@ -41,9 +41,10 @@ debugMode = True
     Input('upload-data-multi', 'contents'),
     Input('upload-data-single', 'contents'),
     Input('editable-table', 'data'),
-    Input('editable-table', 'columns')
+    Input('editable-table', 'columns'),
+    State('editable-table', 'data_previous')
 )
-def init_main_page(contents_multi, contents_single, table_data, table_columns):
+def init_main_page(contents_multi, contents_single, table_data, table_columns, old_table_data):
     ctx = dash.callback_context
     upload_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
@@ -119,8 +120,12 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns):
         for item in table_columns:
             columns.append(item.get("name"))
         table_df = pd.DataFrame(data=table_data, columns=columns)
-        SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(table_df))
-        systemList = SUSData.getAllStudNames()
+        try:
+            SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(table_df))
+            systemList = SUSData.getAllStudNames()
+        except:
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, old_table_data, dash.no_update
+
 
         return dash.no_update, dash.no_update, dash.no_update, table_df.to_json(date_format='iso', orient='split'), dash.no_update,ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData),dash.no_update,dash.no_update
     else:
@@ -448,6 +453,6 @@ def download_csv_conclusiveness(n_clicks, data):
 
 if __name__ == '__main__':
     if debugMode:
-        app.run_server(debug=True)
+        app.run_server(port=80,host='0.0.0.0',debug=True)
     else:
         app.run_server(port=80,host='0.0.0.0')
