@@ -198,10 +198,14 @@ def getMainContent(app):
                                 dcc.Tab(id='editable-table-tab',
                                         label='Editable Data Table',
                                         children=[
+
+                                            html.Div(id='table-error-icon',className='tooltip', children=[html.Img(src=app.get_asset_url('exclamation-mark.png'), style={'height':'2em'}), html.Span('You\'ve either entered a value that is not between 1 and 5, or there are empty cells. The plots will not update until this is fixed.', className='tooltiptext')], style=styles.tableErrorIconDefaultStyle),
                                             dash_table.DataTable(
                                                 id='editable-table',
-                                               editable=True,
-                                            )
+                                                editable=True,
+                                                row_deletable=True
+                                            ),
+                                            html.Button('Add Row', className='button1', id='add-row-button', n_clicks=0),
                                         ],
                                         selected_style={'border-top': '3px solid #445262'}
                                         ),

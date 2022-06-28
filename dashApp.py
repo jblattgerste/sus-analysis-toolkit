@@ -23,7 +23,7 @@ app._favicon = ("assets/favicon.ico")
 app.config.suppress_callback_exceptions = True
 app.layout = Layouts.getMainContent(app)
 
-debugMode = False
+debugMode = True
 
 
 @app.callback(
@@ -38,28 +38,37 @@ debugMode = False
     Output('conclusiveness-tab', 'children'),
     Output('editable-table', 'data'),
     Output('editable-table', 'columns'),
+    Output('editable-table', 'style_data'),
+    Output('editable-table', 'style_header'),
+    Output('table-error-icon', 'style'),
     Input('upload-data-multi', 'contents'),
     Input('upload-data-single', 'contents'),
     Input('editable-table', 'data'),
     Input('editable-table', 'columns'),
-    State('editable-table', 'data_previous')
+    Input('add-row-button', 'n_clicks'),
 )
-def init_main_page(contents_multi, contents_single, table_data, table_columns, old_table_data):
+def init_main_page(contents_multi, contents_single, table_data, table_columns, add_row_button_nclicks):
     ctx = dash.callback_context
     upload_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
+    # When the multi study upload is triggered
     if upload_id == 'upload-data-multi':
         try:
             if contents_multi is None:
                 raise PreventUpdate
+            # decode the upload data and convert it to pandas data frame
             csvData = Helper.decodeContentToCSV(contents_multi)
+            # check if the upload file is correctly formated, has no null values etc.
             Helper.checkUploadFile(csvData, False)
+            # Parse pandas dataframe to SUSDataset
             SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
             systemList = SUSData.getAllStudNames()
+            # Apply the formatting rules to the editable data table
             columns = [{"name": i, "id": i} for i in csvData.columns]
             for column in columns[0:9]:
                 column.update(Helper.editableTableTypeFormatting)
-            return dash.no_update, styles.graph_content_style, {'display': 'none'}, csvData.to_json(date_format='iso', orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), csvData.to_dict('records'), columns
+            return dash.no_update, styles.graph_content_style, {'display': 'none'}, csvData.to_json(date_format='iso', orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), csvData.to_dict('records'), columns, dash.no_update, dash.no_update, dash.no_update
+        # If something is wrong with the upload file, print the reason on the page.
         except Helper.WrongUploadFileException as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -70,7 +79,7 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, o
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         except Exception as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -82,7 +91,8 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, o
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+    # Single study upload trigger
     elif upload_id == 'upload-data-single':
         if contents_single is None:
             raise PreventUpdate
@@ -91,7 +101,7 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, o
             csvData = Helper.checkUploadFile(csvData, True)
             SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
             graph = [ChartLayouts.CreateSingleStudyChartLayout(SUSData)]
-            return graph, styles.graph_content_style, {'display': 'none'}, dash.no_update, csvData.to_json(date_format='iso', orient='split'), dash.no_update, dash.no_update, dash.no_update, dash.no_update,dash.no_update, dash.no_update
+            return graph, styles.graph_content_style, {'display': 'none'}, dash.no_update, csvData.to_json(date_format='iso', orient='split'), dash.no_update, dash.no_update, dash.no_update, dash.no_update,dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         except Helper.WrongUploadFileException as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -102,7 +112,7 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, o
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         except Exception as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -114,20 +124,27 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, o
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+    # On changes to the editable table
     elif upload_id == 'editable-table':
+        # Checks whether all entries in the table are viable. If not the error overlay of the data table is enabled.
+        if Helper.checkTableData(table_data):
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data, dash.no_update, styles.editableTableDataStyleError, styles.editableTableDataStyleError, styles.tableErrorIconEnabledStyle
+        # Collecting the table heads for each of the columns of the table.
         columns = []
         for item in table_columns:
             columns.append(item.get("name"))
+        # Creating the dataframe from the table entries
         table_df = pd.DataFrame(data=table_data, columns=columns)
-        try:
-            SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(table_df))
-            systemList = SUSData.getAllStudNames()
-        except:
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, old_table_data, dash.no_update
-
-
-        return dash.no_update, dash.no_update, dash.no_update, table_df.to_json(date_format='iso', orient='split'), dash.no_update,ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData),dash.no_update,dash.no_update
+        #  parsing it to SUS Dataset, so all the graphs can be updated
+        SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(table_df))
+        systemList = SUSData.getAllStudNames()
+        return dash.no_update, dash.no_update, dash.no_update, table_df.to_json(date_format='iso', orient='split'), dash.no_update,ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData),dash.no_update,dash.no_update, styles.editableTableDataStyleDefault, styles.editableTableDataStyleDefault, styles.tableErrorIconDefaultStyle
+    # On Press of the add-row button
+    elif upload_id == 'add-row-button':
+        if add_row_button_nclicks > 0:
+            table_data.append({c['id']: '' for c in table_columns})
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data, dash.no_update, dash.no_update, dash.no_update, dash.no_update
     else:
         if contents_single is None and contents_multi is None:
             raise PreventUpdate
@@ -441,14 +458,6 @@ def download_csv_conclusiveness(n_clicks, data):
     systemList = set(df['System'])
     df = ChartLayouts.CreateConclusivenessPlotDataFrame(SUSData, systemList)
     return dcc.send_data_frame(df.to_csv, "conclusiveness.csv", index=False)
-
-
-# @app.callback(
-#     Output('sessionPlotData-multi', 'data'),
-#     Input('editableDataTable', 'data')
-# )
-# def table_was_edited(tableData):
-#     print(tableData)
 
 
 if __name__ == '__main__':

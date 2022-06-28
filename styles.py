@@ -119,6 +119,13 @@ mainPageDownloadPanelStyle = {
                                         'color': 'black',
                                     }
 
+editableTableDataStyleError = {'border': '3px double #FF0033'}
+
+editableTableDataStyleDefault = {'border': '1px double lightgray'}
+
+tableErrorIconDefaultStyle = {'display':'none'}
+
+tableErrorIconEnabledStyle = {'margin-left': 'auto', 'margin-right': 'auto', 'display':'block'}
 
 def changeGraphWidth(width):
     return {'max-width': '1000px',
