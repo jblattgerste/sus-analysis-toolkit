@@ -63,6 +63,7 @@ def getMainContent(app):
                     [
                         html.Div([
                             html.Img(src=app.get_asset_url('SUSToolFlow.png'), style={'width': '75%'}),
+                            html.Button( 'Start Analysis Tool', id='start-tool-button', className='button1', style={'width': '75%'}),
                             html.Div([
                                 html.H1('Multi Variable Upload', style={'textAlign': 'center'}),
                                 dcc.Upload(

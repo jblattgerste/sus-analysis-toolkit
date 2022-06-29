@@ -46,11 +46,11 @@ debugMode = True
     Input('editable-table', 'data'),
     Input('editable-table', 'columns'),
     Input('add-row-button', 'n_clicks'),
+    Input('start-tool-button','n_clicks')
 )
-def init_main_page(contents_multi, contents_single, table_data, table_columns, add_row_button_nclicks):
+def init_main_page(contents_multi, contents_single, table_data, table_columns, add_row_button_nclicks, start_tool_button_nclicks):
     ctx = dash.callback_context
     upload_id = ctx.triggered[0]['prop_id'].split('.')[0]
-
     # When the multi study upload is triggered
     if upload_id == 'upload-data-multi':
         try:
@@ -64,6 +64,7 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
             SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
             systemList = SUSData.getAllStudNames()
             # Apply the formatting rules to the editable data table
+            print(csvData.columns)
             columns = [{"name": i, "id": i} for i in csvData.columns]
             for column in columns[0:9]:
                 column.update(Helper.editableTableTypeFormatting)
@@ -93,6 +94,22 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
             ])]
             return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
     # Single study upload trigger
+    elif upload_id == 'start-tool-button':
+        exampleData = Helper.createExampleDataFrame()
+        # Create SUSDataset from example dataframe
+        SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(exampleData))
+        systemList = SUSData.getAllStudNames()
+        # Apply the formatting rules to the editable data table
+        columns = [{"name": i, "id": i} for i in exampleData.columns]
+        for column in columns[0:9]:
+            column.update(Helper.editableTableTypeFormatting)
+        return dash.no_update, styles.graph_content_style, {'display': 'none'}, exampleData.to_json(date_format='iso',
+                                                                                                orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(
+            SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData,
+                                                                          systemList), ChartLayouts.CreatePerQuestionChartLayout(
+            SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), exampleData.to_dict(
+            'records'), columns, dash.no_update, dash.no_update, dash.no_update
+    # If something is wrong with the upload file, print the reason on the page.
     elif upload_id == 'upload-data-single':
         if contents_single is None:
             raise PreventUpdate
@@ -128,7 +145,7 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
     # On changes to the editable table
     elif upload_id == 'editable-table':
         # Checks whether all entries in the table are viable. If not the error overlay of the data table is enabled.
-        if Helper.checkTableData(table_data):
+        if Helper.tableDataIsInvalid(table_data):
             return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data, dash.no_update, styles.editableTableDataStyleError, styles.editableTableDataStyleError, styles.tableErrorIconEnabledStyle
         # Collecting the table heads for each of the columns of the table.
         columns = []

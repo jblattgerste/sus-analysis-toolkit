@@ -1,5 +1,7 @@
 import base64
 import copy
+import random
+
 import pandas as pd
 from dash import html
 import io
@@ -315,13 +317,52 @@ def getConclusiveness(study):
         return '100%'
 
 
-def checkTableData(table_data):
-    for row in table_data:
-        cells = list(row.values())
-        if all([cell != '' for cell in cells]) and all([0 < int(cell) < 6 for cell in cells[0:9]]):
-            continue
-        else:
-            return True
+def tableDataIsInvalid(table_data):
+    # Check whether table is empty
+    if table_data:
+        for row in table_data:
+            cells = list(row.values())
+            if all([cell != '' for cell in cells]) and all([0 < int(cell) < 6 for cell in cells[0:9]]):
+                continue
+            else:
+                return True
+    else:
+        return True
+
+
+def conditionalFormattingEditableDataTable(columnNames):
+    style_data_conditional = []
+    for name in columnNames:
+        style_data_conditional.append(
+            {
+                'if': {
+                    'filter_query': '{name} > 0 && {name} < 6',
+                    'column_id': {name}
+                },
+                'backgroundColor': 'tomato',
+                'color': 'white'
+            },
+        )
+        style_data_conditional.append(
+            {
+                'if': {
+                    'filter_query': f'{name} == '' ',
+                    'column_id': {name}
+                },
+                'backgroundColor': 'tomato',
+                'color': 'white'
+            },
+        )
+
+
+# Generates an example dataframe with random SUS values
+def createExampleDataFrame():
+    exampleData = {}
+    for i in range(1, 11):
+        exampleData['Question {qNumber}'.format(qNumber=i)] = [random.randint(1, 5), random.randint(1, 5)]
+    exampleData['System'] = ['Example System A', 'Example System B']
+    dataframe = pd.DataFrame(data=exampleData)
+    return dataframe
 
 
 dataframeQuartileConditions = [
