@@ -332,27 +332,37 @@ def tableDataIsInvalid(table_data):
 
 def conditionalFormattingEditableDataTable(columnNames):
     style_data_conditional = []
-    for name in columnNames:
-        style_data_conditional.append(
+    for name in columnNames[0:10]:
+        style_data_conditional.extend([
             {
                 'if': {
-                    'filter_query': '{name} > 0 && {name} < 6',
-                    'column_id': {name}
+                    'filter_query': '{' + '{name}'.format(name=name) + '}< 1 ||' + '{' + '{name}'.format(name=name) + '} > 5',
+                    'column_id': '{name}'.format(name=name)
                 },
                 'backgroundColor': 'tomato',
                 'color': 'white'
             },
-        )
-        style_data_conditional.append(
             {
                 'if': {
-                    'filter_query': f'{name} == '' ',
-                    'column_id': {name}
+                    'filter_query': '{' + '{name}'.format(name=name) + '} is blank',
+                    'column_id': '{name}'.format(name=name)
                 },
                 'backgroundColor': 'tomato',
                 'color': 'white'
             },
+        ]
         )
+    style_data_conditional.append(
+        {
+            'if': {
+                'filter_query': '{' + '{name}'.format(name=columnNames[10]) + '} is blank',
+                'column_id': '{name}'.format(name=columnNames[10])
+            },
+            'backgroundColor': 'tomato',
+            'color': 'white'
+        },
+    )
+    return style_data_conditional
 
 
 # Generates an example dataframe with random SUS values

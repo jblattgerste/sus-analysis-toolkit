@@ -38,9 +38,8 @@ debugMode = True
     Output('conclusiveness-tab', 'children'),
     Output('editable-table', 'data'),
     Output('editable-table', 'columns'),
-    Output('editable-table', 'style_data'),
-    Output('editable-table', 'style_header'),
     Output('table-error-icon', 'style'),
+    Output('editable-table', 'style_data_conditional'),
     Input('upload-data-multi', 'contents'),
     Input('upload-data-single', 'contents'),
     Input('editable-table', 'data'),
@@ -64,11 +63,11 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
             SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
             systemList = SUSData.getAllStudNames()
             # Apply the formatting rules to the editable data table
-            print(csvData.columns)
             columns = [{"name": i, "id": i} for i in csvData.columns]
             for column in columns[0:9]:
                 column.update(Helper.editableTableTypeFormatting)
-            return dash.no_update, styles.graph_content_style, {'display': 'none'}, csvData.to_json(date_format='iso', orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), csvData.to_dict('records'), columns, dash.no_update, dash.no_update, dash.no_update
+            style_data_conditional = (Helper.conditionalFormattingEditableDataTable(csvData.columns.values.tolist()))
+            return dash.no_update, styles.graph_content_style, {'display': 'none'}, csvData.to_json(date_format='iso', orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), csvData.to_dict('records'), columns, dash.no_update, style_data_conditional
         # If something is wrong with the upload file, print the reason on the page.
         except Helper.WrongUploadFileException as e:
             print(e)
@@ -80,7 +79,7 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         except Exception as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -92,7 +91,7 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
     # Single study upload trigger
     elif upload_id == 'start-tool-button':
         exampleData = Helper.createExampleDataFrame()
@@ -108,7 +107,7 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
             SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData,
                                                                           systemList), ChartLayouts.CreatePerQuestionChartLayout(
             SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), exampleData.to_dict(
-            'records'), columns, dash.no_update, dash.no_update, dash.no_update
+            'records'), columns, dash.no_update, (Helper.conditionalFormattingEditableDataTable(exampleData.columns.values.tolist()))
     # If something is wrong with the upload file, print the reason on the page.
     elif upload_id == 'upload-data-single':
         if contents_single is None:
@@ -118,7 +117,7 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
             csvData = Helper.checkUploadFile(csvData, True)
             SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
             graph = [ChartLayouts.CreateSingleStudyChartLayout(SUSData)]
-            return graph, styles.graph_content_style, {'display': 'none'}, dash.no_update, csvData.to_json(date_format='iso', orient='split'), dash.no_update, dash.no_update, dash.no_update, dash.no_update,dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return graph, styles.graph_content_style, {'display': 'none'}, dash.no_update, csvData.to_json(date_format='iso', orient='split'), dash.no_update, dash.no_update, dash.no_update, dash.no_update,dash.no_update, dash.no_update, dash.no_update, dash.no_update
         except Helper.WrongUploadFileException as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -129,7 +128,7 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
         except Exception as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -141,12 +140,12 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
     # On changes to the editable table
     elif upload_id == 'editable-table':
         # Checks whether all entries in the table are viable. If not the error overlay of the data table is enabled.
         if Helper.tableDataIsInvalid(table_data):
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data, dash.no_update, styles.editableTableDataStyleError, styles.editableTableDataStyleError, styles.tableErrorIconEnabledStyle
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data, dash.no_update, styles.tableErrorIconEnabledStyle, dash.no_update
         # Collecting the table heads for each of the columns of the table.
         columns = []
         for item in table_columns:
@@ -156,12 +155,12 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
         #  parsing it to SUS Dataset, so all the graphs can be updated
         SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(table_df))
         systemList = SUSData.getAllStudNames()
-        return dash.no_update, dash.no_update, dash.no_update, table_df.to_json(date_format='iso', orient='split'), dash.no_update,ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData),dash.no_update,dash.no_update, styles.editableTableDataStyleDefault, styles.editableTableDataStyleDefault, styles.tableErrorIconDefaultStyle
+        return dash.no_update, dash.no_update, dash.no_update, table_df.to_json(date_format='iso', orient='split'), dash.no_update,ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData),dash.no_update,dash.no_update, styles.tableErrorIconDefaultStyle, dash.no_update
     # On Press of the add-row button
     elif upload_id == 'add-row-button':
         if add_row_button_nclicks > 0:
             table_data.append({c['id']: '' for c in table_columns})
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data, dash.no_update, dash.no_update, dash.no_update
     else:
         if contents_single is None and contents_multi is None:
             raise PreventUpdate
