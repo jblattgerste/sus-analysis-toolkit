@@ -168,10 +168,11 @@ def CreateMainPlotLayout(SUSData, systemList):
                            },
                 ),
                 html.Label([
-                    "Plot type: ",
+                    html.Details([
+                    html.Summary("Plot type: "),
                     html.P(id="plotstyle-info",
                            children=[Helper.plotStyleInfoTexts['mainplot']],
-                           style=styles.editorInfoTextStyle),
+                           style=styles.editorInfoTextStyle)]),
                     dcc.Dropdown(id='plotstyle-mainplot',
                                  options=[{'label': 'Boxplot', 'value': 'mainplot'},
                                           {'label': 'Notched Boxplot', 'value': 'notched'},
@@ -187,10 +188,10 @@ def CreateMainPlotLayout(SUSData, systemList):
                            },
                 ),
                 html.Label([
-                    "Contextualization scale: ",
+                    html.Details([html.Summary("Contextualization scale: "),
                     html.P(id="scaletype-info",
                            children=[Helper.scaleInfoTexts['adjectiveScale']],
-                           style=styles.editorInfoTextStyle),
+                           style=styles.editorInfoTextStyle)]),
                     dcc.Dropdown(id='scale-mainplot',
                                  options=[{'label': 'Adjective Scale', 'value': 'adjectiveScale'},
                                           {'label': 'Grade Scale', 'value': 'gradeScale'},
@@ -477,7 +478,7 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
                     dcc.Dropdown(id='colorize-by-meaning',
                                  options=[{'label': 'Regular colors', 'value': 'regular'},
                                           {'label': 'Colorize by meaning', 'value': 'byMeaning'}],
-                                 value='regular',
+                                 value='byMeaning',
                                  style={'font-weight': 'normal',
                                         'margin-top': '10px',
                                         }

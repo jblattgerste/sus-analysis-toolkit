@@ -130,7 +130,7 @@ def generateSingleStudyPreset2(singleStudy):
     traces.append(getSingleStudyBoxPlotTraces(singleStudy))
 
     # Add the trace for the LikertScale
-    likertScaleTraces, likertScaleAnnotaions = getSingleStudyLikertChartTraces(singleStudy, 'regular')
+    likertScaleTraces, likertScaleAnnotaions = getSingleStudyLikertChartTraces(singleStudy, 'byMeaning')
     traces.extend(likertScaleTraces)
     # Defining the layout for the subplots
     singleStudyLayout = go.Layout(
@@ -234,7 +234,7 @@ def generateSingleStudyPreset3(singleStudy):
     traces.append(getSingleStudyBoxPlotTraces(singleStudy))
 
     # Add the trace for the LikertScale
-    likertScaleTraces, likertScaleAnnotaitons = getSingleStudyLikertChartTraces(singleStudy, 'regular')
+    likertScaleTraces, likertScaleAnnotaitons = getSingleStudyLikertChartTraces(singleStudy, 'byMeaning')
     traces.extend(likertScaleTraces)
     # Defining the layout for the subplots
     singleStudyLayout = go.Layout(

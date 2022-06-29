@@ -60,3 +60,50 @@ button.button2:hover{
     color:#FFFFFF;
     background-color:#576372;
 }
+
+details.mainPage {
+  width: 100%;
+  margin: 0 auto ;
+  background: #BABFC4;
+  margin-bottom: .5rem;
+  box-shadow: 0 1rem 1rem -.5rem rgba(0,0,0,.4);
+  border-radius: 5px;
+
+  overflow: hidden;
+}
+
+summary.mainPage {
+  padding: 1rem;
+  display: block;
+  background: #445262;
+  padding-left: 2.2rem;
+  position: relative;
+  cursor: pointer;
+}
+
+summary.mainPage:before {
+  content: '';
+  border-width: .4rem;
+  border-style: solid;
+  border-color: transparent transparent transparent #fff;
+  position: absolute;
+  top: 1.3rem;
+  left: 1rem;
+  transform: rotate(0);
+  transform-origin: .2rem 50%;
+  transition: .25s transform ease;
+}
+
+details.mainPage[open] > summary.mainPage:before {
+  transform: rotate(90deg);
+}
+
+
+details.mainPage summary.mainPage::-webkit-details-marker {
+  display:none;
+}
+
+details.mainPage > ul {
+  padding-bottom: 1rem;
+  margin-bottom: 0;
+}
