@@ -103,20 +103,17 @@ per_item_main_content_style = {'display': 'block',
                                'width': '70%'}
 
 mainPageDownloadPanelStyle = {
-
                                         'height': '10em',
-                                        'width':'98%',
-                                        'line-height':'10em',
+                                        'lineHeight': '8em',
                                         'borderWidth': '1px',
                                         'borderStyle': 'dashed',
                                         'borderRadius': '5px',
-                                        'display': 'inline-block',
+                                        'display': 'block',
                                         'textAlign': 'center',
                                         'background-color': '#FFFFFF',
                                         'box-shadow': '0 .5rem 1rem -.5rem rgba(0, 0, 0, .4)',
-                                        'font-weight': 'bold',
-                                        'font-size': 'x-large',
                                         'color': 'black',
+                                        'font-family': 'monospace'
                                     }
 
 editableTableDataStyleError = {'border': '3px double #FF0033'}
@@ -126,6 +123,15 @@ editableTableDataStyleDefault = {'border': '1px double lightgray'}
 tableErrorIconDefaultStyle = {'display':'none'}
 
 tableErrorIconEnabledStyle = {'margin-left': 'auto', 'margin-right': 'auto', 'display':'block'}
+
+tab_style_upload_panel = {
+    'fontWeight': 'bold'
+}
+
+tab_selected_style_upload_panel = {
+    'backgroundColor': '#445262',
+    'color': 'white',
+}
 
 def changeGraphWidth(width):
     return {'max-width': '1000px',

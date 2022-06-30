@@ -63,43 +63,59 @@ def getMainContent(app):
                     [
                         html.Div([
                             html.Img(src=app.get_asset_url('SUSToolFlow.png'), style={'width': '75%'}),
-                            html.Button( 'Start Analysis Tool', id='start-tool-button', className='button1', style={'width': '75%'}),
-                            html.Div([
-                                html.H1('Multi Variable Upload', style={'textAlign': 'center'}),
-                                dcc.Upload(
-                                    id='upload-data-multi',
-                                    children=html.Div([
-                                        'Drag and Drop or ',
-                                        html.A('click here to select CSV-file.')
-                                    ], style={'line-height': '1.5',
-                                              'display': 'inline-block',
-                                              'vertical-align': 'middle'}),
-                                    style=styles.mainPageDownloadPanelStyle,
-                                    # Allow multiple files to be uploaded
-                                    multiple=False
-                                ),
-                            ],
-                                style={'display': 'inline-block',
-                                       'width': '37.5%'
-                                       }),
-                            html.Div([
-                                html.H1('Single Variable Upload', style={'textAlign': 'center'}),
-                                dcc.Upload(
-                                    id='upload-data-single',
-                                    children=html.Div([
-                                        'Drag and Drop or ',
-                                        html.A('click here to select CSV-file.')
-                                    ], style={'line-height': '1.5',
-                                              'display': 'inline-block',
-                                              'vertical-align': 'middle'}),
-                                    style=styles.mainPageDownloadPanelStyle,
-                                    # Allow multiple files to be uploaded
-                                    multiple=False
-                                )
-                            ],
-                                style={'display': 'inline-block',
-                                       'width': '37.5%'
-                                       }),
+                            html.Div(
+                                dcc.Tabs([
+                                    dcc.Tab([
+                                        html.Button(html.H1('Start Multi Variable Analysis'), id='start-tool-button', className='startToolButton'),
+                                        html.Div([
+                                            html.H1('Or', style={'textAlign': 'center'}),
+                                            dcc.Upload(
+                                                id='upload-data-multi',
+                                                children=html.Div([
+                                                    html.H1(['Drag and Drop or ',
+                                                    html.A('click here to select CSV-file.')])
+                                                ],),
+                                                style=styles.mainPageDownloadPanelStyle,
+                                                # Allow multiple files to be uploaded
+                                                multiple=False
+                                            ),
+                                        ],
+                                        className='centre',
+                                        style={'width':'75%'}),
+                                    ],
+                                        label='Multi Variable Upload',
+                                        style=styles.tab_style_upload_panel,
+                                        selected_style=styles.tab_selected_style_upload_panel
+                                    ),
+                                    dcc.Tab([
+                                        html.Button(html.H1('Start Single Variable Analysis'), id='start-tool-button-single',
+                                                    className='startToolButton'),
+                                        html.Div([
+                                            html.H1('Or', style={'textAlign': 'center'}),
+                                            dcc.Upload(
+                                                id='upload-data-single',
+                                                children=html.Div([
+                                                    html.H1(['Drag and Drop or ',
+                                                             html.A('click here to select CSV-file.')])
+                                                ],),
+                                                style=styles.mainPageDownloadPanelStyle,
+                                                # Allow multiple files to be uploaded
+                                                multiple=False
+                                            )
+                                        ],
+                                            className='centre',
+                                            style={'width': '75%'}
+                                        ),
+                                    ],
+
+                                        label='Single Variable Upload',
+                                        style=styles.tab_style_upload_panel,
+                                        selected_style=styles.tab_selected_style_upload_panel
+                                    )
+                                ],
+                                    className='centre',
+                                    style={'width': '75%'})
+                            ),
                         ], style={'textAlign': 'center', 'margin-top': '20px'}),
                         # html.H2('CSV-File Upload', style={'textAlign': 'center'}),
                         html.Div([
@@ -177,41 +193,45 @@ def getMainContent(app):
 
                 html.Div(id='graph-content', style={'display': 'none', 'padding': '10px'}, children=[
 
-                        html.Div([
-                            dcc.Download(id='download-all-charts-data'),
+                    html.Div([
+                        dcc.Download(id='download-all-charts-data'),
 
-                            dcc.Tabs([
-                                dcc.Tab(id='main-plot-tab',
-                                        label='System Usability Scale',
-                                        selected_style={'border-top': '3px solid #445262'}),
-                                dcc.Tab(id='percentile-plot-tab',
-                                        label='SUS Score on Percentile-Curve',
-                                        selected_style={'border-top': '3px solid #445262'}
-                                        ),
-                                dcc.Tab(id='per-item-tab',
-                                        label='Per Item Chart',
-                                        selected_style={'border-top': '3px solid #445262'}
-                                        ),
-                                dcc.Tab(id='conclusiveness-tab',
-                                        label='Conclusiveness Chart',
-                                        selected_style={'border-top': '3px solid #445262'}
-                                        ),
-                                dcc.Tab(id='editable-table-tab',
-                                        label='Editable Data Table',
-                                        children=[
+                        dcc.Tabs([
+                            dcc.Tab(id='main-plot-tab',
+                                    label='System Usability Scale',
+                                    selected_style={'border-top': '3px solid #445262'}),
+                            dcc.Tab(id='percentile-plot-tab',
+                                    label='SUS Score on Percentile-Curve',
+                                    selected_style={'border-top': '3px solid #445262'}
+                                    ),
+                            dcc.Tab(id='per-item-tab',
+                                    label='Per Item Chart',
+                                    selected_style={'border-top': '3px solid #445262'}
+                                    ),
+                            dcc.Tab(id='conclusiveness-tab',
+                                    label='Conclusiveness Chart',
+                                    selected_style={'border-top': '3px solid #445262'}
+                                    ),
+                            dcc.Tab(id='editable-table-tab',
+                                    label='Editable Data Table',
+                                    children=[
 
-                                            html.Div(id='table-error-icon',className='tooltip', children=[html.Img(src=app.get_asset_url('exclamation-mark.png'), style={'height':'2em'}), html.Span('You\'ve either entered a value that is not between 1 and 5, or there are empty cells. The plots will not update until this is fixed.', className='tooltiptext')], style=styles.tableErrorIconDefaultStyle),
-                                            dash_table.DataTable(
-                                                id='editable-table',
-                                                editable=True,
-                                                row_deletable=True
-                                            ),
-                                            html.Button('Add Row', className='button1', id='add-row-button', n_clicks=0),
-                                        ],
-                                        selected_style={'border-top': '3px solid #445262'}
+                                        html.Div(id='table-error-icon', className='tooltip', children=[
+                                            html.Img(src=app.get_asset_url('exclamation-mark.png'),
+                                                     style={'height': '2em'}), html.Span(
+                                                'You\'ve either entered a value that is not between 1 and 5, or there are empty cells. The plots will not update until this is fixed.',
+                                                className='tooltiptext')], style=styles.tableErrorIconDefaultStyle),
+                                        dash_table.DataTable(
+                                            id='editable-table',
+                                            editable=True,
+                                            row_deletable=True
                                         ),
-                            ])
+                                        html.Button('Add Row', className='button1', id='add-row-button', n_clicks=0),
+                                    ],
+                                    selected_style={'border-top': '3px solid #445262'}
+                                    ),
                         ])
+                    ])
                 ]),
 
                 # This stores the session data
@@ -242,4 +262,3 @@ def CreateDataTableLayout(df=pd.DataFrame()):
         columns=[{"name": i, "id": i} for i in df.columns],
         editable=True
     )]
-

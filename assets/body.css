@@ -138,3 +138,37 @@ details.mainPage > ul {
     display: none;
 }
 
+button.startToolButton{
+    display:inline-block;
+    width: 75%;
+    height: 10em;
+    padding:0.5em 0em;
+    border:0.1em solid #000000;
+    margin-top:30px;
+    border-radius:0.12em;
+    box-sizing: border-box;
+    text-decoration:none;
+    font-family: monospace;
+    color:#000000;
+    text-align:center;
+    transition: all 0.2s;
+
+}
+button.startToolButton:hover{
+    color:#FFFFFF;
+    background-color:#445262;
+}
+@media all and (max-width:30em) {
+    button.startToolButton {
+        display: block;
+        margin: 0.4em auto;
+    }
+}
+
+div.centre {
+  width: 200px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
