@@ -66,29 +66,31 @@ def getMainContent(app):
                             html.Div(
                                 dcc.Tabs([
                                     dcc.Tab([
-                                        html.Button(html.H1('Start Multi Variable Analysis'), id='start-tool-button', className='startToolButton'),
+                                        html.Button(html.H1('Start Multi Variable Analysis'), id='start-tool-button',
+                                                    className='startToolButton'),
                                         html.Div([
                                             html.H1('Or', style={'textAlign': 'center'}),
                                             dcc.Upload(
                                                 id='upload-data-multi',
                                                 children=html.Div([
                                                     html.H1(['Drag and Drop or ',
-                                                    html.A('click here to select CSV-file.')])
-                                                ],),
+                                                             html.A('click here to select CSV-file.')])
+                                                ], ),
                                                 style=styles.mainPageDownloadPanelStyle,
                                                 # Allow multiple files to be uploaded
                                                 multiple=False
                                             ),
                                         ],
-                                        className='centre',
-                                        style={'width':'75%'}),
+                                            className='centre',
+                                            style={'width': '75%'}),
                                     ],
                                         label='Multi Variable Upload',
                                         style=styles.tab_style_upload_panel,
                                         selected_style=styles.tab_selected_style_upload_panel
                                     ),
                                     dcc.Tab([
-                                        html.Button(html.H1('Start Single Variable Analysis'), id='start-tool-button-single',
+                                        html.Button(html.H1('Start Single Variable Analysis'),
+                                                    id='start-tool-button-single',
                                                     className='startToolButton'),
                                         html.Div([
                                             html.H1('Or', style={'textAlign': 'center'}),
@@ -97,7 +99,7 @@ def getMainContent(app):
                                                 children=html.Div([
                                                     html.H1(['Drag and Drop or ',
                                                              html.A('click here to select CSV-file.')])
-                                                ],),
+                                                ], ),
                                                 style=styles.mainPageDownloadPanelStyle,
                                                 # Allow multiple files to be uploaded
                                                 multiple=False
@@ -213,6 +215,7 @@ def getMainContent(app):
                                     selected_style={'border-top': '3px solid #445262'}
                                     ),
                             dcc.Tab(id='editable-table-tab',
+                                    value='editable-table-tab',
                                     label='Editable Data Table',
                                     children=[
 
@@ -230,7 +233,8 @@ def getMainContent(app):
                                     ],
                                     selected_style={'border-top': '3px solid #445262'}
                                     ),
-                        ])
+                        ],
+                            value='editable-table-tab')
                     ])
                 ]),
 
