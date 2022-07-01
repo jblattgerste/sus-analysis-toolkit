@@ -108,13 +108,11 @@ details.mainPage > ul {
   margin-bottom: 0;
 }
 
-/* Tooltip container */
 .tooltip {
   display: block;
   width: 3em;
 }
 
-/* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
   background-color: red;
@@ -124,12 +122,10 @@ details.mainPage > ul {
   padding: 5px;
   border-radius: 6px;
 
-  /* Position the tooltip text - see examples below! */
   position: absolute;
   z-index: 1;
 }
 
-/* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
@@ -145,14 +141,14 @@ button.startToolButton{
     padding:0.5em 0em;
     border:0.1em solid #000000;
     margin-top:30px;
-    border-radius:0.12em;
+    border-radius:5px;
     box-sizing: border-box;
     text-decoration:none;
     font-family: monospace;
     color:#000000;
     text-align:center;
     transition: all 0.2s;
-
+    box-shadow: 0 .5rem 1rem -.5rem rgba(0, 0, 0, .4);
 }
 button.startToolButton:hover{
     color:#FFFFFF;

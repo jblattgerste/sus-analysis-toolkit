@@ -116,7 +116,9 @@ def getMainContent(app):
                                     )
                                 ],
                                     className='centre',
-                                    style={'width': '75%'})
+                                    style={'width': '75%',
+                                           'box-shadow': '0 .5rem 1rem -.5rem rgba(0, 0, 0, .4)'},
+                                )
                             ),
                         ], style={'textAlign': 'center', 'margin-top': '20px'}),
                         # html.H2('CSV-File Upload', style={'textAlign': 'center'}),

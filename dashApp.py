@@ -64,7 +64,7 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
             systemList = SUSData.getAllStudNames()
             # Apply the formatting rules to the editable data table
             columns = [{"name": i, "id": i} for i in csvData.columns]
-            for column in columns[0:9]:
+            for column in columns[0:10]:
                 column.update(Helper.editableTableTypeFormatting)
             style_data_conditional = (Helper.conditionalFormattingEditableDataTable(csvData.columns.values.tolist()))
             return dash.no_update, styles.graph_content_style, {'display': 'none'}, csvData.to_json(date_format='iso', orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), csvData.to_dict('records'), columns, dash.no_update, style_data_conditional
@@ -100,7 +100,7 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
         systemList = SUSData.getAllStudNames()
         # Apply the formatting rules to the editable data table
         columns = [{"name": i, "id": i} for i in exampleData.columns]
-        for column in columns[0:9]:
+        for column in columns[0:10]:
             column.update(Helper.editableTableTypeFormatting)
         return dash.no_update, styles.graph_content_style, {'display': 'none'}, exampleData.to_json(date_format='iso',
                                                                                                 orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(
