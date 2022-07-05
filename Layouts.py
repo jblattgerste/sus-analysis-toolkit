@@ -1,7 +1,6 @@
 import pandas as pd
-from dash import dcc
-from dash import html
-from dash import Dash, dash_table
+from dash import html, dcc
+from dash import dash_table
 
 import ChartLayouts
 import styles
@@ -195,7 +194,7 @@ def getMainContent(app):
                                                  'margin-left': 'auto',
                                                  'margin-right': 'auto'}),
 
-                html.Div(id='graph-content', style={'display': 'none', 'padding': '10px'}, children=[
+                html.Div(id='graph-content', style=styles.graph_div_style, children=[
 
                     html.Div([
                         dcc.Download(id='download-all-charts-data'),
@@ -203,18 +202,18 @@ def getMainContent(app):
                         dcc.Tabs([
                             dcc.Tab(id='main-plot-tab',
                                     label='System Usability Scale',
-                                    selected_style={'border-top': '3px solid #445262'}),
+                                    selected_style=styles.tab_selected_style),
                             dcc.Tab(id='percentile-plot-tab',
                                     label='SUS Score on Percentile-Curve',
-                                    selected_style={'border-top': '3px solid #445262'}
+                                    selected_style=styles.tab_selected_style
                                     ),
                             dcc.Tab(id='per-item-tab',
                                     label='Per Item Chart',
-                                    selected_style={'border-top': '3px solid #445262'}
+                                    selected_style=styles.tab_selected_style
                                     ),
                             dcc.Tab(id='conclusiveness-tab',
                                     label='Conclusiveness Chart',
-                                    selected_style={'border-top': '3px solid #445262'}
+                                    selected_style=styles.tab_selected_style
                                     ),
                             dcc.Tab(id='editable-table-tab',
                                     value='editable-table-tab',
@@ -233,11 +232,39 @@ def getMainContent(app):
                                         ),
                                         html.Button('Add Row', className='button1', id='add-row-button', n_clicks=0),
                                     ],
-                                    selected_style={'border-top': '3px solid #445262'}
+                                    selected_style=styles.tab_selected_style
                                     ),
                         ],
                             value='editable-table-tab')
-                    ])
+                    ],
+                    id='multi-study-content',
+                    style={'display': 'none'}),
+                    html.Div([dcc.Tabs([
+                        dcc.Tab(id='single-study-tab',
+                                label='Single Study Dashboard',
+                                selected_style=styles.tab_selected_style),
+
+                        dcc.Tab(id='single-study-editable-table',
+                                label='Editable Data Table',
+                                children=[
+
+                                    #html.Div(id='table-error-icon-single', className='tooltip', children=[
+                                    #    html.Img(src=app.get_asset_url('exclamation-mark.png'),
+                                    #             style={'height': '2em'}), html.Span(
+                                    #        'You\'ve either entered a value that is not between 1 and 5, or there are empty cells. The plots will not update until this is fixed.',
+                                    #        className='tooltiptext')], style=styles.tableErrorIconDefaultStyle),
+                                    dash_table.DataTable(
+                                        id='editable-table-single',
+                                        editable=True,
+                                        row_deletable=True
+                                    ),
+                                    html.Button('Add Row', className='button1', id='add-row-button-single', n_clicks=0),
+                                ],
+                                selected_style=styles.tab_selected_style),
+                    ])],
+                        id='single-study-content',
+                        style={'display': 'none'}
+                    )
                 ]),
 
                 # This stores the session data

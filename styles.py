@@ -10,13 +10,7 @@ tab_style = {
     'fontWeight': 'bold'
 }
 
-tab_selected_style = {
-    'borderTop': '1px solid #d6d6d6',
-    'borderBottom': '1px solid #d6d6d6',
-    'backgroundColor': '#445262',
-    'color': 'white',
-    'padding': '6px'
-}
+tab_selected_style = {'border-top': '3px solid #445262'}
 
 graph_content_style={'display': 'block', 'padding': '10px'}
 

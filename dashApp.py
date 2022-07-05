@@ -27,31 +27,52 @@ debugMode = True
 
 
 @app.callback(
-    Output('graph-content', 'children'),
-    Output('graph-content', 'style'),
+    Output('multi-study-content', 'style'),
+    Output('single-study-content', 'style'),
     Output('landing-page', 'style'),
-    Output("sessionPlotData-multi", 'data'),
-    Output("sessionPlotData-single", "data"),
+    Input('upload-data-multi', 'contents'),
+    Input('start-tool-button', 'n_clicks'),
+    Input('upload-data-single', 'contents'),
+    Input('start-tool-button-single', 'n_clicks'),
+)
+def init_main_page(contents_multi, contents_single, nclicks_multi, nclicks_single):
+    ctx = dash.callback_context
+    upload_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    # When the multi study upload is triggered
+    if upload_id == 'upload-data-multi' or upload_id == 'start-tool-button':
+        return {'display':'block'}, dash.no_update, {'display':'none'}
+    # Single study upload trigger
+    elif upload_id == 'upload-data-single' or upload_id == 'start-tool-button-single':
+        return dash.no_update, {'display': 'block'}, {'display': 'none'}
+    # On changes to the editable table
+    else:
+        if contents_single is None and contents_multi is None:
+            raise PreventUpdate
+
+
+@app.callback(
     Output('main-plot-tab','children'),
     Output('percentile-plot-tab', 'children'),
     Output('per-item-tab', 'children'),
     Output('conclusiveness-tab', 'children'),
+    Output("sessionPlotData-multi", 'data'),
     Output('editable-table', 'data'),
     Output('editable-table', 'columns'),
     Output('table-error-icon', 'style'),
     Output('editable-table', 'style_data_conditional'),
+    Output('multi-study-content', 'children'),
     Input('upload-data-multi', 'contents'),
-    Input('upload-data-single', 'contents'),
     Input('editable-table', 'data'),
     Input('editable-table', 'columns'),
     Input('add-row-button', 'n_clicks'),
-    Input('start-tool-button','n_clicks')
+    Input('start-tool-button', 'n_clicks'),
 )
-def init_main_page(contents_multi, contents_single, table_data, table_columns, add_row_button_nclicks, start_tool_button_nclicks):
+def update_multi_study(contents_multi, table_data, table_columns, add_row_button_nclicks, start_tool_button_nclicks):
+
     ctx = dash.callback_context
-    upload_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    # When the multi study upload is triggered
-    if upload_id == 'upload-data-multi':
+    input_trigger = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if input_trigger == 'upload-data-multi':
         try:
             if contents_multi is None:
                 raise PreventUpdate
@@ -67,19 +88,22 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
             for column in columns[0:10]:
                 column.update(Helper.editableTableTypeFormatting)
             style_data_conditional = (Helper.conditionalFormattingEditableDataTable(csvData.columns.values.tolist()))
-            return dash.no_update, styles.graph_content_style, {'display': 'none'}, csvData.to_json(date_format='iso', orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), csvData.to_dict('records'), columns, dash.no_update, style_data_conditional
+            return ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData),  csvData.to_json(
+                date_format='iso', orient='split'), csvData.to_dict(
+                'records'), columns, dash.no_update, style_data_conditional, dash.no_update
         # If something is wrong with the upload file, print the reason on the page.
         except Helper.WrongUploadFileException as e:
             print(e)
             errorMessage = [html.Div(children=[
                 'There was an error processing this file: ' + str(e),
                 html.P(['Please refer to this ',
-                        html.A('template', href=app.get_asset_url('singleStudyData.csv'), download='singleStudyData.csv'),
+                        html.A('template', href=app.get_asset_url('singleStudyData.csv'),
+                               download='singleStudyData.csv'),
                         ' for help. ', ]),
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update,errorMessage
         except Exception as e:
             print(e)
             errorMessage = [html.Div(children=[
@@ -91,9 +115,8 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return errorMessage, styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
-    # Single study upload trigger
-    elif upload_id == 'start-tool-button':
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update ,errorMessage
+    elif 'start-tool-button' == input_trigger:
         exampleData = Helper.createExampleDataFrame()
         # Create SUSDataset from example dataframe
         SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(exampleData))
@@ -102,50 +125,13 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
         columns = [{"name": i, "id": i} for i in exampleData.columns]
         for column in columns[0:10]:
             column.update(Helper.editableTableTypeFormatting)
-        return dash.no_update, styles.graph_content_style, {'display': 'none'}, exampleData.to_json(date_format='iso',
-                                                                                                orient='split'), dash.no_update, ChartLayouts.CreateMainPlotLayout(
-            SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData,
-                                                                          systemList), ChartLayouts.CreatePerQuestionChartLayout(
-            SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), exampleData.to_dict(
-            'records'), columns, dash.no_update, (Helper.conditionalFormattingEditableDataTable(exampleData.columns.values.tolist()))
-    # If something is wrong with the upload file, print the reason on the page.
-    elif upload_id == 'upload-data-single':
-        if contents_single is None:
-            raise PreventUpdate
-        try:
-            csvData = Helper.decodeContentToCSV(contents_single)
-            csvData = Helper.checkUploadFile(csvData, True)
-            SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
-            graph = [ChartLayouts.CreateSingleStudyChartLayout(SUSData)]
-            return graph, styles.graph_content_style, {'display': 'none'}, dash.no_update, csvData.to_json(date_format='iso', orient='split'), dash.no_update, dash.no_update, dash.no_update, dash.no_update,dash.no_update, dash.no_update, dash.no_update, dash.no_update
-        except Helper.WrongUploadFileException as e:
-            print(e)
-            errorMessage = [html.Div(children=[
-                'There was an error processing this file: ' + str(e),
-                html.P(['Please refer to this ',
-                        html.A('template', href=app.get_asset_url('singleStudyData.csv'), download='singleStudyData.csv'),
-                        ' for help. ', ]),
-
-                html.P([html.A('Refresh', href='/'), ' the page to try again.'])
-            ])]
-            return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
-        except Exception as e:
-            print(e)
-            errorMessage = [html.Div(children=[
-                'There was an error processing this file. ',
-                html.P(['Please refer to this ',
-                        html.A('template', href=app.get_asset_url('singleStudyData.csv'),
-                               download='singleStudyData.csv'),
-                        ' for help. ', ]),
-
-                html.P([html.A('Refresh', href='/'), ' the page to try again.'])
-            ])]
-            return errorMessage,styles.graph_content_style, {'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
-    # On changes to the editable table
-    elif upload_id == 'editable-table':
+        return ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), exampleData.to_json(date_format='iso',
+                                                                                                orient='split'), exampleData.to_dict(
+            'records'), columns, dash.no_update, (Helper.conditionalFormattingEditableDataTable(exampleData.columns.values.tolist())), dash.no_update
+    elif input_trigger == 'editable-table':
         # Checks whether all entries in the table are viable. If not the error overlay of the data table is enabled.
         if Helper.tableDataIsInvalid(table_data):
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data, dash.no_update, styles.tableErrorIconEnabledStyle, dash.no_update
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data,  dash.no_update, styles.tableErrorIconEnabledStyle, dash.no_update, dash.no_update
         # Collecting the table heads for each of the columns of the table.
         columns = []
         for item in table_columns:
@@ -155,15 +141,65 @@ def init_main_page(contents_multi, contents_single, table_data, table_columns, a
         #  parsing it to SUS Dataset, so all the graphs can be updated
         SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(table_df))
         systemList = SUSData.getAllStudNames()
-        return dash.no_update, dash.no_update, dash.no_update, table_df.to_json(date_format='iso', orient='split'), dash.no_update,ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData),dash.no_update,dash.no_update, styles.tableErrorIconDefaultStyle, dash.no_update
+        return ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), table_df.to_json(date_format='iso', orient='split'), dash.no_update,dash.no_update, styles.tableErrorIconDefaultStyle, dash.no_update,dash.no_update
     # On Press of the add-row button
-    elif upload_id == 'add-row-button':
+    elif input_trigger == 'add-row-button':
         if add_row_button_nclicks > 0:
             table_data.append({c['id']: '' for c in table_columns})
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data, dash.no_update, dash.no_update, dash.no_update
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update,  dash.no_update, table_data, dash.no_update, dash.no_update, dash.no_update, dash.no_update
     else:
-        if contents_single is None and contents_multi is None:
+        if contents_multi is None:
             raise PreventUpdate
+
+
+@app.callback(
+    Output('single-study-tab','children'),
+    Output("sessionPlotData-single", 'data'),
+    Output('editable-table-single', 'data'),
+    Output('editable-table-single', 'columns'),
+   # Output('table-error-icon-single', 'style'),
+    Output('editable-table-single', 'style_data_conditional'),
+    Input('upload-data-single', 'contents'),
+    Input('editable-table-single', 'data'),
+    Input('editable-table-single', 'columns'),
+    Input('add-row-button-single', 'n_clicks'),
+)
+def update_single_study(contents_single, table_data, table_columns, add_row_button_nclicks):
+    if contents_single is None:
+        raise PreventUpdate
+    try:
+        csvData = Helper.decodeContentToCSV(contents_single)
+        csvData = Helper.checkUploadFile(csvData, True)
+        SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
+        graph = [ChartLayouts.CreateSingleStudyChartLayout(SUSData)]
+        return dash.no_update, {'display': 'none'}, {'display': 'block'}, {
+            'display': 'none'}, dash.no_update, csvData.to_json(date_format='iso',
+                                                                orient='split'), dash.no_update, dash.no_update, dash.no_update, dash.no_update, graph, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+    except Helper.WrongUploadFileException as e:
+        print(e)
+        errorMessage = [html.Div(children=[
+            'There was an error processing this file: ' + str(e),
+            html.P(['Please refer to this ',
+                    html.A('template', href=app.get_asset_url('singleStudyData.csv'), download='singleStudyData.csv'),
+                    ' for help. ', ]),
+
+            html.P([html.A('Refresh', href='/'), ' the page to try again.'])
+        ])]
+        return errorMessage, dash.no_update, dash.no.update, {
+            'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+    except Exception as e:
+        print(e)
+        errorMessage = [html.Div(children=[
+            'There was an error processing this file. ',
+            html.P(['Please refer to this ',
+                    html.A('template', href=app.get_asset_url('singleStudyData.csv'),
+                           download='singleStudyData.csv'),
+                    ' for help. ', ]),
+
+            html.P([html.A('Refresh', href='/'), ' the page to try again.'])
+        ])]
+        return errorMessage, dash.no_update, dash.no_update, {
+            'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
 
 
 @app.callback(
@@ -340,7 +376,7 @@ def update_mainplot_table(scaleValue):
     State('percentilePlot', 'figure'),
     State('conclusivenessPlot', 'figure'),
     State('sessionPlotData-multi', 'data'),
-    prevent_initial_call=True,
+    prevent_initial_call=True
 )
 def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, per_question, percentile,
                         conclusiveness, data):

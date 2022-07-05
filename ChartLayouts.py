@@ -1,8 +1,7 @@
 import statistics
 import pandas as pd
 import Charts as Charts
-from dash import dcc
-from dash import html
+from dash import html, dcc
 from dash import dash_table
 
 import SingleStudyCharts

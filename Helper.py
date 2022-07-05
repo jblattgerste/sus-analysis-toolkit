@@ -5,7 +5,6 @@ import random
 import pandas as pd
 from dash import html
 import io
-from dash import dcc
 from dash.dash_table.Format import Format, Scheme
 
 from Result import Result
