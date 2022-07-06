@@ -195,21 +195,6 @@ def getMainContent(app):
                         dcc.Download(id='download-all-charts-data'),
 
                         dcc.Tabs([
-                            dcc.Tab(id='main-plot-tab',
-                                    label='System Usability Scale',
-                                    selected_style=styles.tab_selected_style),
-                            dcc.Tab(id='percentile-plot-tab',
-                                    label='SUS Score on Percentile-Curve',
-                                    selected_style=styles.tab_selected_style
-                                    ),
-                            dcc.Tab(id='per-item-tab',
-                                    label='Per Item Chart',
-                                    selected_style=styles.tab_selected_style
-                                    ),
-                            dcc.Tab(id='conclusiveness-tab',
-                                    label='Conclusiveness Chart',
-                                    selected_style=styles.tab_selected_style
-                                    ),
                             dcc.Tab(id='editable-table-tab',
                                     value='editable-table-tab',
                                     label='Editable Data Table',
@@ -229,25 +214,36 @@ def getMainContent(app):
                                     ],
                                     selected_style=styles.tab_selected_style
                                     ),
+                            dcc.Tab(id='main-plot-tab',
+                                    label='System Usability Scale',
+                                    selected_style=styles.tab_selected_style),
+                            dcc.Tab(id='percentile-plot-tab',
+                                    label='SUS Score on Percentile-Curve',
+                                    selected_style=styles.tab_selected_style
+                                    ),
+                            dcc.Tab(id='per-item-tab',
+                                    label='Per Item Chart',
+                                    selected_style=styles.tab_selected_style
+                                    ),
+                            dcc.Tab(id='conclusiveness-tab',
+                                    label='Conclusiveness Chart',
+                                    selected_style=styles.tab_selected_style
+                                    ),
                         ],
                             value='editable-table-tab')
                     ],
                     id='multi-study-content',
                     style={'display': 'none'}),
                     html.Div([dcc.Tabs([
-                        dcc.Tab(id='single-study-tab',
-                                label='Single Study Dashboard',
-                                selected_style=styles.tab_selected_style),
-
                         dcc.Tab(id='single-study-editable-table',
                                 label='Editable Data Table',
                                 children=[
 
                                     html.Div(id='table-error-icon-single', className='tooltip', children=[
-                                       html.Img(src=app.get_asset_url('exclamation-mark.png'),
-                                                style={'height': '2em'}), html.Span(
-                                           'You\'ve either entered a value that is not between 1 and 5, or there are empty cells. The plots will not update until this is fixed.',
-                                           className='tooltiptext')], style=styles.tableErrorIconDefaultStyle),
+                                        html.Img(src=app.get_asset_url('exclamation-mark.png'),
+                                                 style={'height': '2em'}), html.Span(
+                                            'You\'ve either entered a value that is not between 1 and 5, or there are empty cells. The plots will not update until this is fixed.',
+                                            className='tooltiptext')], style=styles.tableErrorIconDefaultStyle),
                                     dash_table.DataTable(
                                         id='editable-table-single',
                                         editable=True,
@@ -256,6 +252,11 @@ def getMainContent(app):
                                     html.Button('Add Row', className='button1', id='add-row-button-single', n_clicks=0),
                                 ],
                                 selected_style=styles.tab_selected_style),
+                        dcc.Tab(id='single-study-tab',
+                                label='Single Study Dashboard',
+                                selected_style=styles.tab_selected_style),
+
+
                     ])],
                         id='single-study-content',
                         style={'display': 'none'}

@@ -145,14 +145,15 @@ button.startToolButton{
     box-sizing: border-box;
     text-decoration:none;
     font-family: monospace;
-    color:#000000;
+    color:#FFFFFF;
     text-align:center;
     transition: all 0.2s;
     box-shadow: 0 .5rem 1rem -.5rem rgba(0, 0, 0, .4);
+    background-color:#445262;
 }
 button.startToolButton:hover{
-    color:#FFFFFF;
-    background-color:#445262;
+    color:#000000;
+    background-color:#FFFFFF;
 }
 @media all and (max-width:30em) {
     button.startToolButton {
