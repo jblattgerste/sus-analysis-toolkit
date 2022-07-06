@@ -97,17 +97,17 @@ per_item_main_content_style = {'display': 'block',
                                'width': '70%'}
 
 mainPageDownloadPanelStyle = {
+                                        'align-items': 'center',
                                         'height': '10em',
-                                        'lineHeight': '8em',
                                         'borderWidth': '1px',
                                         'borderStyle': 'dashed',
                                         'borderRadius': '5px',
-                                        'display': 'block',
+                                        'display': 'flex',
                                         'textAlign': 'center',
                                         'background-color': '#FFFFFF',
                                         'box-shadow': '0 .5rem 1rem -.5rem rgba(0, 0, 0, .4)',
                                         'color': 'black',
-                                        'font-family': 'monospace'
+                                        'font-family': 'monospace',
                                     }
 
 editableTableDataStyleError = {'border': '3px double #FF0033'}

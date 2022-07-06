@@ -13,8 +13,8 @@ from SUSStud import SUSStud
 import numpy as np
 
 
-def parseDataFrameToSUSDataset(dataFrame):
-    """Parses through DataFrame and creates and returns a SUSDataset object from it."""
+def parseDataFrameToSUSDataset(dataFrame, singleStudy=False):
+    """Parses through DataFrame and creates and returns a list with SUSStuds from it."""
 
     # Set with each individual study.
     studySet = set(dataFrame['System'])
@@ -365,11 +365,15 @@ def conditionalFormattingEditableDataTable(columnNames):
 
 
 # Generates an example dataframe with random SUS values
-def createExampleDataFrame():
+def createExampleDataFrame(singleStudy=False):
     exampleData = {}
     for i in range(1, 11):
         exampleData['Question {qNumber}'.format(qNumber=i)] = [random.randint(1, 5), random.randint(1, 5)]
-    exampleData['System'] = ['Example System A', 'Example System B']
+    # Only Multi Study table has a system column
+    if singleStudy is False:
+        exampleData['System'] = ['Example System A', 'Example System B']
+    else:
+        exampleData['System'] = ['Example System', 'Example System']
     dataframe = pd.DataFrame(data=exampleData)
     return dataframe
 

@@ -157,49 +157,94 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
     Output("sessionPlotData-single", 'data'),
     Output('editable-table-single', 'data'),
     Output('editable-table-single', 'columns'),
-   # Output('table-error-icon-single', 'style'),
+    Output('table-error-icon-single', 'style'),
     Output('editable-table-single', 'style_data_conditional'),
+    Output('single-study-content', 'children'),
     Input('upload-data-single', 'contents'),
     Input('editable-table-single', 'data'),
     Input('editable-table-single', 'columns'),
     Input('add-row-button-single', 'n_clicks'),
+    Input('start-tool-button-single', 'n_clicks'),
 )
-def update_single_study(contents_single, table_data, table_columns, add_row_button_nclicks):
-    if contents_single is None:
-        raise PreventUpdate
-    try:
-        csvData = Helper.decodeContentToCSV(contents_single)
-        csvData = Helper.checkUploadFile(csvData, True)
-        SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
+def update_single_study(contents_single, table_data, table_columns, add_row_button_nclicks, start_tool_button_nclicks):
+    ctx = dash.callback_context
+    input_trigger = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if input_trigger == 'upload-data-single':
+        try:
+            csvData = Helper.decodeContentToCSV(contents_single)
+            csvData = Helper.checkUploadFile(csvData, True)
+            SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(csvData))
+            # The columns for the editable table. The system column is dropped, since the editable table isn't supposed to have it.
+            columns = [{"name": i, "id": i} for i in csvData.drop('System', axis=1).columns]
+            for column in columns:
+                column.update(Helper.editableTableTypeFormatting)
+            style_data_conditional = (Helper.conditionalFormattingEditableDataTable(csvData.columns.values.tolist()))
+            graph = [ChartLayouts.CreateSingleStudyChartLayout(SUSData)]
+            return graph, csvData.to_json(date_format='iso',
+                                                                    orient='split'), csvData.drop('System', axis=1).to_dict(
+                'records'), columns, dash.no_update, style_data_conditional, dash.no_update
+        except Helper.WrongUploadFileException as e:
+            print(e)
+            errorMessage = [html.Div(children=[
+                'There was an error processing this file: ' + str(e),
+                html.P(['Please refer to this ',
+                        html.A('template', href=app.get_asset_url('singleStudyData.csv'), download='singleStudyData.csv'),
+                        ' for help. ', ]),
+
+                html.P([html.A('Refresh', href='/'), ' the page to try again.'])
+            ])]
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, errorMessage
+        except Exception as e:
+            print(e)
+            errorMessage = [html.Div(children=[
+                'There was an error processing this file. ',
+                html.P(['Please refer to this ',
+                        html.A('template', href=app.get_asset_url('singleStudyData.csv'),
+                               download='singleStudyData.csv'),
+                        ' for help. ', ]),
+
+                html.P([html.A('Refresh', href='/'), ' the page to try again.'])
+            ])]
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, errorMessage
+    elif input_trigger == 'editable-table-single':
+        # Checks whether all entries in the table are viable. If not the error overlay of the data table is enabled.
+        if Helper.tableDataIsInvalid(table_data):
+            return dash.no_update, dash.no_update, table_data,  dash.no_update, styles.tableErrorIconEnabledStyle, dash.no_update, dash.no_update
+        # Collecting the table heads for each of the columns of the table.
+        columns = []
+        for item in table_columns:
+            columns.append(item.get("name"))
+        # Creating the dataframe from the table entries
+        table_df = pd.DataFrame(data=table_data, columns=columns)
+        table_df = Helper.checkUploadFile(table_df, True)
+        #  parsing it to SUS Dataset, so all the graphs can be updated
+        SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(table_df))
         graph = [ChartLayouts.CreateSingleStudyChartLayout(SUSData)]
-        return dash.no_update, {'display': 'none'}, {'display': 'block'}, {
-            'display': 'none'}, dash.no_update, csvData.to_json(date_format='iso',
-                                                                orient='split'), dash.no_update, dash.no_update, dash.no_update, dash.no_update, graph, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
-    except Helper.WrongUploadFileException as e:
-        print(e)
-        errorMessage = [html.Div(children=[
-            'There was an error processing this file: ' + str(e),
-            html.P(['Please refer to this ',
-                    html.A('template', href=app.get_asset_url('singleStudyData.csv'), download='singleStudyData.csv'),
-                    ' for help. ', ]),
+        return graph, table_df.to_json(date_format='iso',
+                               orient='split'), dash.no_update, dash.no_update, styles.tableErrorIconDefaultStyle,  dash.no_update, dash.no_update
+    elif input_trigger == 'start-tool-button-single':
+        exampleData = Helper.createExampleDataFrame(singleStudy=True)
+        # Create SUSDataset from example dataframe
+        SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(exampleData))
+        # The columns for the editable table. The system column is dropped, since the editable table isn't supposed to have it.
+        columns = [{"name": i, "id": i} for i in exampleData.drop('System', axis=1).columns]
+        graph = [ChartLayouts.CreateSingleStudyChartLayout(SUSData)]
+        # Apply the formatting rules to the editable data table
+        style_data_conditional = (Helper.conditionalFormattingEditableDataTable(exampleData.columns.values.tolist()))
+        for column in columns[0:10]:
+            column.update(Helper.editableTableTypeFormatting)
+        return graph, exampleData.to_json(date_format='iso',
+                               orient='split'), exampleData.drop('System', axis=1).to_dict(
+            'records'), columns, dash.no_update, style_data_conditional, dash.no_update
+    elif input_trigger == 'add-row-button-single':
+        if add_row_button_nclicks > 0:
+            table_data.append({c['id']: '' for c in table_columns})
+            return dash.no_update, dash.no_update,  table_data, dash.no_update,  dash.no_update,  dash.no_update,  dash.no_update
+    else:
+        if contents_single is None:
+            raise PreventUpdate
 
-            html.P([html.A('Refresh', href='/'), ' the page to try again.'])
-        ])]
-        return errorMessage, dash.no_update, dash.no.update, {
-            'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
-    except Exception as e:
-        print(e)
-        errorMessage = [html.Div(children=[
-            'There was an error processing this file. ',
-            html.P(['Please refer to this ',
-                    html.A('template', href=app.get_asset_url('singleStudyData.csv'),
-                           download='singleStudyData.csv'),
-                    ' for help. ', ]),
-
-            html.P([html.A('Refresh', href='/'), ' the page to try again.'])
-        ])]
-        return errorMessage, dash.no_update, dash.no_update, {
-            'display': 'none'}, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
 
 
 @app.callback(
