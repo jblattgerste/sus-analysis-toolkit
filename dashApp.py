@@ -431,7 +431,6 @@ def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, 
         return dash.no_update
 
     # Create Data Frames for the .csv files
-    print(dash.callback_context.triggered[0]['prop_id'].split('.')[0])
     df = pd.read_json(data, orient='split')
     systemList = set(df['System'])
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
@@ -555,6 +554,38 @@ def download_csv_conclusiveness(n_clicks, data):
     systemList = set(df['System'])
     df = ChartLayouts.CreateConclusivenessPlotDataFrame(SUSData, systemList)
     return dcc.send_data_frame(df.to_csv, "conclusiveness.csv", index=False)
+
+
+@app.callback(
+    Output('download-csv-data', 'data'),
+    Input('csv-data-button', 'n_clicks'),
+    State('editable-table', 'data'),
+    State('editable-table', 'columns'),
+    prevent_initial_call=True
+)
+def download_csv_data_multi(nclicks, data, table_columns):
+    columns = []
+    for item in table_columns:
+        columns.append(item.get("name"))
+    # Creating the dataframe from the table entries
+    table_df = pd.DataFrame(data=data, columns=columns)
+    return dcc.send_data_frame(table_df.to_csv, "studyData.csv", index=False, sep=';')
+
+
+@app.callback(
+    Output('download-csv-data-single', 'data'),
+    Input('csv-data-button-single', 'n_clicks'),
+    State('editable-table-single', 'data'),
+    State('editable-table-single', 'columns'),
+    prevent_initial_call=True
+)
+def download_csv_data_single(nclicks, data, table_columns):
+    columns = []
+    for item in table_columns:
+        columns.append(item.get("name"))
+    # Creating the dataframe from the table entries
+    table_df = pd.DataFrame(data=data, columns=columns)
+    return dcc.send_data_frame(table_df.to_csv, "studyData.csv", index=False,sep=';')
 
 
 if __name__ == '__main__':

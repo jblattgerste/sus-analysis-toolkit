@@ -22,7 +22,8 @@ single_study_graph_style = {'width': '100%', 'height': '80vh'}
 graph_editor_container = {'width': '100%',
                           'display': 'flex',
                           'justify-content': 'center',
-                          'flex-wrap': 'wrap'
+                          'flex-wrap': 'wrap',
+                          'margin-top': '1.5em'
                           }
 
 defaultEditorLabel = {'display': 'block',
@@ -88,10 +89,13 @@ graph_div_style_with_table_row = {'max-width': '100%',
                                   'display': 'flex',
                                   'justify-content': 'center'}
 
-main_content_style = {'width': '70%'
+main_content_style = {'width': '70%',
+                      'display':'inline-block',
+                      'float': 'left'
                       }
 
-single_study_main_content_style = {'width': '70%'}
+single_study_main_content_style = {
+    'width': '70%'}
 
 per_item_main_content_style = {'display': 'block',
                                'width': '70%'}
