@@ -48,7 +48,7 @@ editable_table_editor_panel = html.Div([
                },
     ),
     html.Div([
-        html.Button('Download .csv', id='csv-data-button', className='button1'),
+        html.Button('Download CSV-File', id='csv-data-button', className='button1'),
         dcc.Download(id='download-csv-data')],
         style=styles.download_div_style
     ),
@@ -72,7 +72,7 @@ editable_table_editor_panel_single = html.Div([
                },
     ),
     html.Div([
-        html.Button('Download .csv', id='csv-data-button-single', className='button1'),
+        html.Button('Download CSV-File', id='csv-data-button-single', className='button1'),
         dcc.Download(id='download-csv-data-single')],
         style=styles.download_div_style
     ),
@@ -244,7 +244,7 @@ def getMainContent(app):
                         dcc.Tabs([
                             dcc.Tab(id='editable-table-tab',
                                     value='editable-table-tab',
-                                    label='Editable Data Table',
+                                    label='Data',
                                     children=[
                                         html.Div([
                                             html.Div([
@@ -290,7 +290,7 @@ def getMainContent(app):
                         style={'display': 'none'}),
                     html.Div([dcc.Tabs([
                         dcc.Tab(id='single-study-editable-table',
-                                label='Editable Data Table',
+                                label='Data',
                                 children=[html.Div([
                                     html.Div([
                                         html.Div(id='table-error-icon-single', className='tooltip', children=[
