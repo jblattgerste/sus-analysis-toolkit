@@ -321,7 +321,6 @@ def tableDataIsInvalid(table_data):
     if table_data:
         for row in table_data:
             cells = list(row.values())
-            print(cells)
             if all([cell != '' for cell in cells]) and all([cell is not None for cell in cells]) and all([0 < int(cell) < 6 for cell in cells[0:9]]):
                 continue
             else:

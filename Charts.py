@@ -122,7 +122,7 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
     #          '#F24726']
 
     colors = ['#F24726', '#FAC710','#FEF445', '#CEE741', '#8FD14F']
-    top_labels = ['Strongly<br>disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly<br>agree']
+    top_labels = [ 'Strongly<br>agree', 'Agree', 'Neutral', 'Disagree', 'Strongly<br>disagree']
 
     x_data = [[],
               [],
@@ -160,8 +160,11 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
         for xd, yd in zip(x_data, y_data):
             if yd['positiveWording'] != 0 or colorizeByMeaning == 'regular':
                 fig.add_trace(go.Bar(
+                    hovertemplate='%{x:d}%, ' + '%{text}<extra></extra>',
+                    text=[top_labels[i]],
                     x=[xd[i]], y=[yd['question']],
                     orientation='h',
+                    textposition="none",
                     marker=dict(
                         color=colors[i],
                         line=dict(color='rgb(248, 248, 249)', width=1)
@@ -169,7 +172,10 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
                 ))
             else:
                 fig.add_trace(go.Bar(
+                    hovertemplate='%{x:d}%, ' + '%{text}<extra></extra>',
+                    text=[top_labels[i]],
                     x=[xd[i]], y=[yd['question']],
+                    textposition="none",
                     orientation='h',
                     marker=dict(
                         color=colors[4 - i],
@@ -587,13 +593,14 @@ def CreatePercentilePlot(SUSData, systems):
     ))
     fig.layout.yaxis.fixedrange = True
 
-    fig.add_trace(go.Scatter(x=x, y=y, showlegend=False))
+    fig.add_trace(go.Scatter(x=x, y=y, showlegend=False, hoverinfo='skip'))
     for i, study in enumerate(SUSData.SUSStuds):
         if study.name in systems:
             fig.add_trace(go.Scatter(x=[study.Score], y=[parametrizePercentile(study.Score)],
                                      marker=dict(size=12, color=defaultPlotlyColors[i]),
                                      mode='markers',
-                                     name=study.name))
+                                     name=study.name,
+                                     hovertemplate='%{y:d}th Percentile' + '<extra></extra>'))
     return fig
 
 

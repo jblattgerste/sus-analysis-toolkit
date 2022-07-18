@@ -432,9 +432,11 @@ def getSingleStudyBoxPlotTraces(singleStudy):
 def getSingleStudyPercentilePlotTraces(singleStudy, xaxis, yaxis):
     x = np.linspace(0, 100, 100)
     y = Charts.parametrizePercentile(x)
-    traces = [go.Scatter(x=x, y=y, showlegend=False, xaxis=xaxis, yaxis=yaxis),
+    traces = [go.Scatter(x=x, y=y, showlegend=False, xaxis=xaxis, yaxis=yaxis, hoverinfo='skip'),
               go.Scatter(x=[singleStudy.Score], y=[Charts.parametrizePercentile(singleStudy.Score)],
-                         marker=dict(size=12), mode='markers', xaxis=xaxis, yaxis=yaxis)]
+                         marker=dict(size=12), mode='markers', xaxis=xaxis, yaxis=yaxis,
+                         hovertemplate='%{y:d}th Percentile' + '<extra></extra>',
+                         )]
     return traces
 
 
@@ -491,6 +493,7 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
 
 
     colors = ['#F24726', '#FAC710','#FEF445', '#CEE741', '#8FD14F']
+    top_labels = [ 'Strongly<br>agree', 'Agree', 'Neutral', 'Disgree', 'Strongly<br>disagree']
 
     x_data = [[],
               [],
@@ -504,7 +507,7 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
               []]
 
     for i, questionResults in enumerate(singleStudy.rawResultPerQuestion):
-        for j in range(5, 0, -1):
+        for j in range(1, 6):
             x_data[i].append(questionResults.count(j) / len(singleStudy.rawResultPerQuestion[0]) * 100)
         # x_data_strings[i].append(round(questionResults.count(j)/len(questionResults)*100))
 
@@ -519,7 +522,10 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
                 traces.append(go.Bar(
                     xaxis='x3',
                     yaxis='y3',
+                    hovertemplate='%{x:d}%, ' + '%{text}<extra></extra>',
+                    text=[top_labels[i]],
                     x=[xd[i]], y=[yd['question']],
+                    textposition="none",
                     orientation='h',
                     marker=dict(
                         color=colors[i],
@@ -528,9 +534,12 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
                 ))
             else:
                 traces.append(go.Bar(
+                    hovertemplate='%{x:d}%, ' + '%{text}<extra></extra>',
+                    text=[top_labels[i]],
                     xaxis='x3',
                     yaxis='y3',
                     x=[xd[i]], y=[yd['question']],
+                    textposition="none",
                     orientation='h',
                     marker=dict(
                         color=colors[4 - i],
