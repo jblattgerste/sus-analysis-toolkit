@@ -310,6 +310,7 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
     Output('sort-by-label', 'style'),
     Output('per-question-context', 'style'),
     Output('systems-label-radio', 'style'),
+    Output('per-item-table-div', 'children'),
     Input('systems-per-question-chart', 'value'),
     Input('questions-per-question-chart', 'value'),
     Input('sessionPlotData-multi', 'data'),
@@ -332,6 +333,8 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
     sortByLabelStyle = {'display': 'none'}
     perQuestionContextStyle = {'float': 'left'}
     systemsLabelRadioStyle = {'display': 'none'}
+
+    perItemTable = ChartLayouts.createPerItemTable(Helper.filterSUSStuds(SUSData, systemsToPlot), questionsTicked)
 
     if plotStyle == 'per-question-chart':
         fig = Charts.CreatePerQuestionChart(SUSData, questionsTicked, systemsToPlot, orientationValue)
@@ -365,7 +368,7 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
                                        colorizeByMeaning)
 
     downloadChart = Helper.downloadChartContent(fig, download_format)
-    return fig, downloadChart, orientationLabelStyle, colorizeByMeaningLabelStyle, systemsLabelStyle, sortByLabelStyle, perQuestionContextStyle, systemsLabelRadioStyle
+    return fig, downloadChart, orientationLabelStyle, colorizeByMeaningLabelStyle, systemsLabelStyle, sortByLabelStyle, perQuestionContextStyle, systemsLabelRadioStyle, perItemTable
 
 
 @app.callback(
@@ -590,6 +593,6 @@ def download_csv_data_single(nclicks, data, table_columns):
 
 if __name__ == '__main__':
     if debugMode:
-        app.run_server(port=80,host='0.0.0.0',debug=True)
+        app.run_server(debug=True)
     else:
         app.run_server(port=80,host='0.0.0.0')

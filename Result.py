@@ -34,6 +34,10 @@ class Result:
             idx += 1
         return rawScore * 2.5
 
+    def getScorePerQuestionExcluding(self, excludeQuestionIdxs):
+        filteredQuestionsScore = [i for j, i in enumerate(self.scorePerQuestion) if j not in excludeQuestionIdxs]
+        return filteredQuestionsScore
+
     def calcStandardDeviation(self):
         return statistics.stdev(self.scorePerQuestion)
 

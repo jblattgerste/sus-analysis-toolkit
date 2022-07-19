@@ -30,13 +30,15 @@ class SUSStud:
             scores.append(res.SUSScore)
         return scores
 
-    # Returns a ordered list of average SUS Scores for each of the 10 SUS-Questions.
-    def calcSUSScorePerQuestion(self):
+    # Returns an ordered list of average SUS Scores for each of the 10 SUS-Questions.
+    def calcSUSScorePerQuestion(self, removeIdxs=None):
+        if removeIdxs is None:
+            removeIdxs = []
         avgScorePerQuestion = []
         scoresPerQuestion = {}
 
         for res in self.Results:
-            for idx, questionScore in enumerate(res.scorePerQuestion):
+            for idx, questionScore in enumerate(res.getScorePerQuestionExcluding(removeIdxs)):
                 if idx < len(avgScorePerQuestion):
                     avgScorePerQuestion[idx] += questionScore
                     scoresPerQuestion[idx].append(questionScore)

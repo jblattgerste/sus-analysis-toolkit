@@ -43,7 +43,7 @@ def CreatePercentilePlotLayout(SUSData, systemList):
                     ),
                 ],
                     style=styles.graph_div_style),
-                tableContent
+                html.Div([tableContent], id='percentile-plot-table-div', style=styles.tableStyle),
             ],
                 style=styles.main_content_style
             ),
@@ -147,7 +147,7 @@ def CreateMainPlotLayout(SUSData, systemList):
                     ],
                     style=styles.graph_div_style
                 ),
-                html.Div([tableContent], id='mainplot-table-div'),
+                html.Div([tableContent], id='mainplot-table-div', style=styles.tableStyle),
 
             ], style=styles.main_content_style
             ),
@@ -373,7 +373,7 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
 
     fig = Charts.CreatePerQuestionChart(SUSData, questionsTicked, value, 'vertical')
 
-    tableContent = createPerItemTable(SUSData)
+    tableContent = createPerItemTable(SUSData, questionsTicked)
 
     graphContent = [
         html.Div([
@@ -392,7 +392,7 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
                 ],
                     style=styles.graph_div_style
                 ),
-                tableContent
+                html.Div([tableContent], id='per-item-table-div', style=styles.tableStyle),
 
             ], style=styles.main_content_style
             ),
@@ -576,7 +576,7 @@ def CreateCocnlusivenessChartLayout(SUSData):
                               style=styles.graph_style)
                 ],
                     style=styles.graph_div_style),
-                tableContent,
+                html.Div([tableContent], id='conclusiveness-plot-table-div', style=styles.tableStyle),
             ],
                 style=styles.main_content_style
             ),
@@ -832,9 +832,7 @@ def createMainplotDataframe(SUSData):
 def createMainplotTable(SUSData, scaleType):
     df = createMainplotDataframe(SUSData)
     dataframeConditions = Helper.dataFrameConditions[scaleType]
-    table = html.Div(
-        [
-            dash_table.DataTable(
+    table = dash_table.DataTable(
                 id='main-plot-dataframe',
                 columns=[{"name": i, "id": i} for i in df.columns],
                 style_table={
@@ -848,23 +846,36 @@ def createMainplotTable(SUSData, scaleType):
                     'fontWeight': 'bold'
                 }
             )
-        ],
-        style=styles.tableStyle,
-    )
     return table
 
 
-def createPerItemDataFrame(SUSData):
+def createPerItemDataFrame(SUSData, questionsTicked):
     questions = ['Question 1', 'Question 2', 'Question 3', 'Question 4', 'Question 5', 'Question 6',
                  'Question 7', 'Question 8', 'Question 9',
                  'Question 10']
     standardDev = []
-    data = {'Items': questions}
+
+    removeIdxs = []
+    for idx, question in enumerate(questions):
+        if question not in questionsTicked:
+            removeIdxs.append(idx)
+
+    filteredQuestions = [i for j, i in enumerate(questions) if j not in removeIdxs]
+
+    data = {'Items': filteredQuestions}
 
     for study in SUSData.SUSStuds:
+        avgScorePerQuestion, scorePerQuestionValues = study.calcSUSScorePerQuestion(removeIdxs)
+        standardDeviations = []
+        for question in scorePerQuestionValues.values():
+            try:
+                standardDeviations.append(statistics.pstdev(question))
+            except statistics.StatisticsError:
+                standardDeviations.append(0)
+
         data[study.name + ' Contribution (SD)'] = [str(round(score, 2)) + ' (' + str(round(stdDev, 2)) + ')'
                                                    for score, stdDev in
-                                                   zip(study.avgScorePerQuestion, study.standardDevPerQuestion)]
+                                                   zip(avgScorePerQuestion, standardDeviations)]
     df = pd.DataFrame(data)
 
     df.set_index('Items', inplace=True)
@@ -874,11 +885,9 @@ def createPerItemDataFrame(SUSData):
     return df
 
 
-def createPerItemTable(SUSData):
-    df = createPerItemDataFrame(SUSData)
-    table = html.Div(
-        [
-            dash_table.DataTable(
+def createPerItemTable(SUSData, questionsTicked):
+    df = createPerItemDataFrame(SUSData, questionsTicked)
+    table = dash_table.DataTable(
                 columns=[{"name": str(i), "id": str(i)} for i in df.columns],
                 data=df.to_dict('records'),
                 style_table={'overflowX': 'auto'
@@ -893,10 +902,7 @@ def createPerItemTable(SUSData):
                     'backgroundColor': 'rgb(230, 230, 230)',
                     'fontWeight': 'bold'
                 }
-            ),
-        ],
-        style=styles.tableStyle,
-    )
+            )
     return table
 
 
@@ -916,9 +922,7 @@ def createPercentilePlotDataFrame(SUSData, systems):
 
 def createPercentilePlotTable(SUSData, systems):
     df = createPercentilePlotDataFrame(SUSData, systems)
-    table = html.Div(
-        [
-            dash_table.DataTable(
+    table = dash_table.DataTable(
                 columns=[{"name": i, "id": i} for i in df.columns],
                 data=df.to_dict('records'),
                 style_cell={'textAlign': 'right',
@@ -934,11 +938,7 @@ def createPercentilePlotTable(SUSData, systems):
                     'backgroundColor': 'rgb(230, 230, 230)',
                     'fontWeight': 'bold'
                 }
-            ),
-
-        ],
-        style=styles.tableStyle,
-    )
+            )
     return table
 
 
@@ -980,9 +980,7 @@ def CreateConclusivenessPlotDataFrame(SUSData, systems):
 
 def CreateConclusivenessPlotTable(SUSData, systems):
     df = CreateConclusivenessPlotDataFrame(SUSData, systems)
-    table = html.Div(
-        [
-            dash_table.DataTable(
+    table = dash_table.DataTable(
                 columns=[{"name": i, "id": i} for i in df.columns],
                 data=df.to_dict('records'),
                 style_cell={'textAlign': 'right',
@@ -999,7 +997,4 @@ def CreateConclusivenessPlotTable(SUSData, systems):
                     'fontWeight': 'bold'
                 }
             )
-        ],
-        style=styles.tableStyle,
-    )
     return table
