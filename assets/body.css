@@ -173,3 +173,10 @@ div.inline-div {
   width: 50%;
 }
 
+.bottomright {
+    position: fixed;
+  right: 0px; bottom: 0px;
+  padding: 5px;
+  font-size: xx-small;
+}
+

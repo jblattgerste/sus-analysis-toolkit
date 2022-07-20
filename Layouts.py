@@ -56,7 +56,6 @@ editable_table_editor_panel = html.Div([
     className='editor'
 )
 
-
 editable_table_editor_panel_single = html.Div([
     html.Label(
         ['This table shows the data that is currently plotted. You can change entries or add additional data points.'
@@ -81,8 +80,8 @@ editable_table_editor_panel_single = html.Div([
 )
 
 
-def getMainContent(app):
-    main_Content = html.Div(
+def getMainContent(app, VERSION):
+    main_Content = html.Div([
         html.Div(
             [html.Div(
                 [
@@ -318,13 +317,14 @@ def getMainContent(app):
 
                     ])],
                         id='single-study-content',
-                        style={'display': 'none'}
+                        style={'display': 'none',
+                               }
                     )
                 ]),
 
                 # This stores the session data
                 dcc.Store(id='sessionPlotData-multi'),
-                dcc.Store(id='sessionPlotData-single')
+                dcc.Store(id='sessionPlotData-single'),
             ],
             style={
                 'margin-right': 'auto',
@@ -336,9 +336,7 @@ def getMainContent(app):
                 # 'transform': 'translate(-50%)',
             }
         ),
-        style={
-
-        }
+        html.Div([VERSION], className='bottomright')]
     )
     return main_Content
 

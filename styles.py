@@ -75,8 +75,8 @@ graph_style_per_item = {
     'height': '50vh'
 }
 
-graph_div_style = {'width': '100%',
-                   'float': 'left',
+graph_div_style = {'margin-left': 'auto',
+                   'margin-right': 'auto',
                    }
 
 graph_div_style_with_table = {'width': '70%',
