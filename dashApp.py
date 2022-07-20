@@ -374,6 +374,7 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
 @app.callback(
     Output('percentilePlot', 'figure'),
     Output('download-percentilePlot', 'children'),
+    Output('percentile-plot-table-div', 'children'),
     Input('systems-percentilePlot', 'value'),
     Input('sessionPlotData-multi', 'data'),
     Input('download-type-percentile', 'value'),
@@ -383,26 +384,30 @@ def update_PercentilePlot(systems, data, download_format, sort_value):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
+    table = ChartLayouts.createPercentilePlotTable(Helper.filterSUSStuds(SUSData, systems))
     fig = Charts.CreatePercentilePlot(SUSData, systems)
 
     downloadPercentilePlot = Helper.downloadChartContent(fig, download_format)
-    return fig, downloadPercentilePlot
+    return fig, downloadPercentilePlot, table
 
 
 @app.callback(
     Output('conclusivenessPlot', 'figure'),
     Output('download-conclusiveness', 'children'),
-    Input('systems-percentilePlot', 'value'),
+    Output('conclusiveness-plot-table-div', 'children'),
+    Input('systems-conclusivenessPlot', 'value'),
     Input('sessionPlotData-multi', 'data'),
     Input('download-type-conclusiveness', 'value')
 )
 def update_Conclusiveness(systems, data, download_format):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
-    fig = Charts.CreateConclusivenessChart(SUSData)
+    filteredSUSData = Helper.filterSUSStuds(SUSData, systems)
+    fig = Charts.CreateConclusivenessChart(filteredSUSData)
+    table = ChartLayouts.CreateConclusivenessPlotTable(filteredSUSData, systems)
 
     downloadConclusivenessChart = Helper.downloadChartContent(fig, download_format)
-    return fig, downloadConclusivenessChart
+    return fig, downloadConclusivenessChart, table
 
 
 @app.callback(
@@ -593,6 +598,6 @@ def download_csv_data_single(nclicks, data, table_columns):
 
 if __name__ == '__main__':
     if debugMode:
-        app.run_server(debug=True)
+        app.run_server(port=80,host='0.0.0.0',debug=True)
     else:
         app.run_server(port=80,host='0.0.0.0')

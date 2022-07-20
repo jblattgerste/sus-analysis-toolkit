@@ -493,7 +493,7 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
 
 
     colors = ['#F24726', '#FAC710','#FEF445', '#CEE741', '#8FD14F']
-    top_labels = [ 'Strongly<br>agree', 'Agree', 'Neutral', 'Disgree', 'Strongly<br>disagree']
+    top_labels = ['Strongly<br>agree', 'Agree', 'Neutral', 'Disgree', 'Strongly<br>disagree']
 
     x_data = [[],
               [],

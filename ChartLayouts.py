@@ -30,7 +30,7 @@ def CreatePercentilePlotLayout(SUSData, systemList):
 
     fig = Charts.CreatePercentilePlot(SUSData, value)
 
-    tableContent = createPercentilePlotTable(SUSData, systemList)
+    tableContent = createPercentilePlotTable(SUSData)
 
     graphContent = [
         html.Div([
@@ -565,6 +565,14 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
 
 
 def CreateCocnlusivenessChartLayout(SUSData):
+
+    value = []
+    options = []
+
+    for study in SUSData.SUSStuds:
+        options.append({'label': study.name, 'value': study.name})
+        value.append(study.name)
+
     fig = Charts.CreateConclusivenessChart(SUSData)
     tableContent = CreateConclusivenessPlotTable(SUSData, SUSData.getAllStudNames())
     graphContent = [
@@ -587,6 +595,21 @@ def CreateCocnlusivenessChartLayout(SUSData):
                 ],
                     style={'display': 'block',
                            'padding': '10px 10px 0px 10px'
+                           },
+                ),
+                html.Label([
+                    "Show in plot: ",
+                    dcc.Checklist(id='systems-conclusivenessPlot',
+                                  options=options,
+                                  value=value,
+                                  labelStyle={'display': 'block'},
+                                  style={'font-weight': 'normal',
+                                         }
+                                  ),
+                ],
+                    style={'display': 'block',
+                           'font-weight': 'bold',
+                           'padding': '10px 10px 10px 10px',
                            },
                 ),
                 html.Label([
@@ -906,22 +929,24 @@ def createPerItemTable(SUSData, questionsTicked):
     return table
 
 
-def createPercentilePlotDataFrame(SUSData, systems):
-    data = {'Variable ': list(systems),
-            }
+def createPercentilePlotDataFrame(SUSData):
+    data = {}
     studyScores = []
     percentileValues = []
+    systemList = []
     for study in SUSData.SUSStuds:
         studyScores.append(round(study.Score, 2))
         percentileValues.append(round(Charts.parametrizePercentile(study.Score), 2))
+        systemList.append(study.name)
+    data['Variable'] = systemList;
     data['SUS Score'] = studyScores
     data['Percentile'] = percentileValues
     df = pd.DataFrame(data)
     return df
 
 
-def createPercentilePlotTable(SUSData, systems):
-    df = createPercentilePlotDataFrame(SUSData, systems)
+def createPercentilePlotTable(SUSData):
+    df = createPercentilePlotDataFrame(SUSData)
     table = dash_table.DataTable(
                 columns=[{"name": i, "id": i} for i in df.columns],
                 data=df.to_dict('records'),
