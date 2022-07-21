@@ -543,7 +543,7 @@ def CreateConclusivenessChart(SUSData):
 
     fig = go.Figure()
     set_PaperBGColor(fig)
-    fig.add_trace(go.Scatter(x=xVal, y=yVal))
+    fig.add_trace(go.Scatter(x=xVal, y=yVal, hoverinfo='skip'))
     fig.update_layout(
         margin=dict(
             l=0,
@@ -600,7 +600,7 @@ def CreatePercentilePlot(SUSData, systems):
                                      marker=dict(size=12, color=defaultPlotlyColors[i]),
                                      mode='markers',
                                      name=study.name,
-                                     hovertemplate='%{y:d}th Percentile' + '<extra></extra>'))
+                                     hovertemplate='%{y:d}th Percentile, ' + study.name + '<extra></extra>'))
     return fig
 
 

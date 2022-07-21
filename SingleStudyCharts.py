@@ -463,7 +463,7 @@ def getSingleStudyRadarChartTraces(singleStudy):
 def getSingleStudyConclusivenessTraces(xaxis, yaxis):
     yVal = [35, 75, 80, 100, 100]
     xVal = [6, 8, 10, 12, 14]
-    return go.Scatter(x=xVal, y=yVal, xaxis=xaxis, yaxis=yaxis)
+    return go.Scatter(x=xVal, y=yVal, xaxis=xaxis, yaxis=yaxis,  hoverinfo='skip')
 
 
 def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
@@ -493,7 +493,7 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
 
 
     colors = ['#F24726', '#FAC710','#FEF445', '#CEE741', '#8FD14F']
-    top_labels = ['Strongly<br>agree', 'Agree', 'Neutral', 'Disgree', 'Strongly<br>disagree']
+    top_labels = ['Strongly<br>agree', 'Agree', 'Neutral', 'Disagree', 'Strongly<br>disagree']
 
     x_data = [[],
               [],
