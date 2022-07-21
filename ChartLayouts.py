@@ -872,7 +872,9 @@ def createMainplotTable(SUSData, scaleType):
     return table
 
 
-def createPerItemDataFrame(SUSData, questionsTicked):
+def createPerItemDataFrame(SUSData, questionsTicked=None):
+    if questionsTicked is None:
+        questionsTicked = []
     questions = ['Question 1', 'Question 2', 'Question 3', 'Question 4', 'Question 5', 'Question 6',
                  'Question 7', 'Question 8', 'Question 9',
                  'Question 10']
@@ -908,7 +910,9 @@ def createPerItemDataFrame(SUSData, questionsTicked):
     return df
 
 
-def createPerItemTable(SUSData, questionsTicked):
+def createPerItemTable(SUSData, questionsTicked=None):
+    if questionsTicked is None:
+        questionsTicked = []
     df = createPerItemDataFrame(SUSData, questionsTicked)
     table = dash_table.DataTable(
                 columns=[{"name": str(i), "id": str(i)} for i in df.columns],
@@ -933,12 +937,11 @@ def createPercentilePlotDataFrame(SUSData):
     data = {}
     studyScores = []
     percentileValues = []
-    systemList = []
+    systemList = SUSData.getAllStudNames()
     for study in SUSData.SUSStuds:
         studyScores.append(round(study.Score, 2))
         percentileValues.append(round(Charts.parametrizePercentile(study.Score), 2))
-        systemList.append(study.name)
-    data['Variable'] = systemList;
+    data['Variable'] = systemList
     data['SUS Score'] = studyScores
     data['Percentile'] = percentileValues
     df = pd.DataFrame(data)

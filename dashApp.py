@@ -328,6 +328,7 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
+    SUSData = Helper.filterSUSStuds(SUSData, systemsToPlot)
 
     colorizeByMeaningLabelStyle = {'display': 'none'}
     orientationLabelStyle = {'display': 'none'}
@@ -336,7 +337,7 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
     perQuestionContextStyle = {'float': 'left'}
     systemsLabelRadioStyle = {'display': 'none'}
 
-    perItemTable = ChartLayouts.createPerItemTable(Helper.filterSUSStuds(SUSData, systemsToPlot), questionsTicked)
+    perItemTable = ChartLayouts.createPerItemTable(SUSData, questionsTicked)
 
     if plotStyle == 'per-question-chart':
         fig = Charts.CreatePerQuestionChart(SUSData, questionsTicked, systemsToPlot, orientationValue)
@@ -452,7 +453,7 @@ def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, 
     df_per_question = ChartLayouts.createPerItemDataFrame(SUSData)
 
     # Percentile Dataframe
-    df_percentile = ChartLayouts.createPercentilePlotDataFrame(SUSData, systemList)
+    df_percentile = ChartLayouts.createPercentilePlotDataFrame(SUSData)
 
     # Conclusiveness Dataframe
     df_conclusiveness = ChartLayouts.CreateConclusivenessPlotDataFrame(SUSData, systemList)
@@ -548,7 +549,7 @@ def download_csv_percentile(n_clicks, data):
     df = pd.read_json(data, orient='split')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     systemList = set(df['System'])
-    df = ChartLayouts.createPercentilePlotDataFrame(SUSData, systemList)
+    df = ChartLayouts.createPercentilePlotDataFrame(SUSData)
     return dcc.send_data_frame(df.to_csv, "percentile.csv", index=False)
 
 
