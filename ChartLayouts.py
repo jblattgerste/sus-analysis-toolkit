@@ -694,7 +694,7 @@ def CreateSingleStudyChartLayout(SUSData):
             html.Label([
                 "Score and Interpretation: ",
                 html.Table([
-                    html.Tr([html.Td('SUS Score: '), html.Td(round(singleStudy.Score, 2))]),
+                    html.Tr([html.Td('SUS Study Score: '), html.Td(round(singleStudy.Score, 2))]),
                     html.Tr([html.Td('Median: '), html.Td(singleStudy.median)]),
                     html.Tr([html.Td('Standard Dev. '), html.Td(round(singleStudy.standardDevOverall, 2))]),
                     html.Tr([html.Td('Adjective: '), html.Td(Helper.getAdjectiveValue(singleStudy.Score))]),

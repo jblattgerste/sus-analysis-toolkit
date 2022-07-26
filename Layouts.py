@@ -1,8 +1,6 @@
 import pandas as pd
 from dash import html, dcc
 from dash import dash_table
-
-import ChartLayouts
 import styles
 
 per_question_context = html.Div([

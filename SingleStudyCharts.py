@@ -6,16 +6,10 @@ import Helper
 import plotly.io as pio
 pio.templates.default = 'seaborn'
 
+
 def generateSingleStudyPreset1(singleStudy):
-    traces = []
-
-    # Add the trace for the SUS Boxplot
-    traces.append(
-        getSingleStudyBoxPlotTraces(singleStudy))
-
-    # Add the trace for the PolarChart
-    traces.append(getSingleStudyRadarChartTraces(singleStudy))
-
+    # Add the traces for Boxplot and Radarchart
+    traces = [getSingleStudyBoxPlotTraces(singleStudy), getSingleStudyRadarChartTraces(singleStudy)]
     # Defining the layout for the subplots
     singleStudyLayout = go.Layout(
         barmode='stack',
