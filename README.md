@@ -59,16 +59,18 @@ As the SUS Analysis Toolkit is an ongoing project, we are happy to receive feedb
 The tool is freely accesible for commercial and non-commercial use under the MIT license and does not require acknowledgement. Nonetheless, if you use our tool for scientific publications or presentations, we would appreciate an acknowledgement in form of a citation to our tool:
 
 ```tex
-@inproceedings{sus-analysis-toolkit,
-  title={A Web-Based Analysis Toolkit for the System Usability Scale},
-  author={Blattgerste, Jonas and Behrends, Jan and Pfeiffer, Thies},
-  booktitle={The 15th International Conference on PErvasive Technologies Related to Assistive Environments (PETRA '22)},
-  year   = {2022},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  url = {https://sus.mixality.de/},
-  doi = {10.1145/3529190.3529216},
-  location = {Corfu, Greece},
-  series = {PETRA '22}
+@inproceedings{10.1145/3529190.3529216,
+author = {Blattgerste, Jonas and Behrends, Jan and Pfeiffer, Thies},
+title = {A Web-Based Analysis Toolkit for the System Usability Scale},
+year = {2022},
+isbn = {9781450396318},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3529190.3529216},
+doi = {10.1145/3529190.3529216},
+pages = {237–246},
+numpages = {10},
+location = {Corfu, Greece},
+series = {PETRA '22}
 }
 ```
