@@ -1,17 +1,61 @@
 cff-version: 1.2.0
-message: "If you use the SUS Analysis Toolkit for your research, please cite it as follows:"
+title: >-
+  A Web-Based Analysis Toolkit for the System
+  Usability Scale
+message: >-
+  If you use the SUS Analysis Toolkit for your
+  research, please cite it as follows:
+type: software
 authors:
-- family-names: "Blattgerste"
-  given-names: "Jonas"
-  orcid:
-- family-names: "Behrends"
-  given-names: "Jan"
-  orcid:
-- family-names: "Pfeiffer"
-  given-names: "Thies"
-  orcid: "https://orcid.org/0000-0001-6619-749X"
-title: "A Web-Based Analysis Toolkit for the System Usability Scale"
-version: 1.0.0
-doi: 
-date-released: 2022-01-01
-url: "https://github.com/jblattgerste/sus-analysis-toolkit"
+  - given-names: Jonas
+    family-names: Blattgerste
+    email: jonas.blattgerste@hs-emden-leer.de
+    affiliation: University of Applied Sciences Emden/Leer
+  - given-names: Jan
+    family-names: Behrends
+    email: jan.behrends@stud.hs-emden-leer.de
+    affiliation: University of Applied Sciences Emden/Leer
+  - given-names: Thies
+    family-names: Pfeiffer
+    email: thies.pfeiffer@hs-emden-leer.de
+    affiliation: University of Applied Sciences Emden/leer
+identifiers:
+  - type: doi
+    value: 10.1145/3529190.3529216
+    description: Accompanying peer-reviewed publication
+repository-code: >-
+  https://github.com/jblattgerste/sus-analysis-toolkit
+url: 'https://sus.mixality.de/'
+abstract: >-
+  The System Usability Scale (SUS) questionnaire is a
+  broadly used usability measurement tool, which is
+  fast in its application and straight forward in its
+  interpretation. While the original SUS
+  questionnaire was envisioned as a one-dimensional
+  ”quick and dirty” approach to measure usability,
+  research over the past 25 years revealed helpful
+  insights and dimensions to contextualize and
+  compare individual SUS scores on. In this paper, we
+  present an open source web-based analysis toolkit
+  for the SUS questionnaire, which calculates SUS
+  measurements, analyses them based on the insights
+  and contextualization scales suggested by previous
+  work, and provides versatile plotting facilities to
+  create appealing SUS graphs for scientific
+  publications and presentations.
+license: MIT
+date-released: '2022-01-01'
+preferred-citation:
+  authors:
+    - given-names: Jonas
+      family-names: Blattgerste
+    - given-names: Jan
+      family-names: Behrends
+    - given-names: Thies
+      family-names: Pfeiffer
+  conference:
+      name: "Proceedings of the 15th International Conference on PErvasive Technologies Related to Assistive Environments"
+  doi: 10.1145/3529190.3529216
+  title: "A Web-Based Analysis Toolkit for the System Usability Scale"
+  type: proceedings
+  year: 2022
