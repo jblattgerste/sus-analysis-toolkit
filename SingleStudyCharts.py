@@ -485,9 +485,8 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
               {'question': 'Question 10',
                'positiveWording': False}]
 
-
-    colors = ['#F24726', '#FAC710','#FEF445', '#CEE741', '#8FD14F']
-    top_labels = ['Strongly<br>agree', 'Agree', 'Neutral', 'Disagree', 'Strongly<br>disagree']
+    colors = ['#8FD14F', '#CEE741', '#FEF445', '#FAC710', '#F24726']
+    top_labels = ['Strongly<br>disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly<br>agree']
 
     x_data = [[],
               [],
@@ -522,7 +521,7 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
                     textposition="none",
                     orientation='h',
                     marker=dict(
-                        color=colors[i],
+                        color=colors[4-i],
                         line=dict(color='rgb(248, 248, 249)', width=1)
                     )
                 ))
@@ -536,7 +535,7 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
                     textposition="none",
                     orientation='h',
                     marker=dict(
-                        color=colors[4 - i],
+                        color=colors[i],
                         line=dict(color='rgb(248, 248, 249)', width=1)
                     )
                 ))
