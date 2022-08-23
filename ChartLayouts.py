@@ -197,6 +197,7 @@ def CreateMainPlotLayout(SUSData, systemList):
                                           {'label': 'Quartile Scale', 'value': 'quartileScale'},
                                           {'label': 'Acceptability Scale', 'value': 'acceptabilityScale'},
                                           {'label': 'Net Promoter Scale', 'value': 'promoterScale'},
+                                          {'label': 'Industry Benchmark', 'value': 'industryBenchmarkScale'},
                                           {'label': 'No Scale', 'value': 'none'}
                                           # {'label': 'Background Adjective Scale', 'value': 'BGAdjectiveScale'}
                                           ],
@@ -805,6 +806,7 @@ def createMainplotDataframe(SUSData):
     acceptability = []
     systemList = []
     nps = []
+    industryBenchmark = []
 
     for study in SUSData.SUSStuds:
         adjectiveScale.append(Helper.getAdjectiveValue(study.Score))
@@ -812,6 +814,7 @@ def createMainplotDataframe(SUSData):
         quartile.append(Helper.getQuartileScaleValue(study.Score))
         acceptability.append(Helper.getAcceptabilityValue(study.Score))
         nps.append(Helper.getNPSValue(study.Score))
+        industryBenchmark.append(Helper.getIndustryBenchmarkValue(study.Score))
         OverallScores.append(round(study.Score, 2))
         susScores = study.getAllSUSScores()
         mins.append(min(susScores))
@@ -844,7 +847,8 @@ def createMainplotDataframe(SUSData):
         'Grade Scale ': grade,
         'Quartile Scale ': quartile,
         'Acceptability Scale ': acceptability,
-        'NPS Scale': nps
+        'NPS Scale': nps,
+        'Industry Benchmark': industryBenchmark
     }
     # tableHeader = [" "].extend(systems)
     df = pd.DataFrame(data)

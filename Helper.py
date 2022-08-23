@@ -189,6 +189,8 @@ scaleInfoTexts = {
         'The Net Promoter score scale describes how likely users of a product are to recommend the System to others. It is based on data from ',
         html.A('Sauro et al. 2012', href='https://measuringu.com/nps-sus/', target="_blank"),
         '.']),
+    'industryBenchmarkScale': html.P(children=[
+            'Non empirical scale commonly used across industries.']),
     'none': ""
 }
 
@@ -304,6 +306,14 @@ def getNPSValue(score):
         return "Passive"
     else:
         return "Promoter"
+
+def getIndustryBenchmarkValue(score):
+    if score < 68:
+        return "Below Average"
+    if score < 80:
+        return "Above Average"
+    else:
+        return "Above Industry Standard"
 
 
 def getConclusiveness(study):
@@ -611,6 +621,43 @@ dataframeNPSConditions = [
     },
 ]
 
+industryBenchmarkConditions = [
+    {
+        'if': {
+            'column_id': 'SUS Score (mean) '
+        },
+        'fontWeight': 'bold'
+    },
+    {
+        'if': {'row_index': 'odd'},
+        'backgroundColor': 'rgb(248, 248, 248)'
+    },
+    {
+        'if': {
+            'filter_query': '{SUS Score (mean) } < 100.1',
+            # 'column_id': 'SUS Score (mean) '
+        },
+        'color': 'black',
+        'backgroundColor': '#8FD14F'
+    },
+    {
+        'if': {
+            'filter_query': '{SUS Score (mean) } < 80',
+            # 'column_id': 'SUS Score (mean) '
+        },
+        'color': 'black',
+        'backgroundColor': '#FEF445'
+    },
+    {
+        'if': {
+            'filter_query': '{SUS Score (mean) } < 68',
+            # 'column_id': 'SUS Score (mean) '
+        },
+        'color': 'black',
+        'backgroundColor': '#F24726'
+    },
+]
+
 dataFrameNoScale = [
     {
         'if': {
@@ -637,6 +684,7 @@ dataFrameConditions = {'acceptabilityScale': dataframeAcceptabilityConditions,
                        'gradeScale': dataframeGradeConditions,
                        'quartileScale': dataframeQuartileConditions,
                        'promoterScale': dataframeNPSConditions,
+                       'industryBenchmarkScale': industryBenchmarkConditions,
                        'none': dataFrameNoScale
                        }
 

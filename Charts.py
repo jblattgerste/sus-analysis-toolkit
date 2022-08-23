@@ -788,6 +788,29 @@ def getPromoterScaleTraces(orientation, xaxis='x2', yaxis='y2'):
     return traces
 
 
+# noinspection PyTypeChecker
+def getIndustryBenchmarkScale(orientation, xaxis='x2', yaxis='y2'):
+    if orientation == 'vertical':
+        traces = [
+            go.Bar(y=[68], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip', text='Below Average',
+                   marker_color='#F24726', insidetextanchor='middle'),
+            go.Bar(y=[12], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip', text='Above Average',
+                   marker_color='#FEF445', insidetextanchor='middle'),
+            go.Bar(y=[20], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip', text='Above<br>Industry Standard',
+                   marker_color='#8FD14F', insidetextanchor='middle')
+        ]
+    else:
+        traces = [
+            go.Bar(x=[68], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip', text='Below Average',
+                   marker_color='#F24726', insidetextanchor='middle'),
+            go.Bar(x=[12], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip', text='Above Average',
+                   marker_color='#FEF445', insidetextanchor='middle'),
+            go.Bar(x=[20], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip', text='Above Industry Standard',
+                   marker_color='#8FD14F', insidetextanchor='middle')
+        ]
+    return traces
+
+
 def getEmptyScaleTraces(orientation):
     return []
 
@@ -827,5 +850,6 @@ scales = {
     'acceptabilityScale': getAcceptabilityScaleTraces,
     'promoterScale': getPromoterScaleTraces,
     'quartileScale': getQuartileScaleTraces,
+    'industryBenchmarkScale': getIndustryBenchmarkScale,
     'none': getEmptyScaleTraces
 }
