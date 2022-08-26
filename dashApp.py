@@ -465,29 +465,29 @@ def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, 
     mainplot_fig.update_layout(
         paper_bgcolor='rgba(255,255,255,255)',
     )
-    img_mainplot = mainplot_fig.to_image(format="png", width=mainplot_fig.layout.width,
-                                         height=mainplot_fig.layout.height)
+    img_mainplot = mainplot_fig.to_image(format="png", width=1600,
+                                         height=750)
     # Per Question
     per_question_fig = go.Figure(per_question)
     per_question_fig.update_layout(
         paper_bgcolor='rgba(255,255,255,255)',
     )
-    img_per_question = per_question_fig.to_image(format="png", width=per_question_fig.layout.width,
-                                                 height=per_question_fig.layout.height)
+    img_per_question = per_question_fig.to_image(format="png", width=1600,
+                                                 height=750)
     # Percentile
     percentile_fig = go.Figure(percentile)
     percentile_fig.update_layout(
         paper_bgcolor='rgba(255,255,255,255)',
     )
-    img_percentile = percentile_fig.to_image(format="png", width=percentile_fig.layout.width,
-                                             height=percentile_fig.layout.height)
+    img_percentile = percentile_fig.to_image(format="png", width=1600,
+                                             height=750)
     # Conclusiveness
     conclusiveness_fig = go.Figure(conclusiveness)
     conclusiveness_fig.update_layout(
         paper_bgcolor='rgba(255,255,255,255)',
     )
-    img_conclusiveness = conclusiveness_fig.to_image(format="png", width=conclusiveness_fig.layout.width,
-                                                     height=conclusiveness_fig.layout.height)
+    img_conclusiveness = conclusiveness_fig.to_image(format="png", width=1600,
+                                                     height=750)
 
     # Write images in zip file
     zip_tf = tempfile.NamedTemporaryFile(delete=False, suffix='.zip')

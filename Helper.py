@@ -59,7 +59,7 @@ def downloadChartContentSingleStudy(fig):
     fig.update_layout(
         paper_bgcolor='rgba(255,255,255,255)',
     )
-    img_bytes = fig.to_image(format="png", width=1080, height=740)
+    img_bytes = fig.to_image(format="png", width=1080*1.5, height=740*1.5)
 
     encoding = base64.b64encode(img_bytes).decode()
     img_b64 = "data:image/png;base64," + encoding
