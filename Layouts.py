@@ -46,7 +46,7 @@ editable_table_editor_panel = html.Div([
                },
     ),
     html.Div([
-        html.Button('Download CSV-File', id='csv-data-button', className='button1'),
+        html.Button('Download as CSV', id='csv-data-button', className='button1'),
         dcc.Download(id='download-csv-data')],
         style=styles.download_div_style
     ),
@@ -69,7 +69,7 @@ editable_table_editor_panel_single = html.Div([
                },
     ),
     html.Div([
-        html.Button('Download CSV-File', id='csv-data-button-single', className='button1'),
+        html.Button('Download as CSV', id='csv-data-button-single', className='button1'),
         dcc.Download(id='download-csv-data-single')],
         style=styles.download_div_style
     ),
@@ -241,7 +241,7 @@ def getMainContent(app, VERSION):
                         dcc.Tabs([
                             dcc.Tab(id='editable-table-tab',
                                     value='editable-table-tab',
-                                    label='Data',
+                                    label='Raw SUS Data',
                                     children=[
                                         html.Div([
                                             html.Div([
@@ -266,7 +266,7 @@ def getMainContent(app, VERSION):
                                     selected_style=styles.tab_selected_style,
                                     ),
                             dcc.Tab(id='main-plot-tab',
-                                    label='System Usability Scale',
+                                    label='SUS Score',
                                     selected_style=styles.tab_selected_style),
                             dcc.Tab(id='percentile-plot-tab',
                                     label='SUS Score on Percentile-Curve',
@@ -287,7 +287,7 @@ def getMainContent(app, VERSION):
                         style={'display': 'none'}),
                     html.Div([dcc.Tabs([
                         dcc.Tab(id='single-study-editable-table',
-                                label='Data',
+                                label='Raw SUS Data',
                                 children=[html.Div([
                                     html.Div([
                                         html.Div(id='table-error-icon-single', className='tooltip', children=[
@@ -310,7 +310,7 @@ def getMainContent(app, VERSION):
                                 ],
                                 selected_style=styles.tab_selected_style),
                         dcc.Tab(id='single-study-tab',
-                                label='Single Study Dashboard',
+                                label='SUS Dashboard Plot',
                                 selected_style=styles.tab_selected_style),
 
                     ])],

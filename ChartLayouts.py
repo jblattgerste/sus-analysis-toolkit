@@ -171,7 +171,7 @@ def CreateMainPlotLayout(SUSData, systemList):
                     html.Summary("Plot type: "),
                     html.P(id="plotstyle-info",
                            children=[Helper.plotStyleInfoTexts['mainplot']],
-                           style=styles.editorInfoTextStyle)]),
+                           style=styles.editorInfoTextStyle)], open=True),
                     dcc.Dropdown(id='plotstyle-mainplot',
                                  options=[{'label': 'Boxplot', 'value': 'mainplot'},
                                           {'label': 'Notched Boxplot', 'value': 'notched'},
@@ -190,14 +190,14 @@ def CreateMainPlotLayout(SUSData, systemList):
                     html.Details([html.Summary("Contextualization scale: "),
                     html.P(id="scaletype-info",
                            children=[Helper.scaleInfoTexts['adjectiveScale']],
-                           style=styles.editorInfoTextStyle)]),
+                           style=styles.editorInfoTextStyle)], open=True),
                     dcc.Dropdown(id='scale-mainplot',
                                  options=[{'label': 'Adjective Scale', 'value': 'adjectiveScale'},
                                           {'label': 'Grade Scale', 'value': 'gradeScale'},
                                           {'label': 'Quartile Scale', 'value': 'quartileScale'},
                                           {'label': 'Acceptability Scale', 'value': 'acceptabilityScale'},
                                           {'label': 'Net Promoter Scale', 'value': 'promoterScale'},
-                                          {'label': 'Industry Benchmark', 'value': 'industryBenchmarkScale'},
+                                          {'label': 'Industry Benchmark Scale', 'value': 'industryBenchmarkScale'},
                                           {'label': 'No Scale', 'value': 'none'}
                                           # {'label': 'Background Adjective Scale', 'value': 'BGAdjectiveScale'}
                                           ],
@@ -472,24 +472,24 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
-
-                html.Label([
-                    "Colorization: ",
-                    dcc.Dropdown(id='colorize-by-meaning',
-                                 options=[{'label': 'Regular colors', 'value': 'regular'},
-                                          {'label': 'Colorize by meaning', 'value': 'byMeaning'}],
-                                 value='byMeaning',
-                                 style={'font-weight': 'normal',
-                                        'margin-top': '10px',
-                                        }
-                                 ),
-                ],
-                    id='colorize-by-meaning-label',
-                    style={'display': 'none',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
-                ),
+                # For now depcrecated, might reuse later
+                # html.Label([
+                #     "Colorization: ",
+                #     dcc.Dropdown(id='colorize-by-meaning',
+                #                  options=[{'label': 'Regular colors', 'value': 'regular'},
+                #                           {'label': 'Colorize by meaning', 'value': 'byMeaning'}],
+                #                  value='byMeaning',
+                #                  style={'font-weight': 'normal',
+                #                         'margin-top': '10px',
+                #                         }
+                #                  ),
+                # ],
+                #     id='colorize-by-meaning-label',
+                #     style={'display': 'none',
+                #            'font-weight': 'bold',
+                #            'padding': '10px 10px 10px 10px'
+                #            },
+                # ),
 
                 html.Label([
                     "Plot type: ",

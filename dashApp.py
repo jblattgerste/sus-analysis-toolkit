@@ -307,7 +307,6 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
     Output('per-question-chart', 'figure'),
     Output('download-per-question-chart', 'children'),
     Output('orientation-label', 'style'),
-    Output('colorize-by-meaning-label', 'style'),
     Output('systems-label', 'style'),
     Output('sort-by-label', 'style'),
     Output('per-question-context', 'style'),
@@ -320,11 +319,10 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
     Input('plotstyle-per-question-chart', 'value'),
     Input('download-type-perquestion', 'value'),
     Input('sort-by-perquestion', 'value'),
-    Input('colorize-by-meaning', 'value'),
     Input('systems-per-question-chart-radio', 'value'),
 )
 def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationValue, plotStyle, download_format,
-                            sort_value, colorizeByMeaning, systemToPlotRadio):
+                            sort_value, systemToPlotRadio):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
@@ -367,11 +365,10 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
         colorizeByMeaningLabelStyle = {'display': 'block',
                                        'font-weight': 'bold',
                                        'padding': '10px 10px 10px 10px'}
-        fig = Charts.CreateLikertChart(SUSData.getIndividualStudyData(systemToPlotRadio), questionsTicked,
-                                       colorizeByMeaning)
+        fig = Charts.CreateLikertChart(SUSData.getIndividualStudyData(systemToPlotRadio), questionsTicked)
 
     downloadChart = Helper.downloadChartContent(fig, download_format)
-    return fig, downloadChart, orientationLabelStyle, colorizeByMeaningLabelStyle, systemsLabelStyle, sortByLabelStyle, perQuestionContextStyle, systemsLabelRadioStyle, perItemTable
+    return fig, downloadChart, orientationLabelStyle, systemsLabelStyle, sortByLabelStyle, perQuestionContextStyle, systemsLabelRadioStyle, perItemTable
 
 
 @app.callback(

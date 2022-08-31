@@ -190,7 +190,9 @@ scaleInfoTexts = {
         html.A('Sauro et al. 2012', href='https://measuringu.com/nps-sus/', target="_blank"),
         '.']),
     'industryBenchmarkScale': html.P(children=[
-            'Non empirical scale commonly used across industries.']),
+            'Non empirical scale derived from ', html.A('Lewis et al. 2018',
+               href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=BD7BLDgAAAAJ&citation_for_view=BD7BLDgAAAAJ:u5HHmVD_uO8C',
+               target="_blank"), ' where they observed scores above 80 to be an “industrial goal”.']),
     'none': ""
 }
 
