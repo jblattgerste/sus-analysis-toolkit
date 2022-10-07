@@ -1,4 +1,5 @@
 import base64
+import traceback
 import dash
 from dash import dcc
 from dash import html
@@ -78,6 +79,7 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
         try:
             if contents_multi is None:
                 raise PreventUpdate
+            print("start upload multi data")
             # decode the upload data and convert it to pandas data frame
             csvData = Helper.decodeContentToCSV(contents_multi)
             # check if the upload file is correctly formated, has no null values etc.
@@ -90,6 +92,7 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
             for column in columns[0:10]:
                 column.update(Helper.editableTableTypeFormatting)
             style_data_conditional = (Helper.conditionalFormattingEditableDataTable(csvData.columns.values.tolist()))
+            print("end upload multi data")
             return ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData),  csvData.to_json(
                 date_format='iso', orient='split'), csvData.to_dict(
                 'records'), columns, dash.no_update, style_data_conditional, dash.no_update
@@ -106,8 +109,8 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
             return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update,errorMessage
-        except Exception as e:
-            print(e)
+        except Exception:
+            print(traceback.format_exc())
             errorMessage = [html.Div(children=[
                 'There was an error processing this file. ',
                 html.P(['Please refer to this ',

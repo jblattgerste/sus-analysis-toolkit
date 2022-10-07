@@ -590,7 +590,7 @@ def CreatePercentilePlot(SUSData, systems):
     for i, study in enumerate(SUSData.SUSStuds):
         if study.name in systems:
             fig.add_trace(go.Scatter(x=[study.Score], y=[parametrizePercentile(study.Score)],
-                                     marker=dict(size=12, color=defaultPlotlyColors[i]),
+                                     marker=dict(size=12),
                                      mode='markers',
                                      name=study.name,
                                      hovertemplate='%{y:d}th Percentile, ' + study.name + '<extra></extra>'))
