@@ -117,7 +117,7 @@ def getMainContent(app, VERSION):
                                                 id='upload-data-multi',
                                                 children=html.Div([
                                                     html.H1(['Drag and Drop or ',
-                                                             html.A('click here to select CSV-file.')])
+                                                             html.A('click here to select CSV-file.')], style={'font-size':'1vw'})
                                                 ], style={'margin': '1em'}),
                                                 style=styles.mainPageDownloadPanelStyle,
                                                 # Allow multiple files to be uploaded
@@ -139,9 +139,8 @@ def getMainContent(app, VERSION):
                                                 id='upload-data-single',
                                                 children=html.Div([
                                                     html.H1(['Drag and Drop or ',
-                                                             html.A('click here to select CSV-file.')])
-                                                ],
-                                                    style={'margin': '1em'}),
+                                                             html.A('click here to select CSV-file.')],style={'font-size':'1vw'})
+                                                ],style={'margin': '1em'}),
                                                 style=styles.mainPageDownloadPanelStyle,
                                                 # Allow multiple files to be uploaded
                                                 multiple=False
@@ -256,7 +255,7 @@ def getMainContent(app, VERSION):
                                                     editable=True,
                                                     row_deletable=True
                                                 ),
-                                                html.Button('Add Row', className='button1', id='add-row-button',
+                                                html.Button('Add SUS Data Entry', className='button1', id='add-row-button',style={'margin-bottom':'10px'},
                                                             n_clicks=0),
                                             ],
                                                 style=styles.main_content_style),
@@ -301,7 +300,7 @@ def getMainContent(app, VERSION):
                                             editable=True,
                                             row_deletable=True
                                         ),
-                                        html.Button('Add Row', className='button1', id='add-row-button-single',
+                                        html.Button('Add SUS Data Entry', className='button1', id='add-row-button-single',
                                                     n_clicks=0),
                                     ],
                                         style=styles.main_content_style),

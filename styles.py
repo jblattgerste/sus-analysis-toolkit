@@ -94,6 +94,7 @@ main_content_style = {'width': '70%',
                       'float': 'left'
                       }
 
+
 single_study_main_content_style = {
     'width': '70%'}
 
@@ -107,6 +108,7 @@ mainPageDownloadPanelStyle = {
                                         'borderStyle': 'dashed',
                                         'borderRadius': '5px',
                                         'display': 'flex',
+                                        'justify-content':'center',
                                         'textAlign': 'center',
                                         'background-color': '#FFFFFF',
                                         'box-shadow': '0 .5rem 1rem -.5rem rgba(0, 0, 0, .4)',
