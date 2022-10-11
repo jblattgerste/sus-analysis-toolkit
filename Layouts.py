@@ -253,7 +253,8 @@ def getMainContent(app, VERSION):
                                                 dash_table.DataTable(
                                                     id='editable-table',
                                                     editable=True,
-                                                    row_deletable=True
+                                                    row_deletable=True,
+                                                    style_table={'overflowX': 'auto'}
                                                 ),
                                                 html.Button('Add SUS Data Entry', className='button1', id='add-row-button',style={'margin-bottom':'10px'},
                                                             n_clicks=0),
@@ -298,7 +299,8 @@ def getMainContent(app, VERSION):
                                         dash_table.DataTable(
                                             id='editable-table-single',
                                             editable=True,
-                                            row_deletable=True
+                                            row_deletable=True,
+                                            style_table={'overflowX': 'auto'}
                                         ),
                                         html.Button('Add SUS Data Entry', className='button1', id='add-row-button-single',
                                                     n_clicks=0),

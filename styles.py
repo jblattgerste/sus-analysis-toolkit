@@ -89,7 +89,7 @@ graph_div_style_with_table_row = {'max-width': '100%',
                                   'display': 'flex',
                                   'justify-content': 'center'}
 
-main_content_style = {'width': '70%',
+main_content_style = {'max-width': '70%',
                       'display':'inline-block',
                       'float': 'left'
                       }
