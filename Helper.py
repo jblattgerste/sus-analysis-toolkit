@@ -59,7 +59,7 @@ def downloadChartContentSingleStudy(fig):
     fig.update_layout(
         paper_bgcolor='rgba(255,255,255,255)',
     )
-    img_bytes = fig.to_image(format="png", width=1080*1.5, height=740*1.5)
+    img_bytes = fig.to_image(format="png", width=1080 * 1.5, height=740 * 1.5)
 
     encoding = base64.b64encode(img_bytes).decode()
     img_b64 = "data:image/png;base64," + encoding
@@ -70,24 +70,30 @@ def downloadChartContentSingleStudy(fig):
     return downloadChart
 
 
-def downloadChartContent(fig, download_format):
+def downloadChartContent(fig, download_format, width=None, height=None, font_size=None):
     fig = copy.copy(fig)
     fig.update_layout(
         paper_bgcolor='rgba(255,255,255,255)',
     )
     if download_format == "defaultPlot":
-        img_bytes = fig.to_image(format="png", width=1600, height=750)
+        fig.update_layout(font=dict(
+            size=25
+        ))
+        img_bytes = fig.to_image(format="png", width=1600, height=750, scale=1.7)
     elif download_format == "widePlot":
         fig.update_layout(font=dict(
-            size=20
+            size=25
         ))
-        img_bytes = fig.to_image(format="png", width=2048, height=600)
+        img_bytes = fig.to_image(format="png", width=1800, height=600, scale=1.7)
     elif download_format == 'narrowPlot':
         fig.update_layout(font=dict(
-            size=50
+            size=30
         ))
-        img_bytes = fig.to_image(format="png", width=2050, height=1610)
-
+        img_bytes = fig.to_image(format="png", width=1025, height=805, scale=2.0)
+    elif download_format == 'customSize':
+        fig.update_layout(font=dict(size=font_size
+        ))
+        img_bytes = fig.to_image(format="png", width=width, height=height, scale=1.0)
     encoding = base64.b64encode(img_bytes).decode()
     img_b64 = "data:image/png;base64," + encoding
 
@@ -196,9 +202,10 @@ scaleInfoTexts = {
         html.A('Sauro et al. 2012', href='https://measuringu.com/nps-sus/', target="_blank"),
         '.']),
     'industryBenchmarkScale': html.P(children=[
-            'Non empirical scale derived from ', html.A('Lewis et al. 2018',
-               href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=BD7BLDgAAAAJ&citation_for_view=BD7BLDgAAAAJ:u5HHmVD_uO8C',
-               target="_blank"), ' where they observed scores above 80 to be an “industrial goal”.']),
+        'Non empirical scale derived from ', html.A('Lewis et al. 2018',
+                                                    href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=BD7BLDgAAAAJ&citation_for_view=BD7BLDgAAAAJ:u5HHmVD_uO8C',
+                                                    target="_blank"),
+        ' where they observed scores above 80 to be an “industrial goal”.']),
     'none': ""
 }
 
@@ -315,6 +322,7 @@ def getNPSValue(score):
     else:
         return "Promoter"
 
+
 def getIndustryBenchmarkValue(score):
     if score < 68:
         return "Below Average"
@@ -339,7 +347,8 @@ def tableDataIsInvalid(table_data):
     if table_data:
         for row in table_data:
             cells = list(row.values())
-            if all([cell != '' for cell in cells]) and all([cell is not None for cell in cells]) and all([0 < int(cell) < 6 for cell in cells[0:9]]):
+            if all([cell != '' for cell in cells]) and all([cell is not None for cell in cells]) and all(
+                    [0 < int(cell) < 6 for cell in cells[0:9]]):
                 continue
             else:
                 return True
@@ -353,7 +362,8 @@ def conditionalFormattingEditableDataTable(columnNames):
         style_data_conditional.extend([
             {
                 'if': {
-                    'filter_query': '{' + '{name}'.format(name=name) + '}< 1 ||' + '{' + '{name}'.format(name=name) + '} > 5',
+                    'filter_query': '{' + '{name}'.format(name=name) + '}< 1 ||' + '{' + '{name}'.format(
+                        name=name) + '} > 5',
                     'column_id': '{name}'.format(name=name)
                 },
                 'backgroundColor': 'tomato',
@@ -680,11 +690,11 @@ dataFrameNoScale = [
 ]
 
 editableTableTypeFormatting = {
-            'type': 'numeric',
-            'format': Format(
-                precision=0,
-                scheme=Scheme.fixed,
-            ),
+    'type': 'numeric',
+    'format': Format(
+        precision=0,
+        scheme=Scheme.fixed,
+    ),
 }
 
 dataFrameConditions = {'acceptabilityScale': dataframeAcceptabilityConditions,

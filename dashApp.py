@@ -43,7 +43,7 @@ def init_main_page(contents_multi, contents_single, nclicks_multi, nclicks_singl
     upload_id = ctx.triggered[0]['prop_id'].split('.')[0]
     # When the multi study upload is triggered
     if upload_id == 'upload-data-multi' or upload_id == 'start-tool-button':
-        return {'display':'block'}, dash.no_update, {'display':'none'}
+        return {'display': 'block'}, dash.no_update, {'display': 'none'}
     # Single study upload trigger
     elif upload_id == 'upload-data-single' or upload_id == 'start-tool-button-single':
         return dash.no_update, {'display': 'block'}, {'display': 'none'}
@@ -54,7 +54,7 @@ def init_main_page(contents_multi, contents_single, nclicks_multi, nclicks_singl
 
 
 @app.callback(
-    Output('main-plot-tab','children'),
+    Output('main-plot-tab', 'children'),
     Output('percentile-plot-tab', 'children'),
     Output('per-item-tab', 'children'),
     Output('conclusiveness-tab', 'children'),
@@ -71,7 +71,6 @@ def init_main_page(contents_multi, contents_single, nclicks_multi, nclicks_singl
     Input('start-tool-button', 'n_clicks'),
 )
 def update_multi_study(contents_multi, table_data, table_columns, add_row_button_nclicks, start_tool_button_nclicks):
-
     ctx = dash.callback_context
     input_trigger = ctx.triggered[0]['prop_id'].split('.')[0]
 
@@ -93,7 +92,10 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
                 column.update(Helper.editableTableTypeFormatting)
             style_data_conditional = (Helper.conditionalFormattingEditableDataTable(csvData.columns.values.tolist()))
             print("end upload multi data")
-            return ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData),  csvData.to_json(
+            return ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(
+                SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData,
+                                                                                systemList), ChartLayouts.CreateCocnlusivenessChartLayout(
+                SUSData), csvData.to_json(
                 date_format='iso', orient='split'), csvData.to_dict(
                 'records'), columns, dash.no_update, style_data_conditional, dash.no_update
         # If something is wrong with the upload file, print the reason on the page.
@@ -108,7 +110,7 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update,errorMessage
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, errorMessage
         except Exception:
             print(traceback.format_exc())
             errorMessage = [html.Div(children=[
@@ -120,7 +122,7 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
             ])]
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update ,errorMessage
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, errorMessage
     elif 'start-tool-button' == input_trigger:
         exampleData = Helper.createExampleDataFrame()
         # Create SUSDataset from example dataframe
@@ -130,13 +132,17 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
         columns = [{"name": i, "id": i} for i in exampleData.columns]
         for column in columns[0:10]:
             column.update(Helper.editableTableTypeFormatting)
-        return ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), exampleData.to_json(date_format='iso',
-                                                                                                orient='split'), exampleData.to_dict(
-            'records'), columns, dash.no_update, (Helper.conditionalFormattingEditableDataTable(exampleData.columns.values.tolist())), dash.no_update
+        return ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData,
+                                                                                                               systemList), ChartLayouts.CreatePerQuestionChartLayout(
+            SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), exampleData.to_json(
+            date_format='iso',
+            orient='split'), exampleData.to_dict(
+            'records'), columns, dash.no_update, (
+                   Helper.conditionalFormattingEditableDataTable(exampleData.columns.values.tolist())), dash.no_update
     elif input_trigger == 'editable-table':
         # Checks whether all entries in the table are viable. If not the error overlay of the data table is enabled.
         if Helper.tableDataIsInvalid(table_data):
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data,  dash.no_update, styles.tableErrorIconEnabledStyle, dash.no_update, dash.no_update
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data, dash.no_update, styles.tableErrorIconEnabledStyle, dash.no_update, dash.no_update
         # Collecting the table heads for each of the columns of the table.
         columns = []
         for item in table_columns:
@@ -146,19 +152,23 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
         #  parsing it to SUS Dataset, so all the graphs can be updated
         SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(table_df))
         systemList = SUSData.getAllStudNames()
-        return ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), table_df.to_json(date_format='iso', orient='split'), dash.no_update,dash.no_update, styles.tableErrorIconDefaultStyle, dash.no_update,dash.no_update
+        return ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(SUSData,
+                                                                                                               systemList), ChartLayouts.CreatePerQuestionChartLayout(
+            SUSData, systemList), ChartLayouts.CreateCocnlusivenessChartLayout(SUSData), table_df.to_json(
+            date_format='iso',
+            orient='split'), dash.no_update, dash.no_update, styles.tableErrorIconDefaultStyle, dash.no_update, dash.no_update
     # On Press of the add-row button
     elif input_trigger == 'add-row-button':
         if add_row_button_nclicks > 0:
             table_data.append({c['id']: '' for c in table_columns})
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update,  dash.no_update, table_data, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, table_data, dash.no_update, dash.no_update, dash.no_update, dash.no_update
     else:
         if contents_multi is None:
             raise PreventUpdate
 
 
 @app.callback(
-    Output('single-study-tab','children'),
+    Output('single-study-tab', 'children'),
     Output("sessionPlotData-single", 'data'),
     Output('editable-table-single', 'data'),
     Output('editable-table-single', 'columns'),
@@ -187,14 +197,15 @@ def update_single_study(contents_single, table_data, table_columns, add_row_butt
             style_data_conditional = (Helper.conditionalFormattingEditableDataTable(csvData.columns.values.tolist()))
             graph = [ChartLayouts.CreateSingleStudyChartLayout(SUSData)]
             return graph, csvData.to_json(date_format='iso',
-                                                                    orient='split'), csvData.drop('System', axis=1).to_dict(
+                                          orient='split'), csvData.drop('System', axis=1).to_dict(
                 'records'), columns, dash.no_update, style_data_conditional, dash.no_update
         except Helper.WrongUploadFileException as e:
             print(e)
             errorMessage = [html.Div(children=[
                 'There was an error processing this file: ' + str(e),
                 html.P(['Please refer to this ',
-                        html.A('template', href=app.get_asset_url('singleStudyData.csv'), download='singleStudyData.csv'),
+                        html.A('template', href=app.get_asset_url('singleStudyData.csv'),
+                               download='singleStudyData.csv'),
                         ' for help. ', ]),
 
                 html.P([html.A('Refresh', href='/'), ' the page to try again.'])
@@ -215,7 +226,7 @@ def update_single_study(contents_single, table_data, table_columns, add_row_butt
     elif input_trigger == 'editable-table-single':
         # Checks whether all entries in the table are viable. If not the error overlay of the data table is enabled.
         if Helper.tableDataIsInvalid(table_data):
-            return dash.no_update, dash.no_update, table_data,  dash.no_update, styles.tableErrorIconEnabledStyle, dash.no_update, dash.no_update
+            return dash.no_update, dash.no_update, table_data, dash.no_update, styles.tableErrorIconEnabledStyle, dash.no_update, dash.no_update
         # Collecting the table heads for each of the columns of the table.
         columns = []
         for item in table_columns:
@@ -227,7 +238,7 @@ def update_single_study(contents_single, table_data, table_columns, add_row_butt
         SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(table_df))
         graph = [ChartLayouts.CreateSingleStudyChartLayout(SUSData)]
         return graph, table_df.to_json(date_format='iso',
-                               orient='split'), dash.no_update, dash.no_update, styles.tableErrorIconDefaultStyle,  dash.no_update, dash.no_update
+                                       orient='split'), dash.no_update, dash.no_update, styles.tableErrorIconDefaultStyle, dash.no_update, dash.no_update
     elif input_trigger == 'start-tool-button-single':
         exampleData = Helper.createExampleDataFrame(singleStudy=True)
         # Create SUSDataset from example dataframe
@@ -240,16 +251,15 @@ def update_single_study(contents_single, table_data, table_columns, add_row_butt
         for column in columns[0:10]:
             column.update(Helper.editableTableTypeFormatting)
         return graph, exampleData.to_json(date_format='iso',
-                               orient='split'), exampleData.drop('System', axis=1).to_dict(
+                                          orient='split'), exampleData.drop('System', axis=1).to_dict(
             'records'), columns, dash.no_update, style_data_conditional, dash.no_update
     elif input_trigger == 'add-row-button-single':
         if add_row_button_nclicks > 0:
             table_data.append({c['id']: '' for c in table_columns})
-            return dash.no_update, dash.no_update,  table_data, dash.no_update,  dash.no_update,  dash.no_update,  dash.no_update
+            return dash.no_update, dash.no_update, table_data, dash.no_update, dash.no_update, dash.no_update, dash.no_update
     else:
         if contents_single is None:
             raise PreventUpdate
-
 
 
 @app.callback(
@@ -274,6 +284,7 @@ def update_SingleStudyMainplot(data_single, presetValue):
     Output('scaletype-info', 'children'),
     Output('plotstyle-info', 'children'),
     Output('mainplot-table-div', 'children'),
+    Output('custom-image-size-mainplot', 'style'),
     Input('systems-mainplot', 'value'),
     Input('sessionPlotData-multi', 'data'),
     Input('datapoints-mainplot', 'value'),
@@ -283,10 +294,13 @@ def update_SingleStudyMainplot(data_single, presetValue):
     Input('mean_sd-mainplot', 'value'),
     Input('axis-title-mainplot', 'value'),
     Input('download-type-mainplot', 'value'),
-    Input('sort-by-mainplot', 'value')
+    Input('sort-by-mainplot', 'value'),
+    Input('image-width-mainplot', 'value'),
+    Input('image-height-mainplot', 'value'),
+    Input('image-font-size-mainplot', 'value')
 )
 def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientationValue, plotStyle, mean_sdValue,
-                    axis_title, download_format, sort_value):
+                    axis_title, download_format, sort_value, image_width, image_height, image_font_size):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
@@ -302,8 +316,18 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
         datapointsLabelStyle = styles.defaultEditorLabel
         mean_sdValueLabelStyle = styles.defaultEditorLabel
 
-    return fig, Helper.downloadChartContent(fig, download_format), datapointsLabelStyle, mean_sdValueLabelStyle, \
-           Helper.scaleInfoTexts[scaleValue], Helper.plotStyleInfoTexts[plotStyle], mainplot_table
+    if download_format == 'customSize':
+        custom_image_label_style = {'display': 'block',
+                                    'font-weight': 'bold',
+                                    'padding': '10px 10px 10px 10px'}
+        downloadFig = Helper.downloadChartContent(fig, download_format, image_width, image_height, image_font_size)
+    else:
+        custom_image_label_style = {'display': 'none'}
+        downloadFig = Helper.downloadChartContent(fig, download_format)
+
+    return fig, downloadFig, datapointsLabelStyle, mean_sdValueLabelStyle, \
+           Helper.scaleInfoTexts[scaleValue], Helper.plotStyleInfoTexts[
+               plotStyle], mainplot_table, custom_image_label_style
 
 
 @app.callback(
@@ -315,6 +339,7 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
     Output('per-question-context', 'style'),
     Output('systems-label-radio', 'style'),
     Output('per-item-table-div', 'children'),
+    Output('custom-image-size-perquestion', 'style'),
     Input('systems-per-question-chart', 'value'),
     Input('questions-per-question-chart', 'value'),
     Input('sessionPlotData-multi', 'data'),
@@ -323,9 +348,12 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
     Input('download-type-perquestion', 'value'),
     Input('sort-by-perquestion', 'value'),
     Input('systems-per-question-chart-radio', 'value'),
+    Input('image-width-perquestion', 'value'),
+    Input('image-height-perquestion', 'value'),
+    Input('image-font-size-perquestion', 'value')
 )
 def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationValue, plotStyle, download_format,
-                            sort_value, systemToPlotRadio):
+                            sort_value, systemToPlotRadio, image_width, image_height, image_font_size):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
@@ -370,47 +398,77 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
                                        'padding': '10px 10px 10px 10px'}
         fig = Charts.CreateLikertChart(SUSData.getIndividualStudyData(systemToPlotRadio), questionsTicked)
 
-    downloadChart = Helper.downloadChartContent(fig, download_format)
-    return fig, downloadChart, orientationLabelStyle, systemsLabelStyle, sortByLabelStyle, perQuestionContextStyle, systemsLabelRadioStyle, perItemTable
+    if download_format == 'customSize':
+        custom_image_label_style = {'display': 'block',
+                                    'font-weight': 'bold',
+                                    'padding': '10px 10px 10px 10px'}
+        downloadFig = Helper.downloadChartContent(fig, download_format, image_width, image_height, image_font_size)
+    else:
+        custom_image_label_style = {'display': 'none'}
+        downloadFig = Helper.downloadChartContent(fig, download_format)
+    return fig, downloadFig, orientationLabelStyle, systemsLabelStyle, sortByLabelStyle, perQuestionContextStyle, systemsLabelRadioStyle, perItemTable, custom_image_label_style
 
 
 @app.callback(
     Output('percentilePlot', 'figure'),
     Output('download-percentilePlot', 'children'),
     Output('percentile-plot-table-div', 'children'),
+    Output('custom-image-size-percentile', 'style'),
     Input('systems-percentilePlot', 'value'),
     Input('sessionPlotData-multi', 'data'),
     Input('download-type-percentile', 'value'),
-    Input('sort-by-percentile', 'value')
+    Input('sort-by-percentile', 'value'),
+    Input('image-width-percentile', 'value'),
+    Input('image-height-percentile', 'value'),
+    Input('image-font-size-percentile', 'value')
 )
-def update_PercentilePlot(systems, data, download_format, sort_value):
+def update_PercentilePlot(systems, data, download_format, sort_value, image_width, image_height, image_font_size):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
     table = ChartLayouts.createPercentilePlotTable(Helper.filterSUSStuds(SUSData, systems))
     fig = Charts.CreatePercentilePlot(SUSData, systems)
 
-    downloadPercentilePlot = Helper.downloadChartContent(fig, download_format)
-    return fig, downloadPercentilePlot, table
+    if download_format == 'customSize':
+        custom_image_label_style = {'display': 'block',
+                                    'font-weight': 'bold',
+                                    'padding': '10px 10px 10px 10px'}
+        downloadFig = Helper.downloadChartContent(fig, download_format, image_width, image_height, image_font_size)
+    else:
+        custom_image_label_style = {'display': 'none'}
+        downloadFig = Helper.downloadChartContent(fig, download_format)
+
+    return fig, downloadFig, table, custom_image_label_style
 
 
 @app.callback(
     Output('conclusivenessPlot', 'figure'),
     Output('download-conclusiveness', 'children'),
     Output('conclusiveness-plot-table-div', 'children'),
+    Output('custom-image-size-conclusive', 'style'),
     Input('systems-conclusivenessPlot', 'value'),
     Input('sessionPlotData-multi', 'data'),
-    Input('download-type-conclusiveness', 'value')
+    Input('download-type-conclusiveness', 'value'),
+    Input('image-width-conclusive', 'value'),
+    Input('image-height-conclusive', 'value'),
+    Input('image-font-size-conclusive', 'value')
 )
-def update_Conclusiveness(systems, data, download_format):
+def update_Conclusiveness(systems, data, download_format,image_width, image_height, image_font_size):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     filteredSUSData = Helper.filterSUSStuds(SUSData, systems)
     fig = Charts.CreateConclusivenessChart(filteredSUSData)
     table = ChartLayouts.CreateConclusivenessPlotTable(filteredSUSData, systems)
 
-    downloadConclusivenessChart = Helper.downloadChartContent(fig, download_format)
-    return fig, downloadConclusivenessChart, table
+    if download_format == 'customSize':
+        custom_image_label_style = {'display': 'block',
+                                    'font-weight': 'bold',
+                                    'padding': '10px 10px 10px 10px'}
+        downloadFig = Helper.downloadChartContent(fig, download_format, image_width, image_height, image_font_size)
+    else:
+        custom_image_label_style = {'display': 'none'}
+        downloadFig = Helper.downloadChartContent(fig, download_format)
+    return fig, downloadFig, table, custom_image_label_style
 
 
 @app.callback(
@@ -436,7 +494,6 @@ def update_mainplot_table(scaleValue):
 )
 def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, per_question, percentile,
                         conclusiveness, data):
-
     # This is needed because prevent_initial_call=True doesnt't work, if the input component is generated by another callback
     if n_clicks is None and n_clicks_2 is None and n_clicks_3 is None and n_clicks_4 is None:
         return dash.no_update
@@ -596,11 +653,11 @@ def download_csv_data_single(nclicks, data, table_columns):
         columns.append(item.get("name"))
     # Creating the dataframe from the table entries
     table_df = pd.DataFrame(data=data, columns=columns)
-    return dcc.send_data_frame(table_df.to_csv, "studyData.csv", index=False,sep=';')
+    return dcc.send_data_frame(table_df.to_csv, "studyData.csv", index=False, sep=';')
 
 
 if __name__ == '__main__':
     if debugMode:
-        app.run_server(port=80, host='0.0.0.0', debug=True)
+        app.run_server(host='0.0.0.0', debug=True)
     else:
         app.run_server(port=80, host='0.0.0.0')

@@ -11,7 +11,8 @@ import Layouts
 
 download_layouts = [{'label': 'Default plot format', 'value': 'defaultPlot'},
                     {'label': 'Narrow plot format', 'value': 'narrowPlot'},
-                    {'label': 'Wide plot format', 'value': 'widePlot'}
+                    {'label': 'Wide plot format', 'value': 'widePlot'},
+                    {'label': 'Custom format', 'value': 'customSize'}
                     ]
 
 sort_values = [{'label': 'Alphabetical order', 'value': 'alphabetically'},
@@ -96,6 +97,39 @@ def CreatePercentilePlotLayout(SUSData, systemList):
                                  ),
                 ],
                     style={'display': 'block',
+                           'font-weight': 'bold',
+                           'padding': '10px 10px 10px 10px'
+                           },
+                ),
+                html.Label([
+                    'Download Image Width:\n',
+                    dcc.Input(id='image-width-percentile',
+                              type="number",
+                              debounce=True,
+                              style={'font-weight': 'normal',
+                                     'margin-top': '10px',
+                                     }
+                              ),
+                    'Download Image Length:\n',
+                    dcc.Input(id='image-height-percentile',
+                              type="number",
+                              debounce=True,
+                              style={'font-weight': 'normal',
+                                     'margin-top': '10px',
+                                     }
+                              ),
+                    'Download Image Font Size:\n',
+                    dcc.Input(id='image-font-size-percentile',
+                              type="number",
+                              value=25,
+                              debounce=True,
+                              style={'font-weight': 'normal',
+                                     'margin-top': '10px',
+                                     }
+                              )
+                ],
+                    id='custom-image-size-percentile',
+                    style={'display': 'None',
                            'font-weight': 'bold',
                            'padding': '10px 10px 10px 10px'
                            },
@@ -326,6 +360,39 @@ def CreateMainPlotLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
+                html.Label([
+                    'Download Image Width:\n',
+                    dcc.Input(id='image-width-mainplot',
+                                         type="number",
+                                         debounce=True,
+                                         style={'font-weight': 'normal',
+                                                'margin-top': '10px',
+                                                }
+                                         ),
+                    'Download Image Length:\n',
+                    dcc.Input(id='image-height-mainplot',
+                                          type="number",
+                                          debounce=True,
+                                          style={'font-weight': 'normal',
+                                                 'margin-top': '10px',
+                                                 }
+                                          ),
+                    'Download Image Font Size:\n',
+                    dcc.Input(id='image-font-size-mainplot',
+                              type="number",
+                              value=25,
+                              debounce=True,
+                              style={'font-weight': 'normal',
+                                     'margin-top': '10px',
+                                     }
+                              )
+                ],
+                    id='custom-image-size-mainplot',
+                    style={'display': 'None',
+                           'font-weight': 'bold',
+                           'padding': '10px 10px 10px 10px'
+                           },
+                ),
                 html.Div(id="download-mainplot",
                          children=[],
                          style=styles.download_div_style),
@@ -540,6 +607,39 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
+                html.Label([
+                    'Download Image Width:\n',
+                    dcc.Input(id='image-width-perquestion',
+                              type="number",
+                              debounce=True,
+                              style={'font-weight': 'normal',
+                                     'margin-top': '10px',
+                                     }
+                              ),
+                    'Download Image Length:\n',
+                    dcc.Input(id='image-height-perquestion',
+                              type="number",
+                              debounce=True,
+                              style={'font-weight': 'normal',
+                                     'margin-top': '10px',
+                                     }
+                              ),
+                    'Download Image Font Size:\n',
+                    dcc.Input(id='image-font-size-perquestion',
+                              type="number",
+                              value=25,
+                              debounce=True,
+                              style={'font-weight': 'normal',
+                                     'margin-top': '10px',
+                                     }
+                              )
+                ],
+                    id='custom-image-size-perquestion',
+                    style={'display': 'None',
+                           'font-weight': 'bold',
+                           'padding': '10px 10px 10px 10px'
+                           },
+                ),
 
                 html.Div(id="download-per-question-chart",
                          children=[],
@@ -623,6 +723,39 @@ def CreateCocnlusivenessChartLayout(SUSData):
                                  ),
                 ],
                     style={'display': 'block',
+                           'font-weight': 'bold',
+                           'padding': '10px 10px 10px 10px'
+                           },
+                ),
+                html.Label([
+                    'Download Image Width:\n',
+                    dcc.Input(id='image-width-conclusive',
+                              type="number",
+                              debounce=True,
+                              style={'font-weight': 'normal',
+                                     'margin-top': '10px',
+                                     }
+                              ),
+                    'Download Image Length:\n',
+                    dcc.Input(id='image-height-conclusive',
+                              type="number",
+                              debounce=True,
+                              style={'font-weight': 'normal',
+                                     'margin-top': '10px',
+                                     }
+                              ),
+                    'Download Image Font Size:\n',
+                    dcc.Input(id='image-font-size-conclusive',
+                              type="number",
+                              value=25,
+                              debounce=True,
+                              style={'font-weight': 'normal',
+                                     'margin-top': '10px',
+                                     }
+                              )
+                ],
+                    id='custom-image-size-conclusive',
+                    style={'display': 'None',
                            'font-weight': 'bold',
                            'padding': '10px 10px 10px 10px'
                            },
