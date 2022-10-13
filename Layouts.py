@@ -33,7 +33,7 @@ per_question_context = html.Div([
 
 editable_table_editor_panel = html.Div([
     html.Label(
-        ['This table shows the data that is currently plotted. You can change entries or add additional data points.'
+        ['This table shows the data that is currently plotted. You can add, change or delete data points.'
          ],
         style={'display': 'block',
                'padding': '10px 10px 0px 10px'
