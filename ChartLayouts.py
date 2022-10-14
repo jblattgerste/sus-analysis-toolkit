@@ -9,9 +9,9 @@ import styles
 import Helper
 import Layouts
 
-download_layouts = [{'label': 'Default plot format', 'value': 'defaultPlot'},
-                    {'label': 'Narrow plot format', 'value': 'narrowPlot'},
-                    {'label': 'Wide plot format', 'value': 'widePlot'},
+download_layouts = [{'label': 'Default plot format' + ' (Width: ' + str(Helper.defaultPlotSettings.width) + ' Height: ' + str(Helper.defaultPlotSettings.height) + ' Font Size: ' + str(Helper.defaultPlotSettings.fontSize) + ')', 'value': 'defaultPlot'},
+                    {'label': 'Narrow plot format' + ' (Width: ' + str(Helper.narrowPlotSettings.width) + ' Height: ' + str(Helper.narrowPlotSettings.height) + ' Font Size: ' + str(Helper.narrowPlotSettings.fontSize) + ')', 'value': 'narrowPlot'},
+                    {'label': 'Wide plot format' + ' (Width: ' + str(Helper.widePlotSettings.width) + ' Height: ' + str(Helper.widePlotSettings.height) + ' Font Size: ' + str(Helper.widePlotSettings.fontSize) + ')', 'value': 'widePlot'},
                     {'label': 'Custom format', 'value': 'customSize'}
                     ]
 
@@ -86,57 +86,15 @@ def CreatePercentilePlotLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
-                html.Label([
-                    "Download ",
-                    dcc.Dropdown(id='download-type-percentile',
-                                 options=download_layouts,
-                                 value='defaultPlot',
-                                 style={'font-weight': 'normal',
-                                        'margin-top': '10px',
-                                        }
-                                 ),
+                Helper.imageDownloadLabelFactory('percentile'),
+                dcc.Download(id='download-image-percentile'),
+                dcc.Download(id='download-csv-percentile'),
+                html.Div([
+
+                    html.Button('Download this chart', id='image-percentile-button', className='button1'),
                 ],
-                    style={'display': 'block',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
+                    style=styles.download_div_style
                 ),
-                html.Label([
-                    'Download Image Width:\n',
-                    dcc.Input(id='image-width-percentile',
-                              type="number",
-                              debounce=True,
-                              style={'font-weight': 'normal',
-                                     'margin-top': '10px',
-                                     }
-                              ),
-                    'Download Image Length:\n',
-                    dcc.Input(id='image-height-percentile',
-                              type="number",
-                              debounce=True,
-                              style={'font-weight': 'normal',
-                                     'margin-top': '10px',
-                                     }
-                              ),
-                    'Download Image Font Size:\n',
-                    dcc.Input(id='image-font-size-percentile',
-                              type="number",
-                              value=25,
-                              debounce=True,
-                              style={'font-weight': 'normal',
-                                     'margin-top': '10px',
-                                     }
-                              )
-                ],
-                    id='custom-image-size-percentile',
-                    style={'display': 'None',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
-                ),
-                html.Div(id="download-percentilePlot",
-                         children=[],
-                         style=styles.download_div_style),
                 html.Div([html.Button('Download this data table', id='csv-percentile-button', className='button1'),
                           dcc.Download(id='download-csv-percentile')],
                          style=styles.download_div_style),
@@ -345,61 +303,17 @@ def CreateMainPlotLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
-                html.Label([
-                    "Download ",
-                    dcc.Dropdown(id='download-type-mainplot',
-                                 options=download_layouts,
-                                 value='defaultPlot',
-                                 style={'font-weight': 'normal',
-                                        'margin-top': '10px',
-                                        }
-                                 ),
-                ],
-                    style={'display': 'block',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
-                ),
-                html.Label([
-                    'Download Image Width:',
-                    dcc.Input(id='image-width-mainplot',
-                                         type="number",
-                                         debounce=True,
-                                         style={'font-weight': 'normal',
-                                                'margin-top': '10px',
-                                                }
-                                         ), html.Br(),
-                    'Download Image Length:',
-                    dcc.Input(id='image-height-mainplot',
-                                          type="number",
-                                          debounce=True,
-                                          style={'font-weight': 'normal',
-                                                 'margin-top': '10px',
-                                                 }
-                                          ), html.Br(),
-                    'Download Image Font Size:',
-                    dcc.Input(id='image-font-size-mainplot',
-                              type="number",
-                              value=25,
-                              debounce=True,
-                              style={'font-weight': 'normal',
-                                     'margin-top': '10px',
-                                     }
-                              )
-                ],
-                    id='custom-image-size-mainplot',
-                    style={'display': 'None',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
-                ),
-                html.Div(id="download-mainplot",
-                         children=[],
-                         style=styles.download_div_style),
+                Helper.imageDownloadLabelFactory('mainplot'),
+                dcc.Download(id='download-image-mainplot'),
                 dcc.Download(id='download-csv-mainplot'),
                 html.Div([
-                    html.Button('Download this data table', id='csv-mainplot-button', className='button1'),
+
+                    html.Button('Download this chart', id='image-mainplot-button', className='button1'),
                 ],
+                    style=styles.download_div_style
+                ),
+                html.Div([
+                    html.Button('Download this data table', id='csv-mainplot-button', className='button1'),],
                     style=styles.download_div_style
                 ),
                 html.Div([
@@ -592,58 +506,15 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
-                html.Label([
-                    "Download ",
-                    dcc.Dropdown(id='download-type-perquestion',
-                                 options=download_layouts,
-                                 value='defaultPlot',
-                                 style={'font-weight': 'normal',
-                                        'margin-top': '10px',
-                                        }
-                                 ),
-                ],
-                    style={'display': 'block',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
-                ),
-                html.Label([
-                    'Download Image Width:\n',
-                    dcc.Input(id='image-width-perquestion',
-                              type="number",
-                              debounce=True,
-                              style={'font-weight': 'normal',
-                                     'margin-top': '10px',
-                                     }
-                              ), "\n",
-                    'Download Image Length:\n',
-                    dcc.Input(id='image-height-perquestion',
-                              type="number",
-                              debounce=True,
-                              style={'font-weight': 'normal',
-                                     'margin-top': '10px',
-                                     }
-                              ), "\n",
-                    'Download Image Font Size":\n',
-                    dcc.Input(id='image-font-size-perquestion',
-                              type="number",
-                              value=25,
-                              debounce=True,
-                              style={'font-weight': 'normal',
-                                     'margin-top': '10px',
-                                     }
-                              )
-                ],
-                    id='custom-image-size-perquestion',
-                    style={'display': 'None',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
-                ),
+                Helper.imageDownloadLabelFactory('perquestion'),
+                dcc.Download(id='download-image-perquestion'),
+                dcc.Download(id='download-csv-perquestion'),
+                html.Div([
 
-                html.Div(id="download-per-question-chart",
-                         children=[],
-                         style=styles.download_div_style, ),
+                    html.Button('Download this chart', id='image-perquestion-button', className='button1'),
+                ],
+                    style=styles.download_div_style
+                ),
                 dcc.Download(id='download-csv-per-question'),
                 html.Div([
                     html.Button('Download this data table', id='csv-per-question-button', className='button1'),
@@ -713,56 +584,15 @@ def CreateCocnlusivenessChartLayout(SUSData):
                            'padding': '10px 10px 10px 10px',
                            },
                 ),
-                html.Label([
-                    "Download ",
-                    dcc.Dropdown(id='download-type-conclusiveness',
-                                 options=download_layouts,
-                                 value='defaultPlot',
-                                 style={'font-weight': 'normal',
-                                        }
-                                 ),
+                Helper.imageDownloadLabelFactory('conclusiveness'),
+                dcc.Download(id='download-image-conclusiveness'),
+                dcc.Download(id='download-csv-conclusiveness'),
+                html.Div([
+
+                    html.Button('Download this chart', id='image-conclusiveness-button', className='button1'),
                 ],
-                    style={'display': 'block',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
+                    style=styles.download_div_style
                 ),
-                html.Label([
-                    'Download Image Width:\n',
-                    dcc.Input(id='image-width-conclusive',
-                              type="number",
-                              debounce=True,
-                              style={'font-weight': 'normal',
-                                     'margin-top': '10px',
-                                     }
-                              ),
-                    'Download Image Length:\n',
-                    dcc.Input(id='image-height-conclusive',
-                              type="number",
-                              debounce=True,
-                              style={'font-weight': 'normal',
-                                     'margin-top': '10px',
-                                     }
-                              ),
-                    'Download Image Font Size:\n',
-                    dcc.Input(id='image-font-size-conclusive',
-                              type="number",
-                              value=25,
-                              debounce=True,
-                              style={'font-weight': 'normal',
-                                     'margin-top': '10px',
-                                     }
-                              )
-                ],
-                    id='custom-image-size-conclusive',
-                    style={'display': 'None',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
-                ),
-                html.Div(id="download-conclusiveness",
-                         children=[],
-                         style=styles.download_div_style),
 
                 html.Div([
                     html.Button('Download this data table', id='csv-conclusiveness-button', className='button1'),

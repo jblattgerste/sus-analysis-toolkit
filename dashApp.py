@@ -1,4 +1,5 @@
 import base64
+import copy
 import traceback
 import dash
 from dash import dcc
@@ -278,7 +279,6 @@ def update_SingleStudyMainplot(data_single, presetValue):
 @app.callback(
     Output('mainplot', 'figure'),
     # Output('mainplot', 'style'),
-    Output('download-mainplot', 'children'),
     Output('datapoints-label', 'style'),
     Output('mean_sdValue-label', 'style'),
     Output('scaletype-info', 'children'),
@@ -295,12 +295,9 @@ def update_SingleStudyMainplot(data_single, presetValue):
     Input('axis-title-mainplot', 'value'),
     Input('download-type-mainplot', 'value'),
     Input('sort-by-mainplot', 'value'),
-    Input('image-width-mainplot', 'value'),
-    Input('image-height-mainplot', 'value'),
-    Input('image-font-size-mainplot', 'value')
 )
 def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientationValue, plotStyle, mean_sdValue,
-                    axis_title, download_format, sort_value, image_width, image_height, image_font_size):
+                    axis_title, download_format, sort_value):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
@@ -320,19 +317,16 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
         custom_image_label_style = {'display': 'block',
                                     'font-weight': 'bold',
                                     'padding': '10px 10px 10px 10px'}
-        downloadFig = Helper.downloadChartContent(fig, download_format, image_width, image_height, image_font_size)
     else:
         custom_image_label_style = {'display': 'none'}
-        downloadFig = Helper.downloadChartContent(fig, download_format)
 
-    return fig, downloadFig, datapointsLabelStyle, mean_sdValueLabelStyle, \
+    return fig, datapointsLabelStyle, mean_sdValueLabelStyle, \
            Helper.scaleInfoTexts[scaleValue], Helper.plotStyleInfoTexts[
                plotStyle], mainplot_table, custom_image_label_style
 
 
 @app.callback(
     Output('per-question-chart', 'figure'),
-    Output('download-per-question-chart', 'children'),
     Output('orientation-label', 'style'),
     Output('systems-label', 'style'),
     Output('sort-by-label', 'style'),
@@ -348,12 +342,9 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
     Input('download-type-perquestion', 'value'),
     Input('sort-by-perquestion', 'value'),
     Input('systems-per-question-chart-radio', 'value'),
-    Input('image-width-perquestion', 'value'),
-    Input('image-height-perquestion', 'value'),
-    Input('image-font-size-perquestion', 'value')
 )
 def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationValue, plotStyle, download_format,
-                            sort_value, systemToPlotRadio, image_width, image_height, image_font_size):
+                            sort_value, systemToPlotRadio):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
@@ -402,27 +393,21 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
         custom_image_label_style = {'display': 'block',
                                     'font-weight': 'bold',
                                     'padding': '10px 10px 10px 10px'}
-        downloadFig = Helper.downloadChartContent(fig, download_format, image_width, image_height, image_font_size)
     else:
         custom_image_label_style = {'display': 'none'}
-        downloadFig = Helper.downloadChartContent(fig, download_format)
-    return fig, downloadFig, orientationLabelStyle, systemsLabelStyle, sortByLabelStyle, perQuestionContextStyle, systemsLabelRadioStyle, perItemTable, custom_image_label_style
+    return fig, orientationLabelStyle, systemsLabelStyle, sortByLabelStyle, perQuestionContextStyle, systemsLabelRadioStyle, perItemTable, custom_image_label_style
 
 
 @app.callback(
     Output('percentilePlot', 'figure'),
-    Output('download-percentilePlot', 'children'),
     Output('percentile-plot-table-div', 'children'),
     Output('custom-image-size-percentile', 'style'),
     Input('systems-percentilePlot', 'value'),
     Input('sessionPlotData-multi', 'data'),
     Input('download-type-percentile', 'value'),
     Input('sort-by-percentile', 'value'),
-    Input('image-width-percentile', 'value'),
-    Input('image-height-percentile', 'value'),
-    Input('image-font-size-percentile', 'value')
 )
-def update_PercentilePlot(systems, data, download_format, sort_value, image_width, image_height, image_font_size):
+def update_PercentilePlot(systems, data, download_format, sort_value):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
@@ -433,27 +418,21 @@ def update_PercentilePlot(systems, data, download_format, sort_value, image_widt
         custom_image_label_style = {'display': 'block',
                                     'font-weight': 'bold',
                                     'padding': '10px 10px 10px 10px'}
-        downloadFig = Helper.downloadChartContent(fig, download_format, image_width, image_height, image_font_size)
     else:
         custom_image_label_style = {'display': 'none'}
-        downloadFig = Helper.downloadChartContent(fig, download_format)
 
-    return fig, downloadFig, table, custom_image_label_style
+    return fig, table, custom_image_label_style
 
 
 @app.callback(
     Output('conclusivenessPlot', 'figure'),
-    Output('download-conclusiveness', 'children'),
     Output('conclusiveness-plot-table-div', 'children'),
-    Output('custom-image-size-conclusive', 'style'),
+    Output('custom-image-size-conclusiveness', 'style'),
     Input('systems-conclusivenessPlot', 'value'),
     Input('sessionPlotData-multi', 'data'),
     Input('download-type-conclusiveness', 'value'),
-    Input('image-width-conclusive', 'value'),
-    Input('image-height-conclusive', 'value'),
-    Input('image-font-size-conclusive', 'value')
 )
-def update_Conclusiveness(systems, data, download_format,image_width, image_height, image_font_size):
+def update_Conclusiveness(systems, data, download_format):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     filteredSUSData = Helper.filterSUSStuds(SUSData, systems)
@@ -464,11 +443,9 @@ def update_Conclusiveness(systems, data, download_format,image_width, image_heig
         custom_image_label_style = {'display': 'block',
                                     'font-weight': 'bold',
                                     'padding': '10px 10px 10px 10px'}
-        downloadFig = Helper.downloadChartContent(fig, download_format, image_width, image_height, image_font_size)
     else:
         custom_image_label_style = {'display': 'none'}
-        downloadFig = Helper.downloadChartContent(fig, download_format)
-    return fig, downloadFig, table, custom_image_label_style
+    return fig, table, custom_image_label_style
 
 
 @app.callback(
@@ -519,32 +496,16 @@ def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, 
 
     # Mainplot
     mainplot_fig = go.Figure(mainplot)
-    mainplot_fig.update_layout(
-        paper_bgcolor='rgba(255,255,255,255)',
-    )
-    img_mainplot = mainplot_fig.to_image(format="png", width=1600,
-                                         height=750)
+    img_mainplot = Helper.downloadChartContent('defaultPlot', mainplot_fig)
     # Per Question
     per_question_fig = go.Figure(per_question)
-    per_question_fig.update_layout(
-        paper_bgcolor='rgba(255,255,255,255)',
-    )
-    img_per_question = per_question_fig.to_image(format="png", width=1600,
-                                                 height=750)
+    img_per_question = Helper.downloadChartContent('defaultPlot', per_question_fig)
     # Percentile
     percentile_fig = go.Figure(percentile)
-    percentile_fig.update_layout(
-        paper_bgcolor='rgba(255,255,255,255)',
-    )
-    img_percentile = percentile_fig.to_image(format="png", width=1600,
-                                             height=750)
+    img_percentile = img_per_question = Helper.downloadChartContent('defaultPlot', percentile_fig)
     # Conclusiveness
     conclusiveness_fig = go.Figure(conclusiveness)
-    conclusiveness_fig.update_layout(
-        paper_bgcolor='rgba(255,255,255,255)',
-    )
-    img_conclusiveness = conclusiveness_fig.to_image(format="png", width=1600,
-                                                     height=750)
+    img_conclusiveness = cimg_percentile = img_per_question = Helper.downloadChartContent('defaultPlot', conclusiveness_fig)
 
     # Write images in zip file
     zip_tf = tempfile.NamedTemporaryFile(delete=False, suffix='.zip')
@@ -567,6 +528,70 @@ def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, 
     zip_tf.seek(0)
 
     return dcc.send_file(zip_tf.name, filename="my_plots.zip")
+
+
+@app.callback(
+    Output('download-image-conclusiveness', "data"),
+    Input('image-conclusiveness-button', 'n_clicks'),
+    State('download-type-conclusiveness', 'value'),
+    State('conclusivenessPlot', 'figure'),
+    State('image-width-conclusiveness', 'value'),
+    State('image-height-conclusiveness', 'value'),
+    State('image-font-size-conclusiveness', 'value'),
+    prevent_initial_call=True
+)
+def download_mainplot_image(n_clicks, downloadType, fig, customWidth, customHeight, customFontSize):
+    fig = go.Figure(fig)
+    img_bytes = Helper.downloadChartContent(downloadType, fig, customWidth, customHeight, customFontSize)
+    return dcc.send_bytes(img_bytes, "plot.png")
+
+
+@app.callback(
+    Output('download-image-percentile', "data"),
+    Input('image-percentile-button', 'n_clicks'),
+    State('download-type-percentile', 'value'),
+    State('percentilePlot', 'figure'),
+    State('image-width-percentile', 'value'),
+    State('image-height-percentile', 'value'),
+    State('image-font-size-percentile', 'value'),
+    prevent_initial_call=True
+)
+def download_mainplot_image(n_clicks, downloadType, fig, customWidth, customHeight, customFontSize):
+    fig = go.Figure(fig)
+    img_bytes = Helper.downloadChartContent(downloadType, fig, customWidth, customHeight, customFontSize)
+    return dcc.send_bytes(img_bytes, "plot.png")
+
+
+@app.callback(
+    Output('download-image-mainplot', "data"),
+    Input('image-mainplot-button', 'n_clicks'),
+    State('download-type-mainplot', 'value'),
+    State('mainplot', 'figure'),
+    State('image-width-mainplot', 'value'),
+    State('image-height-mainplot', 'value'),
+    State('image-font-size-mainplot', 'value'),
+    prevent_initial_call=True
+)
+def download_mainplot_image(n_clicks, downloadType, fig, customWidth, customHeight, customFontSize):
+    fig = go.Figure(fig)
+    img_bytes = Helper.downloadChartContent(downloadType, fig, customWidth, customHeight, customFontSize)
+    return dcc.send_bytes(img_bytes, "plot.png")
+
+
+@app.callback(
+    Output('download-image-perquestion', "data"),
+    Input('image-perquestion-button', 'n_clicks'),
+    State('download-type-perquestion', 'value'),
+    State('per-question-chart', 'figure'),
+    State('image-width-perquestion', 'value'),
+    State('image-height-perquestion', 'value'),
+    State('image-font-size-perquestion', 'value'),
+    prevent_initial_call=True
+)
+def download_perquestion_image(n_clicks, downloadType, fig, customWidth, customHeight, customFontSize):
+    fig = go.Figure(fig)
+    img_bytes = Helper.downloadChartContent(downloadType, fig, customWidth, customHeight, customFontSize)
+    return dcc.send_bytes(img_bytes, "plot.png")
 
 
 @app.callback(

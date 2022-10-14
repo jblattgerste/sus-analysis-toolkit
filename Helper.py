@@ -4,10 +4,11 @@ import random
 from dataclasses import dataclass
 
 import pandas as pd
-from dash import html
+from dash import html, dcc
 import io
 from dash.dash_table.Format import Format, Scheme
 
+import ChartLayouts
 from Result import Result
 from SUSDataset import SUSDataset
 from SUSStud import SUSStud
@@ -71,38 +72,25 @@ def downloadChartContentSingleStudy(fig):
     return downloadChart
 
 
-def downloadChartContent(fig, download_format, width=None, height=None, font_size=None):
-    fig = copy.copy(fig)
-    fig.update_layout(
-        paper_bgcolor='rgba(255,255,255,255)',
-    )
-    if download_format == "defaultPlot":
-        image_download_settings = ImageDownloadSettings(1600, 750, 25)
-        fig.update_layout(font=dict(
-            size=image_download_settings.fontSize
-        ))
-        img_bytes = fig.to_image(format="png", width=image_download_settings.width, height=image_download_settings.height, scale=1.7)
-    elif download_format == "widePlot":
-        fig.update_layout(font=dict(
-            size=25
-        ))
-        img_bytes = fig.to_image(format="png", width=1800, height=600, scale=1.7)
-    elif download_format == 'narrowPlot':
-        fig.update_layout(font=dict(
-            size=30
-        ))
-        img_bytes = fig.to_image(format="png", width=1025, height=805, scale=2.0)
-    elif download_format == 'customSize':
-        fig.update_layout(font=dict(size=font_size
-                                    ))
-        img_bytes = fig.to_image(format="png", width=width, height=height, scale=1.0)
-    encoding = base64.b64encode(img_bytes).decode()
-    img_b64 = "data:image/png;base64," + encoding
+def downloadChartContent(downloadType, fig, customWidth=None, customHeight=None, customFontSize=None):
 
-    downloadChart = [
-        html.A(html.Button('Download this chart', className='button1'), href=img_b64, download='plot')
-    ]
-    return downloadChart
+    if downloadType == 'customSize':
+        fig.update_layout(
+            paper_bgcolor='rgba(255,255,255,255)',
+            font=dict(
+                size=customFontSize)
+        )
+        img_bytes = fig.to_image(format="png", width=customWidth,
+                                 height=customHeight)
+    else:
+        fig.update_layout(
+            paper_bgcolor='rgba(255,255,255,255)',
+            font=dict(
+                size=plotSettings[downloadType].fontSize)
+        )
+        img_bytes = fig.to_image(format="png", width=plotSettings[downloadType].width,
+                                 height=plotSettings[downloadType].height)
+    return img_bytes
 
 
 def downloadChartContent_orientation(fig, download_format, orientation):
@@ -730,3 +718,66 @@ class ImageDownloadSettings:
     width: float
     height: float
     fontSize: float
+
+
+defaultPlotSettings = ImageDownloadSettings(1200, 487, 15)
+widePlotSettings = ImageDownloadSettings(1530, 510, 15)
+narrowPlotSettings = ImageDownloadSettings(1025, 805, 15)
+
+plotSettings = {'defaultPlot': defaultPlotSettings,
+                'narrowPlot': narrowPlotSettings,
+                'widePlot': widePlotSettings}
+
+
+def imageDownloadLabelFactory(idSubstring):
+    return html.Div([
+        html.Label([
+        "Download ",
+        dcc.Dropdown(id='download-type-' + idSubstring,
+                     options=ChartLayouts.download_layouts,
+                     value='defaultPlot',
+                     style={'font-weight': 'normal',
+                            'margin-top': '10px',
+                            'font-size': '.8rem'
+                            }
+                     ),
+    ],
+        style={'display': 'block',
+               'font-weight': 'bold',
+               'padding': '10px 10px 10px 10px'
+               },
+    ),
+    html.Label([
+        'Download Image Width:', html.Br(),
+        dcc.Input(id='image-width-' + idSubstring + '',
+                  type="number",
+                  debounce=True,
+                  style={'font-weight': 'normal',
+                         'margin-top': '10px',
+                         }
+                  ), html.Br(),
+        'Download Image Length:', html.Br(),
+        dcc.Input(id='image-height-' + idSubstring,
+                  type="number",
+                  debounce=True,
+                  style={'font-weight': 'normal',
+                         'margin-top': '10px',
+                         }
+                  ), html.Br(),
+        'Download Image Font Size":', html.Br(),
+        dcc.Input(id='image-font-size-' + idSubstring,
+                  type="number",
+                  value=25,
+                  debounce=True,
+                  style={'font-weight': 'normal',
+                         'margin-top': '10px',
+                         }
+                  ), html.Br(),
+    ],
+        id='custom-image-size-' + idSubstring,
+        style={'display': 'None',
+               'font-weight': 'bold',
+               'padding': '10px 10px 10px 10px'
+               },
+    )])
+
