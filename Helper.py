@@ -1,6 +1,7 @@
 import base64
 import copy
 import random
+from dataclasses import dataclass
 
 import pandas as pd
 from dash import html
@@ -76,10 +77,11 @@ def downloadChartContent(fig, download_format, width=None, height=None, font_siz
         paper_bgcolor='rgba(255,255,255,255)',
     )
     if download_format == "defaultPlot":
+        image_download_settings = ImageDownloadSettings(1600, 750, 25)
         fig.update_layout(font=dict(
-            size=25
+            size=image_download_settings.fontSize
         ))
-        img_bytes = fig.to_image(format="png", width=1600, height=750, scale=1.7)
+        img_bytes = fig.to_image(format="png", width=image_download_settings.width, height=image_download_settings.height, scale=1.7)
     elif download_format == "widePlot":
         fig.update_layout(font=dict(
             size=25
@@ -92,7 +94,7 @@ def downloadChartContent(fig, download_format, width=None, height=None, font_siz
         img_bytes = fig.to_image(format="png", width=1025, height=805, scale=2.0)
     elif download_format == 'customSize':
         fig.update_layout(font=dict(size=font_size
-        ))
+                                    ))
         img_bytes = fig.to_image(format="png", width=width, height=height, scale=1.0)
     encoding = base64.b64encode(img_bytes).decode()
     img_b64 = "data:image/png;base64," + encoding
@@ -721,3 +723,10 @@ conclusivenessInfoText = html.P(children=[
            target="_blank"),
     '.'
 ])
+
+
+@dataclass
+class ImageDownloadSettings:
+    width: float
+    height: float
+    fontSize: float
