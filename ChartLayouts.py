@@ -1,8 +1,7 @@
 import statistics
 import pandas as pd
 import Charts as Charts
-from dash import dcc
-from dash import html
+from dash import html, dcc
 from dash import dash_table
 
 import SingleStudyCharts
@@ -10,9 +9,10 @@ import styles
 import Helper
 import Layouts
 
-download_layouts = [{'label': 'Default plot format', 'value': 'defaultPlot'},
-                    {'label': 'Narrow plot format', 'value': 'narrowPlot'},
-                    {'label': 'Wide plot format', 'value': 'widePlot'}
+download_layouts = [{'label': 'Default plot format' + ' (Width: ' + str(Helper.defaultPlotSettings.width) + ' Height: ' + str(Helper.defaultPlotSettings.height) + ' Font Size: ' + str(Helper.defaultPlotSettings.fontSize) + ')', 'value': 'defaultPlot'},
+                    {'label': 'Narrow plot format' + ' (Width: ' + str(Helper.narrowPlotSettings.width) + ' Height: ' + str(Helper.narrowPlotSettings.height) + ' Font Size: ' + str(Helper.narrowPlotSettings.fontSize) + ')', 'value': 'narrowPlot'},
+                    {'label': 'Wide plot format' + ' (Width: ' + str(Helper.widePlotSettings.width) + ' Height: ' + str(Helper.widePlotSettings.height) + ' Font Size: ' + str(Helper.widePlotSettings.fontSize) + ')', 'value': 'widePlot'},
+                    {'label': 'Custom format', 'value': 'customSize'}
                     ]
 
 sort_values = [{'label': 'Alphabetical order', 'value': 'alphabetically'},
@@ -31,7 +31,7 @@ def CreatePercentilePlotLayout(SUSData, systemList):
 
     fig = Charts.CreatePercentilePlot(SUSData, value)
 
-    tableContent = createPercentilePlotTable(SUSData, systemList)
+    tableContent = createPercentilePlotTable(SUSData)
 
     graphContent = [
         html.Div([
@@ -44,7 +44,7 @@ def CreatePercentilePlotLayout(SUSData, systemList):
                     ),
                 ],
                     style=styles.graph_div_style),
-                tableContent
+                html.Div([tableContent], id='percentile-plot-table-div', style=styles.tableStyle),
             ],
                 style=styles.main_content_style
             ),
@@ -86,24 +86,15 @@ def CreatePercentilePlotLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
-                html.Label([
-                    "Download ",
-                    dcc.Dropdown(id='download-type-percentile',
-                                 options=download_layouts,
-                                 value='defaultPlot',
-                                 style={'font-weight': 'normal',
-                                        'margin-top': '10px',
-                                        }
-                                 ),
+                Helper.imageDownloadLabelFactory('percentile'),
+                dcc.Download(id='download-image-percentile'),
+                dcc.Download(id='download-csv-percentile'),
+                html.Div([
+
+                    html.Button('Download this chart', id='image-percentile-button', className='button1'),
                 ],
-                    style={'display': 'block',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
+                    style=styles.download_div_style
                 ),
-                html.Div(id="download-percentilePlot",
-                         children=[],
-                         style=styles.download_div_style),
                 html.Div([html.Button('Download this data table', id='csv-percentile-button', className='button1'),
                           dcc.Download(id='download-csv-percentile')],
                          style=styles.download_div_style),
@@ -148,7 +139,7 @@ def CreateMainPlotLayout(SUSData, systemList):
                     ],
                     style=styles.graph_div_style
                 ),
-                html.Div([tableContent], id='mainplot-table-div'),
+                html.Div([tableContent], id='mainplot-table-div', style=styles.tableStyle),
 
             ], style=styles.main_content_style
             ),
@@ -172,7 +163,7 @@ def CreateMainPlotLayout(SUSData, systemList):
                     html.Summary("Plot type: "),
                     html.P(id="plotstyle-info",
                            children=[Helper.plotStyleInfoTexts['mainplot']],
-                           style=styles.editorInfoTextStyle)]),
+                           style=styles.editorInfoTextStyle)], open=True),
                     dcc.Dropdown(id='plotstyle-mainplot',
                                  options=[{'label': 'Boxplot', 'value': 'mainplot'},
                                           {'label': 'Notched Boxplot', 'value': 'notched'},
@@ -191,13 +182,14 @@ def CreateMainPlotLayout(SUSData, systemList):
                     html.Details([html.Summary("Contextualization scale: "),
                     html.P(id="scaletype-info",
                            children=[Helper.scaleInfoTexts['adjectiveScale']],
-                           style=styles.editorInfoTextStyle)]),
+                           style=styles.editorInfoTextStyle)], open=True),
                     dcc.Dropdown(id='scale-mainplot',
                                  options=[{'label': 'Adjective Scale', 'value': 'adjectiveScale'},
                                           {'label': 'Grade Scale', 'value': 'gradeScale'},
                                           {'label': 'Quartile Scale', 'value': 'quartileScale'},
                                           {'label': 'Acceptability Scale', 'value': 'acceptabilityScale'},
                                           {'label': 'Net Promoter Scale', 'value': 'promoterScale'},
+                                          {'label': 'Industry Benchmark Scale', 'value': 'industryBenchmarkScale'},
                                           {'label': 'No Scale', 'value': 'none'}
                                           # {'label': 'Background Adjective Scale', 'value': 'BGAdjectiveScale'}
                                           ],
@@ -311,28 +303,17 @@ def CreateMainPlotLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
-                html.Label([
-                    "Download ",
-                    dcc.Dropdown(id='download-type-mainplot',
-                                 options=download_layouts,
-                                 value='defaultPlot',
-                                 style={'font-weight': 'normal',
-                                        'margin-top': '10px',
-                                        }
-                                 ),
-                ],
-                    style={'display': 'block',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
-                ),
-                html.Div(id="download-mainplot",
-                         children=[],
-                         style=styles.download_div_style),
+                Helper.imageDownloadLabelFactory('mainplot'),
+                dcc.Download(id='download-image-mainplot'),
                 dcc.Download(id='download-csv-mainplot'),
                 html.Div([
-                    html.Button('Download this data table', id='csv-mainplot-button', className='button1'),
+
+                    html.Button('Download this chart', id='image-mainplot-button', className='button1'),
                 ],
+                    style=styles.download_div_style
+                ),
+                html.Div([
+                    html.Button('Download this data table', id='csv-mainplot-button', className='button1'),],
                     style=styles.download_div_style
                 ),
                 html.Div([
@@ -374,7 +355,7 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
 
     fig = Charts.CreatePerQuestionChart(SUSData, questionsTicked, value, 'vertical')
 
-    tableContent = createPerItemTable(SUSData)
+    tableContent = createPerItemTable(SUSData, questionsTicked)
 
     graphContent = [
         html.Div([
@@ -393,7 +374,7 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
                 ],
                     style=styles.graph_div_style
                 ),
-                tableContent
+                html.Div([tableContent], id='per-item-table-div', style=styles.tableStyle),
 
             ], style=styles.main_content_style
             ),
@@ -472,24 +453,24 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
-
-                html.Label([
-                    "Colorization: ",
-                    dcc.Dropdown(id='colorize-by-meaning',
-                                 options=[{'label': 'Regular colors', 'value': 'regular'},
-                                          {'label': 'Colorize by meaning', 'value': 'byMeaning'}],
-                                 value='byMeaning',
-                                 style={'font-weight': 'normal',
-                                        'margin-top': '10px',
-                                        }
-                                 ),
-                ],
-                    id='colorize-by-meaning-label',
-                    style={'display': 'none',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
-                ),
+                # For now depcrecated, might reuse later
+                # html.Label([
+                #     "Colorization: ",
+                #     dcc.Dropdown(id='colorize-by-meaning',
+                #                  options=[{'label': 'Regular colors', 'value': 'regular'},
+                #                           {'label': 'Colorize by meaning', 'value': 'byMeaning'}],
+                #                  value='byMeaning',
+                #                  style={'font-weight': 'normal',
+                #                         'margin-top': '10px',
+                #                         }
+                #                  ),
+                # ],
+                #     id='colorize-by-meaning-label',
+                #     style={'display': 'none',
+                #            'font-weight': 'bold',
+                #            'padding': '10px 10px 10px 10px'
+                #            },
+                # ),
 
                 html.Label([
                     "Plot type: ",
@@ -525,25 +506,15 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
-                html.Label([
-                    "Download ",
-                    dcc.Dropdown(id='download-type-perquestion',
-                                 options=download_layouts,
-                                 value='defaultPlot',
-                                 style={'font-weight': 'normal',
-                                        'margin-top': '10px',
-                                        }
-                                 ),
-                ],
-                    style={'display': 'block',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
-                ),
+                Helper.imageDownloadLabelFactory('perquestion'),
+                dcc.Download(id='download-image-perquestion'),
+                dcc.Download(id='download-csv-perquestion'),
+                html.Div([
 
-                html.Div(id="download-per-question-chart",
-                         children=[],
-                         style=styles.download_div_style, ),
+                    html.Button('Download this chart', id='image-perquestion-button', className='button1'),
+                ],
+                    style=styles.download_div_style
+                ),
                 dcc.Download(id='download-csv-per-question'),
                 html.Div([
                     html.Button('Download this data table', id='csv-per-question-button', className='button1'),
@@ -566,6 +537,14 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
 
 
 def CreateCocnlusivenessChartLayout(SUSData):
+
+    value = []
+    options = []
+
+    for study in SUSData.SUSStuds:
+        options.append({'label': study.name, 'value': study.name})
+        value.append(study.name)
+
     fig = Charts.CreateConclusivenessChart(SUSData)
     tableContent = CreateConclusivenessPlotTable(SUSData, SUSData.getAllStudNames())
     graphContent = [
@@ -577,7 +556,7 @@ def CreateCocnlusivenessChartLayout(SUSData):
                               style=styles.graph_style)
                 ],
                     style=styles.graph_div_style),
-                tableContent,
+                html.Div([tableContent], id='conclusiveness-plot-table-div', style=styles.tableStyle),
             ],
                 style=styles.main_content_style
             ),
@@ -591,22 +570,29 @@ def CreateCocnlusivenessChartLayout(SUSData):
                            },
                 ),
                 html.Label([
-                    "Download ",
-                    dcc.Dropdown(id='download-type-conclusiveness',
-                                 options=download_layouts,
-                                 value='defaultPlot',
-                                 style={'font-weight': 'normal',
-                                        }
-                                 ),
+                    "Show in plot: ",
+                    dcc.Checklist(id='systems-conclusivenessPlot',
+                                  options=options,
+                                  value=value,
+                                  labelStyle={'display': 'block'},
+                                  style={'font-weight': 'normal',
+                                         }
+                                  ),
                 ],
                     style={'display': 'block',
                            'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
+                           'padding': '10px 10px 10px 10px',
                            },
                 ),
-                html.Div(id="download-conclusiveness",
-                         children=[],
-                         style=styles.download_div_style),
+                Helper.imageDownloadLabelFactory('conclusiveness'),
+                dcc.Download(id='download-image-conclusiveness'),
+                dcc.Download(id='download-csv-conclusiveness'),
+                html.Div([
+
+                    html.Button('Download this chart', id='image-conclusiveness-button', className='button1'),
+                ],
+                    style=styles.download_div_style
+                ),
 
                 html.Div([
                     html.Button('Download this data table', id='csv-conclusiveness-button', className='button1'),
@@ -649,7 +635,6 @@ def CreateSingleStudyChartLayout(SUSData):
             style=styles.single_study_main_content_style
         ),
 
-        # html.Img(src='/assets/adjective_scale.JPG'),
         html.Div([
             html.Label([
                 "Plot type: ",
@@ -673,7 +658,7 @@ def CreateSingleStudyChartLayout(SUSData):
             html.Label([
                 "Score and Interpretation: ",
                 html.Table([
-                    html.Tr([html.Td('SUS Score: '), html.Td(round(singleStudy.Score, 2))]),
+                    html.Tr([html.Td('SUS Study Score: '), html.Td(round(singleStudy.Score, 2))]),
                     html.Tr([html.Td('Median: '), html.Td(singleStudy.median)]),
                     html.Tr([html.Td('Standard Dev. '), html.Td(round(singleStudy.standardDevOverall, 2))]),
                     html.Tr([html.Td('Adjective: '), html.Td(Helper.getAdjectiveValue(singleStudy.Score))]),
@@ -784,6 +769,7 @@ def createMainplotDataframe(SUSData):
     acceptability = []
     systemList = []
     nps = []
+    industryBenchmark = []
 
     for study in SUSData.SUSStuds:
         adjectiveScale.append(Helper.getAdjectiveValue(study.Score))
@@ -791,6 +777,7 @@ def createMainplotDataframe(SUSData):
         quartile.append(Helper.getQuartileScaleValue(study.Score))
         acceptability.append(Helper.getAcceptabilityValue(study.Score))
         nps.append(Helper.getNPSValue(study.Score))
+        industryBenchmark.append(Helper.getIndustryBenchmarkValue(study.Score))
         OverallScores.append(round(study.Score, 2))
         susScores = study.getAllSUSScores()
         mins.append(min(susScores))
@@ -823,7 +810,8 @@ def createMainplotDataframe(SUSData):
         'Grade Scale ': grade,
         'Quartile Scale ': quartile,
         'Acceptability Scale ': acceptability,
-        'NPS Scale': nps
+        'NPS Scale': nps,
+        'Industry Benchmark': industryBenchmark
     }
     # tableHeader = [" "].extend(systems)
     df = pd.DataFrame(data)
@@ -834,9 +822,7 @@ def createMainplotDataframe(SUSData):
 def createMainplotTable(SUSData, scaleType):
     df = createMainplotDataframe(SUSData)
     dataframeConditions = Helper.dataFrameConditions[scaleType]
-    table = html.Div(
-        [
-            dash_table.DataTable(
+    table = dash_table.DataTable(
                 id='main-plot-dataframe',
                 columns=[{"name": i, "id": i} for i in df.columns],
                 style_table={
@@ -850,23 +836,38 @@ def createMainplotTable(SUSData, scaleType):
                     'fontWeight': 'bold'
                 }
             )
-        ],
-        style=styles.tableStyle,
-    )
     return table
 
 
-def createPerItemDataFrame(SUSData):
+def createPerItemDataFrame(SUSData, questionsTicked=None):
+    if questionsTicked is None:
+        questionsTicked = []
     questions = ['Question 1', 'Question 2', 'Question 3', 'Question 4', 'Question 5', 'Question 6',
                  'Question 7', 'Question 8', 'Question 9',
                  'Question 10']
     standardDev = []
-    data = {'Items': questions}
+
+    removeIdxs = []
+    for idx, question in enumerate(questions):
+        if question not in questionsTicked:
+            removeIdxs.append(idx)
+
+    filteredQuestions = [i for j, i in enumerate(questions) if j not in removeIdxs]
+
+    data = {'Items': filteredQuestions}
 
     for study in SUSData.SUSStuds:
+        avgScorePerQuestion, scorePerQuestionValues = study.calcSUSScorePerQuestion(removeIdxs)
+        standardDeviations = []
+        for question in scorePerQuestionValues.values():
+            try:
+                standardDeviations.append(statistics.pstdev(question))
+            except statistics.StatisticsError:
+                standardDeviations.append(0)
+
         data[study.name + ' Contribution (SD)'] = [str(round(score, 2)) + ' (' + str(round(stdDev, 2)) + ')'
                                                    for score, stdDev in
-                                                   zip(study.avgScorePerQuestion, study.standardDevPerQuestion)]
+                                                   zip(avgScorePerQuestion, standardDeviations)]
     df = pd.DataFrame(data)
 
     df.set_index('Items', inplace=True)
@@ -876,11 +877,11 @@ def createPerItemDataFrame(SUSData):
     return df
 
 
-def createPerItemTable(SUSData):
-    df = createPerItemDataFrame(SUSData)
-    table = html.Div(
-        [
-            dash_table.DataTable(
+def createPerItemTable(SUSData, questionsTicked=None):
+    if questionsTicked is None:
+        questionsTicked = []
+    df = createPerItemDataFrame(SUSData, questionsTicked)
+    table = dash_table.DataTable(
                 columns=[{"name": str(i), "id": str(i)} for i in df.columns],
                 data=df.to_dict('records'),
                 style_table={'overflowX': 'auto'
@@ -895,32 +896,28 @@ def createPerItemTable(SUSData):
                     'backgroundColor': 'rgb(230, 230, 230)',
                     'fontWeight': 'bold'
                 }
-            ),
-        ],
-        style=styles.tableStyle,
-    )
+            )
     return table
 
 
-def createPercentilePlotDataFrame(SUSData, systems):
-    data = {'Variable ': list(systems),
-            }
+def createPercentilePlotDataFrame(SUSData):
+    data = {}
     studyScores = []
     percentileValues = []
+    systemList = SUSData.getAllStudNames()
     for study in SUSData.SUSStuds:
         studyScores.append(round(study.Score, 2))
         percentileValues.append(round(Charts.parametrizePercentile(study.Score), 2))
+    data['Variable'] = systemList
     data['SUS Score'] = studyScores
     data['Percentile'] = percentileValues
     df = pd.DataFrame(data)
     return df
 
 
-def createPercentilePlotTable(SUSData, systems):
-    df = createPercentilePlotDataFrame(SUSData, systems)
-    table = html.Div(
-        [
-            dash_table.DataTable(
+def createPercentilePlotTable(SUSData):
+    df = createPercentilePlotDataFrame(SUSData)
+    table = dash_table.DataTable(
                 columns=[{"name": i, "id": i} for i in df.columns],
                 data=df.to_dict('records'),
                 style_cell={'textAlign': 'right',
@@ -936,11 +933,7 @@ def createPercentilePlotTable(SUSData, systems):
                     'backgroundColor': 'rgb(230, 230, 230)',
                     'fontWeight': 'bold'
                 }
-            ),
-
-        ],
-        style=styles.tableStyle,
-    )
+            )
     return table
 
 
@@ -982,9 +975,7 @@ def CreateConclusivenessPlotDataFrame(SUSData, systems):
 
 def CreateConclusivenessPlotTable(SUSData, systems):
     df = CreateConclusivenessPlotDataFrame(SUSData, systems)
-    table = html.Div(
-        [
-            dash_table.DataTable(
+    table = dash_table.DataTable(
                 columns=[{"name": i, "id": i} for i in df.columns],
                 data=df.to_dict('records'),
                 style_cell={'textAlign': 'right',
@@ -1001,7 +992,4 @@ def CreateConclusivenessPlotTable(SUSData, systems):
                     'fontWeight': 'bold'
                 }
             )
-        ],
-        style=styles.tableStyle,
-    )
     return table

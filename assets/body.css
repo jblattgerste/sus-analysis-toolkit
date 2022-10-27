@@ -7,7 +7,6 @@ font-family: Tahoma, Verdana, sans-serif;}
     font-family: 'Courier New', monospace;
     display: inline;
     float: left;
-    margin-top: 1.5em;
     margin-left: 1em;
     background: #EAEAF2;
     background-clip: content-box;
@@ -107,3 +106,77 @@ details.mainPage > ul {
   padding-bottom: 1rem;
   margin-bottom: 0;
 }
+
+.tooltip {
+  display: block;
+  width: 3em;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  background-color: red;
+  width: 20em;
+  color: #fff;
+  text-align: left;
+  padding: 5px;
+  border-radius: 6px;
+
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.disabled {
+    display: none;
+}
+
+button.startToolButton{
+    display:inline-block;
+    width: 90%;
+    height: 10em;
+    padding:0.5em 0em;
+    border:0.1em solid #000000;
+    margin-top:30px;
+    border-radius:5px;
+    box-sizing: border-box;
+    text-decoration:none;
+    font-family: monospace;
+    color:#FFFFFF;
+    text-align:center;
+    transition: all 0.2s;
+    box-shadow: 0 .5rem 1rem -.5rem rgba(0, 0, 0, .4);
+    background-color:#445262;
+}
+button.startToolButton:hover{
+    color:#000000;
+    background-color:#FFFFFF;
+}
+@media all and (max-width:30em) {
+    button.startToolButton {
+        display: block;
+        margin: 0.4em auto;
+    }
+}
+
+div.centre {
+  width: 200px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div.inline-div {
+  display: inline-block;
+  width: 50%;
+}
+
+.bottomright {
+    position: fixed;
+  right: 0px; bottom: 0px;
+  padding: 5px;
+  font-size: xx-small;
+}
+

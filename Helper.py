@@ -1,17 +1,22 @@
 import base64
 import copy
+import random
+from dataclasses import dataclass
+
 import pandas as pd
-from dash import html
+from dash import html, dcc
 import io
-from dash import dcc
+from dash.dash_table.Format import Format, Scheme
+
+import ChartLayouts
 from Result import Result
 from SUSDataset import SUSDataset
 from SUSStud import SUSStud
 import numpy as np
 
 
-def parseDataFrameToSUSDataset(dataFrame):
-    """Parses through DataFrame and creates and returns a SUSDataset object from it."""
+def parseDataFrameToSUSDataset(dataFrame, singleStudy=False):
+    """Parses through DataFrame and creates and returns a list with SUSStuds from it."""
 
     # Set with each individual study.
     studySet = set(dataFrame['System'])
@@ -56,7 +61,7 @@ def downloadChartContentSingleStudy(fig):
     fig.update_layout(
         paper_bgcolor='rgba(255,255,255,255)',
     )
-    img_bytes = fig.to_image(format="png", width=1080, height=740)
+    img_bytes = fig.to_image(format="png", width=1080 * 1.5, height=740 * 1.5)
 
     encoding = base64.b64encode(img_bytes).decode()
     img_b64 = "data:image/png;base64," + encoding
@@ -67,25 +72,25 @@ def downloadChartContentSingleStudy(fig):
     return downloadChart
 
 
-def downloadChartContent(fig, download_format):
-    fig = copy.copy(fig)
-    fig.update_layout(
-        paper_bgcolor='rgba(255,255,255,255)',
-    )
-    if download_format == "defaultPlot":
-        img_bytes = fig.to_image(format="png", width=1600, height=750)
-    elif download_format == "widePlot":
-        img_bytes = fig.to_image(format="png", width=2400, height=750)
-    elif download_format == 'narrowPlot':
-        img_bytes = fig.to_image(format="png", width=1050, height=750)
+def downloadChartContent(downloadType, fig, customWidth=None, customHeight=None, customFontSize=None):
 
-    encoding = base64.b64encode(img_bytes).decode()
-    img_b64 = "data:image/png;base64," + encoding
-
-    downloadChart = [
-        html.A(html.Button('Download this chart', className='button1'), href=img_b64, download='plot')
-    ]
-    return downloadChart
+    if downloadType == 'customSize':
+        fig.update_layout(
+            paper_bgcolor='rgba(255,255,255,255)',
+            font=dict(
+                size=customFontSize)
+        )
+        img_bytes = fig.to_image(format="png", width=customWidth,
+                                 height=customHeight)
+    else:
+        fig.update_layout(
+            paper_bgcolor='rgba(255,255,255,255)',
+            font=dict(
+                size=plotSettings[downloadType].fontSize)
+        )
+        img_bytes = fig.to_image(format="png", width=plotSettings[downloadType].width,
+                                 height=plotSettings[downloadType].height)
+    return img_bytes
 
 
 def downloadChartContent_orientation(fig, download_format, orientation):
@@ -186,6 +191,11 @@ scaleInfoTexts = {
         'The Net Promoter score scale describes how likely users of a product are to recommend the System to others. It is based on data from ',
         html.A('Sauro et al. 2012', href='https://measuringu.com/nps-sus/', target="_blank"),
         '.']),
+    'industryBenchmarkScale': html.P(children=[
+        'Non empirical scale derived from ', html.A('Lewis et al. 2018',
+                                                    href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=BD7BLDgAAAAJ&citation_for_view=BD7BLDgAAAAJ:u5HHmVD_uO8C',
+                                                    target="_blank"),
+        ' where they observed scores above 80 to be an “industrial goal”.']),
     'none': ""
 }
 
@@ -303,6 +313,15 @@ def getNPSValue(score):
         return "Promoter"
 
 
+def getIndustryBenchmarkValue(score):
+    if score < 68:
+        return "Below Average"
+    if score < 80:
+        return "Above Average"
+    else:
+        return "Above Industry Standard"
+
+
 def getConclusiveness(study):
     sampleSize = len(study.Results)
     if sampleSize < 6:
@@ -311,6 +330,70 @@ def getConclusiveness(study):
         return ConclusivenessValues.get(sampleSize)
     else:
         return '100%'
+
+
+def tableDataIsInvalid(table_data):
+    # Check whether table is empty
+    if table_data:
+        for row in table_data:
+            cells = list(row.values())
+            if all([cell != '' for cell in cells]) and all([cell is not None for cell in cells]) and all(
+                    [0 < int(cell) < 6 for cell in cells[0:9]]):
+                continue
+            else:
+                return True
+    else:
+        return True
+
+
+def conditionalFormattingEditableDataTable(columnNames):
+    style_data_conditional = []
+    for name in columnNames[0:10]:
+        style_data_conditional.extend([
+            {
+                'if': {
+                    'filter_query': '{' + '{name}'.format(name=name) + '}< 1 ||' + '{' + '{name}'.format(
+                        name=name) + '} > 5',
+                    'column_id': '{name}'.format(name=name)
+                },
+                'backgroundColor': 'tomato',
+                'color': 'white'
+            },
+            {
+                'if': {
+                    'filter_query': '{' + '{name}'.format(name=name) + '} is blank',
+                    'column_id': '{name}'.format(name=name)
+                },
+                'backgroundColor': 'tomato',
+                'color': 'white'
+            },
+        ]
+        )
+    style_data_conditional.append(
+        {
+            'if': {
+                'filter_query': '{' + '{name}'.format(name=columnNames[10]) + '} is blank',
+                'column_id': '{name}'.format(name=columnNames[10])
+            },
+            'backgroundColor': 'tomato',
+            'color': 'white'
+        },
+    )
+    return style_data_conditional
+
+
+# Generates an example dataframe with random SUS values
+def createExampleDataFrame(singleStudy=False):
+    exampleData = {}
+    for i in range(1, 11):
+        exampleData['Question {qNumber}'.format(qNumber=i)] = [random.randint(1, 5), random.randint(1, 5)]
+    # Only Multi Study table has a system column
+    if singleStudy is False:
+        exampleData['System'] = ['Example System A', 'Example System B']
+    else:
+        exampleData['System'] = ['Example System', 'Example System']
+    dataframe = pd.DataFrame(data=exampleData)
+    return dataframe
 
 
 dataframeQuartileConditions = [
@@ -546,6 +629,43 @@ dataframeNPSConditions = [
     },
 ]
 
+industryBenchmarkConditions = [
+    {
+        'if': {
+            'column_id': 'SUS Score (mean) '
+        },
+        'fontWeight': 'bold'
+    },
+    {
+        'if': {'row_index': 'odd'},
+        'backgroundColor': 'rgb(248, 248, 248)'
+    },
+    {
+        'if': {
+            'filter_query': '{SUS Score (mean) } < 100.1',
+            # 'column_id': 'SUS Score (mean) '
+        },
+        'color': 'black',
+        'backgroundColor': '#8FD14F'
+    },
+    {
+        'if': {
+            'filter_query': '{SUS Score (mean) } < 80',
+            # 'column_id': 'SUS Score (mean) '
+        },
+        'color': 'black',
+        'backgroundColor': '#FEF445'
+    },
+    {
+        'if': {
+            'filter_query': '{SUS Score (mean) } < 68',
+            # 'column_id': 'SUS Score (mean) '
+        },
+        'color': 'black',
+        'backgroundColor': '#F24726'
+    },
+]
+
 dataFrameNoScale = [
     {
         'if': {
@@ -559,11 +679,20 @@ dataFrameNoScale = [
     }
 ]
 
+editableTableTypeFormatting = {
+    'type': 'numeric',
+    'format': Format(
+        precision=0,
+        scheme=Scheme.fixed,
+    ),
+}
+
 dataFrameConditions = {'acceptabilityScale': dataframeAcceptabilityConditions,
                        'adjectiveScale': dataframeAdjectiveConditions,
                        'gradeScale': dataframeGradeConditions,
                        'quartileScale': dataframeQuartileConditions,
                        'promoterScale': dataframeNPSConditions,
+                       'industryBenchmarkScale': industryBenchmarkConditions,
                        'none': dataFrameNoScale
                        }
 
@@ -582,3 +711,73 @@ conclusivenessInfoText = html.P(children=[
            target="_blank"),
     '.'
 ])
+
+
+@dataclass
+class ImageDownloadSettings:
+    width: float
+    height: float
+    fontSize: float
+
+
+defaultPlotSettings = ImageDownloadSettings(1200, 487, 15)
+widePlotSettings = ImageDownloadSettings(1530, 510, 15)
+narrowPlotSettings = ImageDownloadSettings(1025, 805, 15)
+
+plotSettings = {'defaultPlot': defaultPlotSettings,
+                'narrowPlot': narrowPlotSettings,
+                'widePlot': widePlotSettings}
+
+
+def imageDownloadLabelFactory(idSubstring):
+    return html.Div([
+        html.Label([
+        "Download ",
+        dcc.Dropdown(id='download-type-' + idSubstring,
+                     options=ChartLayouts.download_layouts,
+                     value='defaultPlot',
+                     style={'font-weight': 'normal',
+                            'margin-top': '10px',
+                            'font-size': '.8rem'
+                            }
+                     ),
+    ],
+        style={'display': 'block',
+               'font-weight': 'bold',
+               'padding': '10px 10px 10px 10px'
+               },
+    ),
+    html.Label([
+        'Download Image Width:', html.Br(),
+        dcc.Input(id='image-width-' + idSubstring + '',
+                  type="number",
+                  debounce=True,
+                  style={'font-weight': 'normal',
+                         'margin-top': '10px',
+                         }
+                  ), html.Br(),
+        'Download Image Length:', html.Br(),
+        dcc.Input(id='image-height-' + idSubstring,
+                  type="number",
+                  debounce=True,
+                  style={'font-weight': 'normal',
+                         'margin-top': '10px',
+                         }
+                  ), html.Br(),
+        'Download Image Font Size":', html.Br(),
+        dcc.Input(id='image-font-size-' + idSubstring,
+                  type="number",
+                  value=25,
+                  debounce=True,
+                  style={'font-weight': 'normal',
+                         'margin-top': '10px',
+                         }
+                  ), html.Br(),
+    ],
+        id='custom-image-size-' + idSubstring,
+        style={'display': 'None',
+               'font-weight': 'bold',
+               'padding': '10px 10px 10px 10px'
+               },
+    )])
+

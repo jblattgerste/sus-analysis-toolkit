@@ -6,16 +6,10 @@ import Helper
 import plotly.io as pio
 pio.templates.default = 'seaborn'
 
+
 def generateSingleStudyPreset1(singleStudy):
-    traces = []
-
-    # Add the trace for the SUS Boxplot
-    traces.append(
-        getSingleStudyBoxPlotTraces(singleStudy))
-
-    # Add the trace for the PolarChart
-    traces.append(getSingleStudyRadarChartTraces(singleStudy))
-
+    # Add the traces for Boxplot and Radarchart
+    traces = [getSingleStudyBoxPlotTraces(singleStudy), getSingleStudyRadarChartTraces(singleStudy)]
     # Defining the layout for the subplots
     singleStudyLayout = go.Layout(
         barmode='stack',
@@ -432,9 +426,11 @@ def getSingleStudyBoxPlotTraces(singleStudy):
 def getSingleStudyPercentilePlotTraces(singleStudy, xaxis, yaxis):
     x = np.linspace(0, 100, 100)
     y = Charts.parametrizePercentile(x)
-    traces = [go.Scatter(x=x, y=y, showlegend=False, xaxis=xaxis, yaxis=yaxis),
+    traces = [go.Scatter(x=x, y=y, showlegend=False, xaxis=xaxis, yaxis=yaxis, hoverinfo='skip'),
               go.Scatter(x=[singleStudy.Score], y=[Charts.parametrizePercentile(singleStudy.Score)],
-                         marker=dict(size=12), mode='markers', xaxis=xaxis, yaxis=yaxis)]
+                         marker=dict(size=12), mode='markers', xaxis=xaxis, yaxis=yaxis,
+                         hovertemplate='%{y:d}th Percentile' + '<extra></extra>',
+                         )]
     return traces
 
 
@@ -461,7 +457,7 @@ def getSingleStudyRadarChartTraces(singleStudy):
 def getSingleStudyConclusivenessTraces(xaxis, yaxis):
     yVal = [35, 75, 80, 100, 100]
     xVal = [6, 8, 10, 12, 14]
-    return go.Scatter(x=xVal, y=yVal, xaxis=xaxis, yaxis=yaxis)
+    return go.Scatter(x=xVal, y=yVal, xaxis=xaxis, yaxis=yaxis,  hoverinfo='skip')
 
 
 def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
@@ -489,8 +485,8 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
               {'question': 'Question 10',
                'positiveWording': False}]
 
-
-    colors = ['#F24726', '#FAC710','#FEF445', '#CEE741', '#8FD14F']
+    colors = ['#8FD14F', '#CEE741', '#FEF445', '#FAC710', '#F24726']
+    top_labels = ['Strongly<br>disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly<br>agree']
 
     x_data = [[],
               [],
@@ -504,7 +500,7 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
               []]
 
     for i, questionResults in enumerate(singleStudy.rawResultPerQuestion):
-        for j in range(5, 0, -1):
+        for j in range(1, 6):
             x_data[i].append(questionResults.count(j) / len(singleStudy.rawResultPerQuestion[0]) * 100)
         # x_data_strings[i].append(round(questionResults.count(j)/len(questionResults)*100))
 
@@ -519,21 +515,27 @@ def getSingleStudyLikertChartTraces(singleStudy, colorizeByMeaning):
                 traces.append(go.Bar(
                     xaxis='x3',
                     yaxis='y3',
+                    hovertemplate='%{x:d}%, ' + '%{text}<extra></extra>',
+                    text=[top_labels[i]],
                     x=[xd[i]], y=[yd['question']],
+                    textposition="none",
                     orientation='h',
                     marker=dict(
-                        color=colors[i],
+                        color=colors[4-i],
                         line=dict(color='rgb(248, 248, 249)', width=1)
                     )
                 ))
             else:
                 traces.append(go.Bar(
+                    hovertemplate='%{x:d}%, ' + '%{text}<extra></extra>',
+                    text=[top_labels[i]],
                     xaxis='x3',
                     yaxis='y3',
                     x=[xd[i]], y=[yd['question']],
+                    textposition="none",
                     orientation='h',
                     marker=dict(
-                        color=colors[4 - i],
+                        color=colors[i],
                         line=dict(color='rgb(248, 248, 249)', width=1)
                     )
                 ))

@@ -86,7 +86,7 @@ def CreateRadarChart(SUSData, questionsTicked, SUSIds):
     return fig
 
 
-def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
+def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning='byMeaning'):
 
     questions = ['Question 1', 'Question 2', 'Question 3', 'Question 4', 'Question 5', 'Question 6',
                  'Question 7', 'Question 8', 'Question 9',
@@ -114,14 +114,7 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
               {'question': 'I needed to learn a lot of things before<br> I could get going with this system.',
                'positiveWording': False}]
 
-    #top_labels = ['Strongly<br>agree', 'Agree', 'Neutral', 'Disagree',
-     #             'Strongly<br>disagree']
-
-    #colors = ['#8FD14F', '#CEE741',
-    #          '#FEF445', '#FAC710',
-    #          '#F24726']
-
-    colors = ['#F24726', '#FAC710','#FEF445', '#CEE741', '#8FD14F']
+    colors = ['#8FD14F', '#CEE741', '#FEF445', '#FAC710', '#F24726']
     top_labels = ['Strongly<br>disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly<br>agree']
 
     x_data = [[],
@@ -142,7 +135,7 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
             removeIdxs.append(idx)
 
     for i, questionResults in enumerate(SUSData.rawResultPerQuestion):
-        for j in range(5, 0, -1):
+        for j in range(1, 6):
             x_data[i].append(questionResults.count(j) / len(SUSData.rawResultPerQuestion[0]) * 100)
         # x_data_strings[i].append(round(questionResults.count(j)/len(questionResults)*100))
 
@@ -160,19 +153,25 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning):
         for xd, yd in zip(x_data, y_data):
             if yd['positiveWording'] != 0 or colorizeByMeaning == 'regular':
                 fig.add_trace(go.Bar(
+                    hovertemplate='%{x:d}%, ' + '%{text}<extra></extra>',
+                    text=[top_labels[i]],
                     x=[xd[i]], y=[yd['question']],
                     orientation='h',
+                    textposition="none",
                     marker=dict(
-                        color=colors[i],
+                        color=colors[4-i],
                         line=dict(color='rgb(248, 248, 249)', width=1)
                     )
                 ))
             else:
                 fig.add_trace(go.Bar(
+                    hovertemplate='%{x:d}%, ' + '%{text}<extra></extra>',
+                    text=[top_labels[i]],
                     x=[xd[i]], y=[yd['question']],
+                    textposition="none",
                     orientation='h',
                     marker=dict(
-                        color=colors[4 - i],
+                        color=colors[i],
                         line=dict(color='rgb(248, 248, 249)', width=1)
                     )
                 ))
@@ -537,7 +536,7 @@ def CreateConclusivenessChart(SUSData):
 
     fig = go.Figure()
     set_PaperBGColor(fig)
-    fig.add_trace(go.Scatter(x=xVal, y=yVal))
+    fig.add_trace(go.Scatter(x=xVal, y=yVal, hoverinfo='skip'))
     fig.update_layout(
         margin=dict(
             l=0,
@@ -587,13 +586,14 @@ def CreatePercentilePlot(SUSData, systems):
     ))
     fig.layout.yaxis.fixedrange = True
 
-    fig.add_trace(go.Scatter(x=x, y=y, showlegend=False))
+    fig.add_trace(go.Scatter(x=x, y=y, showlegend=False, hoverinfo='skip'))
     for i, study in enumerate(SUSData.SUSStuds):
         if study.name in systems:
             fig.add_trace(go.Scatter(x=[study.Score], y=[parametrizePercentile(study.Score)],
-                                     marker=dict(size=12, color=defaultPlotlyColors[i]),
+                                     marker=dict(size=12),
                                      mode='markers',
-                                     name=study.name))
+                                     name=study.name,
+                                     hovertemplate='%{y:d}th Percentile, ' + study.name + '<extra></extra>'))
     return fig
 
 
@@ -788,6 +788,29 @@ def getPromoterScaleTraces(orientation, xaxis='x2', yaxis='y2'):
     return traces
 
 
+# noinspection PyTypeChecker
+def getIndustryBenchmarkScale(orientation, xaxis='x2', yaxis='y2'):
+    if orientation == 'vertical':
+        traces = [
+            go.Bar(y=[68], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip', text='Below Average',
+                   marker_color='#F24726', insidetextanchor='middle'),
+            go.Bar(y=[12], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip', text='Above Average',
+                   marker_color='#FEF445', insidetextanchor='middle'),
+            go.Bar(y=[20], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip', text='Above<br>Industry Benchmark',
+                   marker_color='#8FD14F', insidetextanchor='middle')
+        ]
+    else:
+        traces = [
+            go.Bar(x=[68], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip', text='Below Average',
+                   marker_color='#F24726', insidetextanchor='middle'),
+            go.Bar(x=[12], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip', text='Above Average',
+                   marker_color='#FEF445', insidetextanchor='middle'),
+            go.Bar(x=[20], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip', text='Above Industry Benchmark',
+                   marker_color='#8FD14F', insidetextanchor='middle')
+        ]
+    return traces
+
+
 def getEmptyScaleTraces(orientation):
     return []
 
@@ -827,5 +850,6 @@ scales = {
     'acceptabilityScale': getAcceptabilityScaleTraces,
     'promoterScale': getPromoterScaleTraces,
     'quartileScale': getQuartileScaleTraces,
+    'industryBenchmarkScale': getIndustryBenchmarkScale,
     'none': getEmptyScaleTraces
 }

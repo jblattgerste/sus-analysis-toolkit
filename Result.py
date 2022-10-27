@@ -18,6 +18,9 @@ class Result:
         rawScore = 0
         idx = 1
         for val in self.resultsRaw:
+            if val is None:
+                print(self.resultsRaw)
+            val = int(val)
             if val < 1 or val > 5:
                 raise Exception('SUS-Values must be between 1 and 5.')
             if idx % 2 == 0:
@@ -30,6 +33,10 @@ class Result:
                 rawScore += tempScore
             idx += 1
         return rawScore * 2.5
+
+    def getScorePerQuestionExcluding(self, excludeQuestionIdxs):
+        filteredQuestionsScore = [i for j, i in enumerate(self.scorePerQuestion) if j not in excludeQuestionIdxs]
+        return filteredQuestionsScore
 
     def calcStandardDeviation(self):
         return statistics.stdev(self.scorePerQuestion)
