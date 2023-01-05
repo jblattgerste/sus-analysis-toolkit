@@ -47,6 +47,7 @@ class SUSStud:
                     scoreList = [questionScore]
                     scoresPerQuestion[idx] = scoreList
 
+
         for idx, questionScoreRaw in enumerate(avgScorePerQuestion):
             avgScorePerQuestion[idx] = questionScoreRaw / len(self.Results)
         return avgScorePerQuestion, scoresPerQuestion

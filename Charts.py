@@ -423,6 +423,91 @@ def CreateMainplot(SUSData, boxpoints, scaleValue, orientationValue, plotStyle, 
     return fig
 
 
+def CreatePerQuestionBoxPlot(SUSData, questionsTicked, SUSIds, orientationValue):
+    fig = go.Figure()
+    set_PaperBGColor(fig)
+    questions = ['Question 1', 'Question 2', 'Question 3', 'Question 4', 'Question 5', 'Question 6',
+                 'Question 7', 'Question 8', 'Question 9',
+                 'Question 10']
+    removeIdxs = []
+
+    for idx, question in enumerate(questions):
+        if question not in questionsTicked:
+            removeIdxs.append(idx)
+
+    # Filter questions based on the ones user chose
+    filteredQuestions = [i for j, i in enumerate(questions) if j not in removeIdxs]
+    if orientationValue == 'vertical':
+
+        for study in SUSData.SUSStuds:
+            if study.name in SUSIds:
+                x_axis_descriptions = []
+                # prepare x-axis description. for each score per sus result one entry specifying to which question this score relates is needed.
+                # very messy, but that's just how grouped boxplot work in plotly.
+                for question in filteredQuestions:
+                    for result in study.Results:
+                        x_axis_descriptions.append(question)
+
+                # dict with scores for each question
+                scoresPerQuestion = study.calcSUSScorePerQuestion(removeIdxs)[1]
+
+                plotdata = []
+                # all the ordered SUS values of this study are put in one list.
+                # again very messy, but just how plotly works here...
+                for questionValues in scoresPerQuestion.values():
+                    plotdata.extend(questionValues)
+
+                # put it all together in the box plot
+                fig.add_trace(go.Box(name=study.name, y=plotdata, x=x_axis_descriptions, boxmean=True))
+
+        fig.update_layout(
+            yaxis_title='SUS Score',
+            boxmode='group',
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            )
+        )
+    else:
+        # same thing with reversed axis
+        for study in SUSData.SUSStuds:
+            if study.name in SUSIds:
+                y_axis_descriptions = []
+                # prepare y-axis description. for each score per sus result one entry specifying to which question this score relates is needed.
+                # very messy, but that's just how grouped boxplot work in plotly.
+                for question in filteredQuestions:
+                    for result in study.Results:
+                        y_axis_descriptions.append(question)
+
+                # dict with scores for each question
+                scoresPerQuestion = study.calcSUSScorePerQuestion(removeIdxs)[1]
+
+                plotdata = []
+                # all the ordered SUS values of this study are put in one list.
+                # again very messy, but just how plotly works here...
+                for questionValues in scoresPerQuestion.values():
+                    plotdata.extend(questionValues)
+
+                # put it all together in the box plot
+                fig.add_trace(go.Box(name=study.name, y=y_axis_descriptions, x=plotdata, boxmean=True))
+        fig.update_traces(orientation='h')
+        fig.update_layout(
+            xaxis=dict(title='SUS Score', zeroline=False),
+            boxmode='group',
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            )
+        )
+    return fig
+
+
 def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
     fig = go.Figure()
     set_PaperBGColor(fig)
@@ -448,12 +533,26 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
             removeIdxs.append(idx)
 
     if orientationValue == 'vertical':
+
+        # for study in SUSData.SUSStuds:
+        #     if study.name in SUSIds:
+        #         filteredQuestions = [i for j, i in enumerate(questions) if j not in removeIdxs]
+        #         plotData = []
+        #
+        #         for questionScore in study.avgScorePerQuestion:
+        #             plotData.append(questionScore)
+        #         print(plotData)
+        #
+        # for study in SUSData.SUSStuds:
+        #     scoresPerQuestion = study.calcSUSScorePerQuestion(removeIdxs)[1]
+        #     allStudyScoresPerQuestion.append(scoresPerQuestion)
+        #
+        # for studyScores in allStudyScoresPerQuestion:
+        #     for scores in studyScores:
+        #         plotData.extend(scores)
         for study in SUSData.SUSStuds:
             if study.name in SUSIds:
-                plotData = []
-
-                for questionScore in study.avgScorePerQuestion:
-                    plotData.append(questionScore)
+                plotData = study.calcSUSScorePerQuestion(removeIdxs)[0]
                 filteredErrorBars = [i for j, i in enumerate(study.standardDevPerQuestion) if j not in removeIdxs]
                 filteredQuestions = [i for j, i in enumerate(questions) if j not in removeIdxs]
                 filteredHover = [i for j, i in enumerate(hovertext) if j not in removeIdxs]
@@ -480,10 +579,7 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
     else:
         for study in SUSData.SUSStuds:
             if study.name in SUSIds:
-                plotData = []
-
-                for questionScore in study.avgScorePerQuestion:
-                    plotData.append(questionScore)
+                plotData = study.calcSUSScorePerQuestion(removeIdxs)[0]
 
                 filteredErrorBars = [i for j, i in enumerate(study.standardDevPerQuestion) if j not in removeIdxs]
                 filteredQuestions = [i for j, i in enumerate(questions) if j not in removeIdxs]
@@ -492,23 +588,23 @@ def CreatePerQuestionChart(SUSData, questionsTicked, SUSIds, orientationValue):
                     go.Bar(name=study.name, x=plotData, y=filteredQuestions, hovertext=filteredHover, orientation='h',
                            error_x=dict(type='data', array=filteredErrorBars)))
 
-        fig.update_layout(
-            xaxis_title="SUS Score",
-            xaxis_range=[0, 10],
-            margin=dict(
-                l=12,
-                r=12,
-                b=12,
-                t=12,
-            ),
-            legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="right",
-                x=1
-            ),
-        )
+        # fig.update_layout(
+        #     xaxis_title="SUS Score",
+        #     xaxis_range=[0, 10],
+        #     margin=dict(
+        #         l=12,
+        #         r=12,
+        #         b=12,
+        #         t=12,
+        #     ),
+        #     legend=dict(
+        #         orientation="h",
+        #         yanchor="bottom",
+        #         y=1.02,
+        #         xanchor="right",
+        #         x=1
+        #     ),
+        # )
 
     return fig
 

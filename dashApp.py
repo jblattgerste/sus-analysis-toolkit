@@ -27,7 +27,7 @@ app._favicon = ("assets/favicon.ico")
 app.config.suppress_callback_exceptions = True
 app.layout = Layouts.getMainContent(app, VERSION)
 
-debugMode = False
+debugMode = True
 
 
 @app.callback(
@@ -361,6 +361,17 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
 
     if plotStyle == 'per-question-chart':
         fig = Charts.CreatePerQuestionChart(SUSData, questionsTicked, systemsToPlot, orientationValue)
+        orientationLabelStyle = {'display': 'block',
+                                 'font-weight': 'bold',
+                                 'padding': '10px 10px 10px 10px'}
+        systemsLabelStyle = {'display': 'block',
+                             'font-weight': 'bold',
+                             'padding': '10px 10px 10px 10px'}
+        sortByLabelStyle = {'display': 'block',
+                            'font-weight': 'bold',
+                            'padding': '10px 10px 10px 10px'}
+    elif plotStyle == 'boxplot':
+        fig = Charts.CreatePerQuestionBoxPlot(SUSData, questionsTicked, systemsToPlot, orientationValue)
         orientationLabelStyle = {'display': 'block',
                                  'font-weight': 'bold',
                                  'padding': '10px 10px 10px 10px'}
