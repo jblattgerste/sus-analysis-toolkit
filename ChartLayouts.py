@@ -121,7 +121,7 @@ def CreateMainPlotLayout(SUSData, systemList):
     for system in systemList:
         options.append({'label': system, 'value': system})
         value.append(system)
-    fig = Charts.CreateMainplot(SUSData, 'outliers', 'adjectiveScale', 'vertical', 'mainplot', 'mean', "")
+    fig = Charts.CreateMainplot(SUSData, 'outliers', 'adjectiveScale', 'vertical', 'mainplot', 'mean', "", ['colorize'])
     #
     tableContent = createMainplotTable(SUSData, 'adjectiveScale')
     #
@@ -204,6 +204,23 @@ def CreateMainPlotLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
+
+                html.Label([
+                    'Colorize plot according to contextualization scale:',
+                    dcc.Checklist(id='colorize-by-scale',
+                                options={'colorize': 'Colorize by scale'},
+                                value=['colorize'],
+                                 style={'font-weight': 'normal',
+                                        'margin-top': '10px',
+                                        }
+                                 ),
+                ],
+                    style={'display': 'block',
+                           'font-weight': 'bold',
+                           'padding': '10px 10px 10px 10px'
+                           },
+                ),
+
                 html.Label([
                     "Show in plot: ",
                     dcc.Checklist(id='systems-mainplot',

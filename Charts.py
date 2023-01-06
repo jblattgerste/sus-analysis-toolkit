@@ -257,11 +257,14 @@ def CreateLikertChart(SUSData, questionsTicked, colorizeByMeaning='byMeaning'):
     return fig
 
 
-def CreateMainplot(SUSData, boxpoints, scaleValue, orientationValue, plotStyle, mean_sdValue, axis_title):
+def CreateMainplot(SUSData, boxpoints, scaleValue, orientationValue, plotStyle, mean_sdValue, axis_title, colorizeByScale):
 
     mean_sdValue = determineMean_sdValue(mean_sdValue)
     fig = go.Figure()
     set_PaperBGColor(fig)
+
+    if not colorizeByScale:
+        colorizeByScale = False
 
     if plotStyle == 'notched':
         notchedValue = True
@@ -273,14 +276,26 @@ def CreateMainplot(SUSData, boxpoints, scaleValue, orientationValue, plotStyle, 
 
     if orientationValue == 'vertical':
         for study in SUSData.SUSStuds:
-            if plotStyle == 'mainplot' or plotStyle == 'notched':
-                fig.add_trace(
-                    go.Box(y=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
-                           notched=notchedValue))
-            elif plotStyle == 'per-question-chart':
-                fig.add_trace(
-                    go.Bar(y=[study.Score], name=study.name, x=[study.name],
-                           error_y=dict(type='data', array=[study.standardDevOverall])))
+            if colorizeByScale and scaleValue != 'none':
+                if plotStyle == 'mainplot' or plotStyle == 'notched':
+                    fig.add_trace(
+                        go.Box(y=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
+                               notched=notchedValue, marker_color=scaleColors[scaleValue](round(study.Score, 2))))
+                elif plotStyle == 'per-question-chart':
+                    fig.add_trace(
+                        go.Bar(y=[study.Score], name=study.name, x=[study.name],
+                               error_y=dict(type='data', array=[study.standardDevOverall],), marker_color=scaleColors[scaleValue](round(study.Score, 2))))
+            else:
+                if plotStyle == 'mainplot' or plotStyle == 'notched':
+                    fig.add_trace(
+                        go.Box(y=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
+                               notched=notchedValue))
+                elif plotStyle == 'per-question-chart':
+                    fig.add_trace(
+                        go.Bar(y=[study.Score], name=study.name, x=[study.name],
+                               error_y=dict(type='data', array=[study.standardDevOverall]), marker_color=scaleColors[scaleValue](round(study.Score, 2))))
+
+
 
         if scaleValue == 'none':
             fig.update_layout(
@@ -348,14 +363,24 @@ def CreateMainplot(SUSData, boxpoints, scaleValue, orientationValue, plotStyle, 
         fig.layout.yaxis.fixedrange = True
     else:
         for study in SUSData.SUSStuds:
-            if plotStyle == 'mainplot' or plotStyle == 'notched':
-                fig.add_trace(
-                    go.Box(x=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
-                           notched=notchedValue))
-            elif plotStyle == 'per-question-chart':
-                fig.add_trace(
-                    go.Bar(x=[study.Score], name=study.name, y=[study.name], orientation='h',
-                           error_x=dict(type='data', array=[study.standardDevOverall])))
+            if colorizeByScale and scaleValue != 'none':
+                if plotStyle == 'mainplot' or plotStyle == 'notched':
+                    fig.add_trace(
+                        go.Box(x=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
+                               notched=notchedValue, marker_color=scaleColors[scaleValue](round(study.Score, 2))))
+                elif plotStyle == 'per-question-chart':
+                    fig.add_trace(
+                        go.Bar(x=[study.Score], name=study.name, y=[study.name],  orientation='h',
+                               error_x=dict(type='data', array=[study.standardDevOverall]),  marker_color=scaleColors[scaleValue](round(study.Score, 2))))
+            else:
+                if plotStyle == 'mainplot' or plotStyle == 'notched':
+                    fig.add_trace(
+                        go.Box(x=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
+                               notched=notchedValue))
+                elif plotStyle == 'per-question-chart':
+                    fig.add_trace(
+                        go.Bar(x=[study.Score], name=study.name, y=[study.name], orientation='h',
+                               error_x=dict(type='data', array=[study.standardDevOverall])))
 
         if scaleValue == 'none':
             fig.update_layout(
@@ -938,6 +963,81 @@ def getQuartileScaleTraces(orientation, xaxis='x2', yaxis='y2'):
     return traces
 
 
+def getAdjectiveScaleColors(SUSMean):
+    if SUSMean < 25.0:
+        return '#F24726'
+    elif SUSMean < 51.7:
+        return '#FAC710'
+    elif SUSMean < 71.1:
+        return '#FEF445'
+    elif SUSMean < 80.8:
+        return '#CEE741'
+    elif SUSMean < 84.1:
+        return '#8FD14F'
+    else:
+        return '#E6E6E6'
+
+
+def getAcceptabilityScaleColors(SUSMean):
+    if SUSMean < 51.7:
+        return '#F24726'
+    elif SUSMean < 72.6:
+        return '#FEF445'
+    else:
+        return '#8FD14F'
+
+
+def getQuartileScaleColors(SUSMean):
+    if SUSMean < 62.5:
+        return '#F24726'
+    elif SUSMean < 71.0:
+        return '#FAC710'
+    elif SUSMean < 78.0:
+        return '#FEF445'
+    else:
+        return '#CEE741'
+
+
+def getGradeScaleColors(SUSMean):
+    if SUSMean < 51.6:
+        return '#F24726'
+    elif SUSMean < 62.6:
+        return '#FAC710'
+    elif SUSMean < 72.5:
+        return '#FEF445'
+    elif SUSMean < 78.8:
+        return '#CEE741'
+    else:
+        return '#8FD14F'
+
+
+def getPromoterScaleColors(SUSMean):
+    if SUSMean < 62.5:
+        return '#F24726'
+    elif SUSMean < 78.8:
+        return '#FEF445'
+    else:
+        return '#8FD14F'
+
+
+def getNPSScaleColors(SUSMean):
+    if SUSMean < 62.5:
+        return '#F24726'
+    elif SUSMean < 78.8:
+        return '#FEF445'
+    else:
+        return '#8FD14F'
+
+
+def getIndustryBenchmarkScaleColors(SUSMean):
+    if SUSMean < 68.0:
+        return '#F24726'
+    elif SUSMean < 80.0:
+        return '#FEF445'
+    else:
+        return '#8FD14F'
+
+
 # Traces for the various vertical contextualization scales
 # noinspection PyTypeChecker
 scales = {
@@ -948,4 +1048,13 @@ scales = {
     'quartileScale': getQuartileScaleTraces,
     'industryBenchmarkScale': getIndustryBenchmarkScale,
     'none': getEmptyScaleTraces
+}
+
+scaleColors = {
+    'adjectiveScale': getAdjectiveScaleColors,
+    'gradeScale': getGradeScaleColors,
+    'acceptabilityScale': getAcceptabilityScaleColors,
+    'promoterScale': getPromoterScaleColors,
+    'quartileScale': getQuartileScaleColors,
+    'industryBenchmarkScale': getIndustryBenchmarkScaleColors,
 }

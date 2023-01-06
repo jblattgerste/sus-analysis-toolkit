@@ -295,9 +295,10 @@ def update_SingleStudyMainplot(data_single, presetValue):
     Input('axis-title-mainplot', 'value'),
     Input('download-type-mainplot', 'value'),
     Input('sort-by-mainplot', 'value'),
+    Input('colorize-by-scale', 'value')
 )
 def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientationValue, plotStyle, mean_sdValue,
-                    axis_title, download_format, sort_value):
+                    axis_title, download_format, sort_value, colorizeByScale):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
@@ -305,7 +306,7 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
     filteredSUSData = Helper.filterSUSStuds(SUSData, systemsToPlot)
     mainplot_table = ChartLayouts.createMainplotTable(filteredSUSData, scaleValue)
     fig = Charts.CreateMainplot(filteredSUSData, datapointsValues, scaleValue, orientationValue, plotStyle,
-                                mean_sdValue, axis_title)
+                                mean_sdValue, axis_title, colorizeByScale)
     if plotStyle == 'per-question-chart':
         datapointsLabelStyle = styles.disabledStyle
         mean_sdValueLabelStyle = styles.disabledStyle
@@ -516,7 +517,8 @@ def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, 
     img_percentile = img_per_question = Helper.downloadChartContent('defaultPlot', percentile_fig)
     # Conclusiveness
     conclusiveness_fig = go.Figure(conclusiveness)
-    img_conclusiveness = cimg_percentile = img_per_question = Helper.downloadChartContent('defaultPlot', conclusiveness_fig)
+    img_conclusiveness = cimg_percentile = img_per_question = Helper.downloadChartContent('defaultPlot',
+                                                                                          conclusiveness_fig)
 
     # Write images in zip file
     zip_tf = tempfile.NamedTemporaryFile(delete=False, suffix='.zip')
