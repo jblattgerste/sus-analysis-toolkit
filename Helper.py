@@ -197,10 +197,10 @@ scaleInfoTexts = {
         html.A('Sauro et al. 2012', href='https://measuringu.com/nps-sus/', target="_blank"),
         '.']),
     'industryBenchmarkScale': html.P(children=[
-        'Non empirical scale derived from ', html.A('Lewis et al. 2018',
-                                                    href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=BD7BLDgAAAAJ&citation_for_view=BD7BLDgAAAAJ:u5HHmVD_uO8C',
+        'This non-empirical scale is derived from ', html.A('Lewis et al. 2018',
+                                                    href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=rmiLIsYAAAAJ&citation_for_view=rmiLIsYAAAAJ:a9-T7VOCCH8C',
                                                     target="_blank"),
-        ' where they observed scores above 80 to be an “industrial goal”.']),
+        '. It is based on the idea that 68 is the average SUS study score but a SUS score of 80 is commonly observed to be an “industrial benchmark” to reach as evidence of an above average user experience.']),
     'none': ""
 }
 
