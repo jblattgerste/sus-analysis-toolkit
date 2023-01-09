@@ -552,8 +552,8 @@ dataframeAdjectiveConditions = [
             'filter_query': '{SUS Score (mean) } < 100.1',
             # 'column_id': 'SUS Score (mean) '
         },
-        'color': 'black',
-        'backgroundColor': '#E6E6E6'
+        'color': 'white',
+        'backgroundColor': '#008000'
     },
     {
         'if': {

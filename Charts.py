@@ -293,7 +293,7 @@ def CreateMainplot(SUSData, boxpoints, scaleValue, orientationValue, plotStyle, 
                 elif plotStyle == 'per-question-chart':
                     fig.add_trace(
                         go.Bar(y=[study.Score], name=study.name, x=[study.name],
-                               error_y=dict(type='data', array=[study.standardDevOverall]), marker_color=scaleColors[scaleValue](round(study.Score, 2))))
+                               error_y=dict(type='data', array=[study.standardDevOverall])))
 
 
 
@@ -367,7 +367,7 @@ def CreateMainplot(SUSData, boxpoints, scaleValue, orientationValue, plotStyle, 
                 if plotStyle == 'mainplot' or plotStyle == 'notched':
                     fig.add_trace(
                         go.Box(x=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
-                               notched=notchedValue, marker_color=scaleColors[scaleValue](round(study.Score, 2))))
+                               notched=notchedValue, fillcolor=scaleColors[scaleValue](round(study.Score, 2))))
                 elif plotStyle == 'per-question-chart':
                     fig.add_trace(
                         go.Bar(x=[study.Score], name=study.name, y=[study.name],  orientation='h',
@@ -809,7 +809,7 @@ def getAdjectiveScaleTraces(orientation, xaxis='x2', yaxis='y2'):
                    marker_color='#8FD14F', insidetextanchor='middle'),
             go.Bar(y=[16], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip',
                    text='Best<br>Imagineable',
-                   marker_color='#E6E6E6', insidetextanchor='middle')
+                   marker_color='#008000', insidetextanchor='middle')
         ]
     else:
         traces = [
@@ -826,7 +826,7 @@ def getAdjectiveScaleTraces(orientation, xaxis='x2', yaxis='y2'):
                    marker_color='#8FD14F', insidetextanchor='middle'),
             go.Bar(x=[16], xaxis=xaxis, yaxis=yaxis, width=1, showlegend=False, hoverinfo='skip',
                    text='Best<br>Imagineable',
-                   marker_color='#E6E6E6', insidetextanchor='middle')
+                   marker_color='#008000', insidetextanchor='middle')
         ]
     return traces
 
@@ -975,7 +975,7 @@ def getAdjectiveScaleColors(SUSMean):
     elif SUSMean < 84.1:
         return '#8FD14F'
     else:
-        return '#E6E6E6'
+        return '#008000'
 
 
 def getAcceptabilityScaleColors(SUSMean):
