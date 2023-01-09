@@ -2,7 +2,8 @@ import base64
 import copy
 import random
 from dataclasses import dataclass
-
+# noinspection PyProtectedMember
+from bs4 import UnicodeDammit
 import pandas as pd
 from dash import html, dcc
 import io
@@ -47,7 +48,11 @@ def parseDataFrameToSUSDataset(dataFrame, singleStudy=False):
 def decodeContentToCSV(contents):
     content_type, csvData = contents.split(',')
     decoded = base64.b64decode(csvData)
-    csvData = pd.read_csv(io.StringIO(decoded.decode("utf-8")), sep=';')
+
+    # Tries to encoding format of uploaded file
+    suggestion = UnicodeDammit(decoded)
+    csvData = pd.read_csv(io.StringIO(decoded.decode(suggestion.original_encoding, errors="strict")), sep=';')
+
     return csvData
 
 

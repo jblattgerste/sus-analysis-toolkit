@@ -79,7 +79,6 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
         try:
             if contents_multi is None:
                 raise PreventUpdate
-            print("start upload multi data")
             # decode the upload data and convert it to pandas data frame
             csvData = Helper.decodeContentToCSV(contents_multi)
             # check if the upload file is correctly formated, has no null values etc.
@@ -92,7 +91,6 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
             for column in columns[0:10]:
                 column.update(Helper.editableTableTypeFormatting)
             style_data_conditional = (Helper.conditionalFormattingEditableDataTable(csvData.columns.values.tolist()))
-            print("end upload multi data")
             return ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(
                 SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData,
                                                                                 systemList), ChartLayouts.CreateCocnlusivenessChartLayout(
