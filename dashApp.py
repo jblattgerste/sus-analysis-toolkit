@@ -240,6 +240,7 @@ def update_single_study(contents_single, table_data, table_columns, add_row_butt
                                        orient='split'), dash.no_update, dash.no_update, styles.tableErrorIconDefaultStyle, dash.no_update, dash.no_update
     elif input_trigger == 'start-tool-button-single':
         exampleData = Helper.createExampleDataFrame(singleStudy=True)
+        exampleData = Helper.checkUploadFile(exampleData, True)
         # Create SUSDataset from example dataframe
         SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(exampleData))
         # The columns for the editable table. The system column is dropped, since the editable table isn't supposed to have it.

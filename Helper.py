@@ -65,8 +65,20 @@ def downloadChartContentSingleStudy(fig):
     fig = copy.copy(fig)
     fig.update_layout(
         paper_bgcolor='rgba(255,255,255,255)',
+        font=dict(
+            size=20),
+        xaxis=dict(title_font_size=20),
+        xaxis3=dict(title_font_size=20),
+        yaxis3=dict(title_font_size=20),
+        xaxis2=dict(
+            title_font_size=20,
+        ),
+        yaxis2=dict(
+            title_font_size=20,
+        ),
+
     )
-    img_bytes = fig.to_image(format="png", width=1080 * 1.5, height=740 * 1.5)
+    img_bytes = fig.to_image(format="png", width=1530, height=1048)
 
     encoding = base64.b64encode(img_bytes).decode()
     img_b64 = "data:image/png;base64," + encoding
@@ -238,23 +250,6 @@ ConclusivenessValues = dict({0: '0%',
                              })
 
 
-def createSUSDataFromJSON(jsonData):
-    df = pd.read_json(jsonData, orient='split')
-    try:
-        SUSData = SUSDataset(parseDataFrameToSUSDataset(df))
-    except Exception as e:
-        print(e)
-        return html.Div([
-            'There was an error processing this file: ' + str(e),
-            html.P(['Please refer to this ',
-                    html.A('template', href=app.get_asset_url('studyData.csv'), download='studyData.csv'),
-                    ' for help. ', ]),
-
-            html.P([html.A('Refresh', href='/'), ' the page to try again.'])
-        ])
-    return SUSData
-
-
 def filterSUSStuds(SUSData, systemsToPlot):
     studies = SUSData.SUSStuds
     SUSData.SUSStuds = list(filter(lambda study: study.name in systemsToPlot, studies))
@@ -389,16 +384,22 @@ def conditionalFormattingEditableDataTable(columnNames):
 
 # Generates an example dataframe with random SUS values
 def createExampleDataFrame(singleStudy=False):
-    exampleData = {}
-    for i in range(1, 11):
-        exampleData['Question {qNumber}'.format(qNumber=i)] = [random.randint(1, 5), random.randint(1, 5)]
-    # Only Multi Study table has a system column
-    if singleStudy is False:
-        exampleData['System'] = ['Example System A', 'Example System B']
+    if singleStudy:
+        df = pd.read_csv('assets/singleStudyData.csv', sep=';')
     else:
-        exampleData['System'] = ['Example System', 'Example System']
-    dataframe = pd.DataFrame(data=exampleData)
-    return dataframe
+        df = pd.read_csv('assets/studyData.csv', sep=';')
+    return df
+    # Random data generation... deprecated for now
+    # exampleData = {}
+    # for i in range(1, 11):
+    #     exampleData['Question {qNumber}'.format(qNumber=i)] = [random.randint(1, 5), random.randint(1, 5)]
+    # # Only Multi Study table has a system column
+    # if singleStudy is False:
+    #     exampleData['System'] = ['Example System A', 'Example System B']
+    # else:
+    #     exampleData['System'] = ['Example System', 'Example System']
+    # dataframe = pd.DataFrame(data=exampleData)
+    # return dataframe
 
 
 dataframeQuartileConditions = [

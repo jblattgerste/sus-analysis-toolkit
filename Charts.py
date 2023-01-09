@@ -263,9 +263,6 @@ def CreateMainplot(SUSData, boxpoints, scaleValue, orientationValue, plotStyle, 
     fig = go.Figure()
     set_PaperBGColor(fig)
 
-    if not colorizeByScale:
-        colorizeByScale = False
-
     if plotStyle == 'notched':
         notchedValue = True
     else:
@@ -276,11 +273,11 @@ def CreateMainplot(SUSData, boxpoints, scaleValue, orientationValue, plotStyle, 
 
     if orientationValue == 'vertical':
         for study in SUSData.SUSStuds:
-            if colorizeByScale and scaleValue != 'none':
+            if colorizeByScale == 'scale-colors' and scaleValue != 'none':
                 if plotStyle == 'mainplot' or plotStyle == 'notched':
                     fig.add_trace(
                         go.Box(y=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
-                               notched=notchedValue, marker_color=scaleColors[scaleValue](round(study.Score, 2))))
+                               notched=notchedValue, fillcolor=scaleColors[scaleValue](round(study.Score, 2)), line=dict(color='black')))
                 elif plotStyle == 'per-question-chart':
                     fig.add_trace(
                         go.Bar(y=[study.Score], name=study.name, x=[study.name],
@@ -363,11 +360,11 @@ def CreateMainplot(SUSData, boxpoints, scaleValue, orientationValue, plotStyle, 
         fig.layout.yaxis.fixedrange = True
     else:
         for study in SUSData.SUSStuds:
-            if colorizeByScale and scaleValue != 'none':
+            if colorizeByScale == 'scale-colors' and scaleValue != 'none':
                 if plotStyle == 'mainplot' or plotStyle == 'notched':
                     fig.add_trace(
                         go.Box(x=study.getAllSUSScores(), name=study.name, boxpoints=boxpoints, boxmean=mean_sdValue,
-                               notched=notchedValue, fillcolor=scaleColors[scaleValue](round(study.Score, 2))))
+                               notched=notchedValue, line=dict(color='black') ,fillcolor=scaleColors[scaleValue](round(study.Score, 2))))
                 elif plotStyle == 'per-question-chart':
                     fig.add_trace(
                         go.Bar(x=[study.Score], name=study.name, y=[study.name],  orientation='h',
