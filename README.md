@@ -53,7 +53,15 @@ An in-depth explanation of the toolkits features and their scientific basis can 
 To run the SUS Analysis Toolkit on a server, we recommend [building a Docker Image and hosting it in a Docker Container](https://docs.docker.com/get-started/). The required `Dockerfile` is included in this repository.
 
 ## Contributing to this project
-As the SUS Analysis Toolkit is an ongoing project, we are happy to receive feedback, suggestions and bug reports through Email or GitHub Issues. Additionally, we are planning to develop the tool further towards including more statistical data analysis tools, automated API processing and improving its accessibility and usability. Therefore, we are happy to collaborate with developers and experts in these areas.
+As the SUS Analysis Toolkit is an ongoing project, we are happy to receive feedback, suggestions and bug reports through Email or GitHub Issues.
+
+Additionally, we are planning to develop the tool further towards including:
+- item-Level benchmarks for each of the 10 questions of the SUS questionnaire according to [Lewis & Sauro 2018](https://scholar.google.de/citations?view_op=view_citation&hl=de&user=rmiLIsYAAAAJ&citation_for_view=rmiLIsYAAAAJ:a9-T7VOCCH8C). This would allow to compare the achieved average of individual items of the SUS study scores to item-level benchmarks calculted from linear regressions based on comparable SUS study scores, the average SUS study score of 68 or the industry benchmark of 80.
+- more statistical data analysis tools, ranging from simple t-test and variance analysis to [more advanced statistical decision helpers](https://scholar.google.de/citations?view_op=view_citation&hl=de&user=3LeQMbkAAAAJ&citation_for_view=3LeQMbkAAAAJ:Y0pCki6q_DkC)
+- automated SUS data processing (E.g. feeding SUS questionnaire data through APIs or directly interpreting filled out questionnaires from the [SUS PDF Generator](https://jblattgerste.github.io/sus-pdf-generator/))
+- improving its accessibility and usability.
+
+Therefore, we are happy to collaborate with developers and experts in these areas. If you are interested in working on and contributing towards one of the topics, feel free to get in touch.
 
 ## Acknowledgement
 The tool is freely accesible for commercial and non-commercial use under the MIT license and does not require acknowledgement. Nonetheless, if you use our tool for scientific publications or presentations, we would appreciate an acknowledgement in form of a citation to our tool:
