@@ -2,7 +2,8 @@ import base64
 import copy
 import random
 from dataclasses import dataclass
-
+# noinspection PyProtectedMember
+from bs4 import UnicodeDammit
 import pandas as pd
 from dash import html, dcc
 import io
@@ -47,7 +48,11 @@ def parseDataFrameToSUSDataset(dataFrame, singleStudy=False):
 def decodeContentToCSV(contents):
     content_type, csvData = contents.split(',')
     decoded = base64.b64decode(csvData)
-    csvData = pd.read_csv(io.StringIO(decoded.decode("utf-8")), sep=';')
+
+    # Tries to encoding format of uploaded file
+    suggestion = UnicodeDammit(decoded)
+    csvData = pd.read_csv(io.StringIO(decoded.decode(suggestion.original_encoding, errors="strict")), sep=';')
+
     return csvData
 
 
@@ -60,8 +65,20 @@ def downloadChartContentSingleStudy(fig):
     fig = copy.copy(fig)
     fig.update_layout(
         paper_bgcolor='rgba(255,255,255,255)',
+        font=dict(
+            size=20),
+        xaxis=dict(title_font_size=20),
+        xaxis3=dict(title_font_size=20),
+        yaxis3=dict(title_font_size=20),
+        xaxis2=dict(
+            title_font_size=20,
+        ),
+        yaxis2=dict(
+            title_font_size=20,
+        ),
+
     )
-    img_bytes = fig.to_image(format="png", width=1080 * 1.5, height=740 * 1.5)
+    img_bytes = fig.to_image(format="png", width=1530, height=1048)
 
     encoding = base64.b64encode(img_bytes).decode()
     img_b64 = "data:image/png;base64," + encoding
@@ -192,10 +209,10 @@ scaleInfoTexts = {
         html.A('Sauro et al. 2012', href='https://measuringu.com/nps-sus/', target="_blank"),
         '.']),
     'industryBenchmarkScale': html.P(children=[
-        'Non empirical scale derived from ', html.A('Lewis et al. 2018',
-                                                    href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=BD7BLDgAAAAJ&citation_for_view=BD7BLDgAAAAJ:u5HHmVD_uO8C',
+        'This non-empirical scale is derived from ', html.A('Lewis et al. 2018',
+                                                    href='https://scholar.google.de/citations?view_op=view_citation&hl=de&user=rmiLIsYAAAAJ&citation_for_view=rmiLIsYAAAAJ:a9-T7VOCCH8C',
                                                     target="_blank"),
-        ' where they observed scores above 80 to be an “industrial goal”.']),
+        '. It is based on the idea that 68 is the average SUS study score but a SUS score of 80 is commonly observed to be an “industrial benchmark” to reach as evidence of an above average user experience.']),
     'none': ""
 }
 
@@ -231,23 +248,6 @@ ConclusivenessValues = dict({0: '0%',
                              13: '100%',
                              14: '100%'
                              })
-
-
-def createSUSDataFromJSON(jsonData):
-    df = pd.read_json(jsonData, orient='split')
-    try:
-        SUSData = SUSDataset(parseDataFrameToSUSDataset(df))
-    except Exception as e:
-        print(e)
-        return html.Div([
-            'There was an error processing this file: ' + str(e),
-            html.P(['Please refer to this ',
-                    html.A('template', href=app.get_asset_url('studyData.csv'), download='studyData.csv'),
-                    ' for help. ', ]),
-
-            html.P([html.A('Refresh', href='/'), ' the page to try again.'])
-        ])
-    return SUSData
 
 
 def filterSUSStuds(SUSData, systemsToPlot):
@@ -384,16 +384,22 @@ def conditionalFormattingEditableDataTable(columnNames):
 
 # Generates an example dataframe with random SUS values
 def createExampleDataFrame(singleStudy=False):
-    exampleData = {}
-    for i in range(1, 11):
-        exampleData['Question {qNumber}'.format(qNumber=i)] = [random.randint(1, 5), random.randint(1, 5)]
-    # Only Multi Study table has a system column
-    if singleStudy is False:
-        exampleData['System'] = ['Example System A', 'Example System B']
+    if singleStudy:
+        df = pd.read_csv('assets/singleStudyData.csv', sep=';')
     else:
-        exampleData['System'] = ['Example System', 'Example System']
-    dataframe = pd.DataFrame(data=exampleData)
-    return dataframe
+        df = pd.read_csv('assets/studyData.csv', sep=';')
+    return df
+    # Random data generation... deprecated for now
+    # exampleData = {}
+    # for i in range(1, 11):
+    #     exampleData['Question {qNumber}'.format(qNumber=i)] = [random.randint(1, 5), random.randint(1, 5)]
+    # # Only Multi Study table has a system column
+    # if singleStudy is False:
+    #     exampleData['System'] = ['Example System A', 'Example System B']
+    # else:
+    #     exampleData['System'] = ['Example System', 'Example System']
+    # dataframe = pd.DataFrame(data=exampleData)
+    # return dataframe
 
 
 dataframeQuartileConditions = [
@@ -547,8 +553,8 @@ dataframeAdjectiveConditions = [
             'filter_query': '{SUS Score (mean) } < 100.1',
             # 'column_id': 'SUS Score (mean) '
         },
-        'color': 'black',
-        'backgroundColor': '#E6E6E6'
+        'color': 'white',
+        'backgroundColor': '#008000'
     },
     {
         'if': {

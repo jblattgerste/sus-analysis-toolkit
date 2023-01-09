@@ -19,7 +19,7 @@ import styles
 import zipfile
 import tempfile
 
-VERSION = '1.0.0 – 07.22'
+VERSION = '1.0.1 – 01.23'
 
 app = dash.Dash(__name__)
 app.title = 'SUS Analysis Toolkit'
@@ -27,7 +27,7 @@ app._favicon = ("assets/favicon.ico")
 app.config.suppress_callback_exceptions = True
 app.layout = Layouts.getMainContent(app, VERSION)
 
-debugMode = True
+debugMode = False
 
 
 @app.callback(
@@ -79,7 +79,6 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
         try:
             if contents_multi is None:
                 raise PreventUpdate
-            print("start upload multi data")
             # decode the upload data and convert it to pandas data frame
             csvData = Helper.decodeContentToCSV(contents_multi)
             # check if the upload file is correctly formated, has no null values etc.
@@ -92,7 +91,6 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
             for column in columns[0:10]:
                 column.update(Helper.editableTableTypeFormatting)
             style_data_conditional = (Helper.conditionalFormattingEditableDataTable(csvData.columns.values.tolist()))
-            print("end upload multi data")
             return ChartLayouts.CreateMainPlotLayout(SUSData, systemList), ChartLayouts.CreatePercentilePlotLayout(
                 SUSData, systemList), ChartLayouts.CreatePerQuestionChartLayout(SUSData,
                                                                                 systemList), ChartLayouts.CreateCocnlusivenessChartLayout(
@@ -242,6 +240,7 @@ def update_single_study(contents_single, table_data, table_columns, add_row_butt
                                        orient='split'), dash.no_update, dash.no_update, styles.tableErrorIconDefaultStyle, dash.no_update, dash.no_update
     elif input_trigger == 'start-tool-button-single':
         exampleData = Helper.createExampleDataFrame(singleStudy=True)
+        exampleData = Helper.checkUploadFile(exampleData, True)
         # Create SUSDataset from example dataframe
         SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(exampleData))
         # The columns for the editable table. The system column is dropped, since the editable table isn't supposed to have it.
@@ -295,9 +294,10 @@ def update_SingleStudyMainplot(data_single, presetValue):
     Input('axis-title-mainplot', 'value'),
     Input('download-type-mainplot', 'value'),
     Input('sort-by-mainplot', 'value'),
+    Input('colorize-by-scale', 'value')
 )
 def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientationValue, plotStyle, mean_sdValue,
-                    axis_title, download_format, sort_value):
+                    axis_title, download_format, sort_value, colorizeByScale):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
@@ -305,7 +305,7 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
     filteredSUSData = Helper.filterSUSStuds(SUSData, systemsToPlot)
     mainplot_table = ChartLayouts.createMainplotTable(filteredSUSData, scaleValue)
     fig = Charts.CreateMainplot(filteredSUSData, datapointsValues, scaleValue, orientationValue, plotStyle,
-                                mean_sdValue, axis_title)
+                                mean_sdValue, axis_title, colorizeByScale)
     if plotStyle == 'per-question-chart':
         datapointsLabelStyle = styles.disabledStyle
         mean_sdValueLabelStyle = styles.disabledStyle
@@ -361,6 +361,17 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
 
     if plotStyle == 'per-question-chart':
         fig = Charts.CreatePerQuestionChart(SUSData, questionsTicked, systemsToPlot, orientationValue)
+        orientationLabelStyle = {'display': 'block',
+                                 'font-weight': 'bold',
+                                 'padding': '10px 10px 10px 10px'}
+        systemsLabelStyle = {'display': 'block',
+                             'font-weight': 'bold',
+                             'padding': '10px 10px 10px 10px'}
+        sortByLabelStyle = {'display': 'block',
+                            'font-weight': 'bold',
+                            'padding': '10px 10px 10px 10px'}
+    elif plotStyle == 'boxplot':
+        fig = Charts.CreatePerQuestionBoxPlot(SUSData, questionsTicked, systemsToPlot, orientationValue)
         orientationLabelStyle = {'display': 'block',
                                  'font-weight': 'bold',
                                  'padding': '10px 10px 10px 10px'}
@@ -505,7 +516,8 @@ def download_all_charts(n_clicks, n_clicks_2, n_clicks_3, n_clicks_4, mainplot, 
     img_percentile = img_per_question = Helper.downloadChartContent('defaultPlot', percentile_fig)
     # Conclusiveness
     conclusiveness_fig = go.Figure(conclusiveness)
-    img_conclusiveness = cimg_percentile = img_per_question = Helper.downloadChartContent('defaultPlot', conclusiveness_fig)
+    img_conclusiveness = cimg_percentile = img_per_question = Helper.downloadChartContent('defaultPlot',
+                                                                                          conclusiveness_fig)
 
     # Write images in zip file
     zip_tf = tempfile.NamedTemporaryFile(delete=False, suffix='.zip')
@@ -683,6 +695,6 @@ def download_csv_data_single(nclicks, data, table_columns):
 
 if __name__ == '__main__':
     if debugMode:
-        app.run_server(port=80, host='0.0.0.0', debug=True)
+        app.run_server(host='0.0.0.0', debug=True)
     else:
         app.run_server(port=80, host='0.0.0.0')

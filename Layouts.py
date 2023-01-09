@@ -172,7 +172,7 @@ def getMainContent(app, VERSION):
                                           ' is a popular questionnaire to measure perceived usability. It consists of 10 likert-scale'
                                           ' questions, where participants responses range from \'Strongly disagree\' to '
                                           '\'Strongly agree\'. The results are then calculated into a single 0 - 100 score called the SUS score. Multiple SUS scores represent the SUS study score.'
-                                          ' It is simple to apply, validated through years of its application, easy to understand for participants, available in multiple langauges, and can be used for any system that requires human interaction.',
+                                          ' It is simple to apply, validated through years of its application, easy to understand for participants, ',html.A('available in multiple languages', href='https://jblattgerste.github.io/sus-pdf-generator'), ' and can be used for any system that requires human interaction.',
                                           ], open=False, className="mainPage")], style=styles.mainPageSummaryParagraph),
                         html.P([
                             html.Details([html.Summary(
@@ -192,7 +192,7 @@ def getMainContent(app, VERSION):
                             ),
                             'After conducting either an iterative, comparative or singular SUS study, questionnaire results have to be converted into a CSV file that consists of one column for each of the 10 questionnaire items in their original order'
                             ' and the last column as the identifier for the variable.',
-                            'Therefore, each row contains the results of one filled out questionnaire and the associated variable. For the single variable analysis, there can either be only one variable present or the column for the variable can be deleted.'
+                            ' Therefore, each row contains the results of one filled out questionnaire and the associated variable. For the single variable analysis, there can either be only one variable present or the column for the variable can be deleted.'
                             ' Values for the individual questionnaire items in the CSV file have to be between 1 (Strongly Disagree) and 5 (Strongly Agree). Other or empty values can not be processed. ',
                             '(Exemplary CSV templates are provided for the multi variable CSV file: ',
                             html.A('Download', href=app.get_asset_url('studyData.csv'), download='studyData.csv'),
@@ -204,8 +204,9 @@ def getMainContent(app, VERSION):
                             html.A('CSV-Editor', href='https://github.com/ritsrivastava01/CSV-Editor'),
                             ' or ',
                             html.A('Table Tool', href='https://github.com/jakob/TableTool'),
-                            'on macOS). ',
+                            ' on macOS). ',
                             'After the successfull upload, SUS scores, per-item contribution, the studies conclusiveness and contextualization onto meta-analysis are calcualted and plotted. The interactive plots can be viewed and customized with a multitude of available options. After the analysis and customization, individual charts, tables or the whole analysis can be downloaded and used.',
+                            ' Alternatively, since version 1.0.1, SUS questionnaire values can also be added in the tool directly and downloaded as a CSV for reuse.'
                         ], open=False, className="mainPage")], style=styles.mainPageSummaryParagraph),
 
                         html.P([

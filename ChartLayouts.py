@@ -121,7 +121,7 @@ def CreateMainPlotLayout(SUSData, systemList):
     for system in systemList:
         options.append({'label': system, 'value': system})
         value.append(system)
-    fig = Charts.CreateMainplot(SUSData, 'outliers', 'adjectiveScale', 'vertical', 'mainplot', 'mean', "")
+    fig = Charts.CreateMainplot(SUSData, 'outliers', 'adjectiveScale', 'vertical', 'mainplot', 'mean', "",'default-colors')
     #
     tableContent = createMainplotTable(SUSData, 'adjectiveScale')
     #
@@ -204,6 +204,24 @@ def CreateMainPlotLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
+
+                html.Label([
+                    'Colorize plot according to contextualization scale:',
+                    dcc.Dropdown(id='colorize-by-scale',
+                                options={'scale-colors': 'Colorize by scale',
+                                         'default-colors': 'Default Colors'},
+                                value='default-colors',
+                                 style={'font-weight': 'normal',
+                                        'margin-top': '10px',
+                                        }
+                                 ),
+                ],
+                    style={'display': 'block',
+                           'font-weight': 'bold',
+                           'padding': '10px 10px 10px 10px'
+                           },
+                ),
+
                 html.Label([
                     "Show in plot: ",
                     dcc.Checklist(id='systems-mainplot',
@@ -477,7 +495,8 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
                     dcc.Dropdown(id='plotstyle-per-question-chart',
                                  options=[{'label': 'Bar chart', 'value': 'per-question-chart'},
                                           {'label': 'Radar chart', 'value': 'radar'},
-                                          {'label': 'Stacked bar chart', 'value': 'likert'}],
+                                          {'label': 'Stacked bar chart', 'value': 'likert'},
+                                          {'label': 'Boxplot', 'value': 'boxplot'}],
                                  value='per-question-chart',
                                  style={'font-weight': 'normal',
                                         'margin-top': '10px',
