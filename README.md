@@ -2,7 +2,7 @@
 
 The [System Usability Scale (SUS) Analysis Toolkit](https://sus.mixality.de/) is a web-based python application that provides a compilation of useful insights and contextualisation approaches based on findings from the scientific literature for the System Usability Scale questionnaire that was originally developed by John Brooke. It allows researchers and practisionaires to calculate comparative, iterative and benchmarking SUS usability study datasets. Furthermore, it provides utility to contextualize the meaning of calculated scores, compare them against scores gathered in meta-analyses, calculate SUS scores conclusiveness and analysing the contribution of specific questions of the 10-item questionnaire to the SUS study scores.
 
-An in-depth explanation of the toolkits features and their scientific basis can be found in our conference publication about the initial release and preliminary evaluation of the toolkit. It is also included in the repository: ["A Web-Based Analysis Toolkit for the System Usability Scale" - Blattgerste et al. (2022)](https://github.com/jblattgerste/sus-analysis-toolkit/blob/main/assets/Blattgerste%202022%20-%20A%20Web-Based%20Analysis%20Toolkit%20for%20the%20System%20Usability%20Scale.pdf)
+An in-depth explanation of the toolkits features and their scientific basis can be found in our conference publication about the initial release and preliminary evaluation of the toolkit. It is also included in the repository: ["A Web-Based Analysis Toolkit for the System Usability Scale" - Blattgerste et al. (2022)](https://github.com/jblattgerste/sus-analysis-toolkit/blob/main/assets/Blattgerste%202022%20-%20A%20Web-Based%20Analysis%20Toolkit%20for%20the%20System%20Usability%20Scale.pdf). More exemplary use cases and visualizations are shown on the [Mixality Lab homepage](https://mixality.de/sus-analysis-toolkit/) of the University of Applied Sciences Emden/Leer, where the tool was originally developed.
 
 ### Preview: Multi-Variable SUS Analysis
 
@@ -13,7 +13,7 @@ An in-depth explanation of the toolkits features and their scientific basis can 
 ![Preview Example of the single-variable SUS usability benchmarking dashboard](/assets/PreviewSingleStudy.png)
 
 ## Using the SUS Analysis Toolkit
-**An online version of the SUS Analysis Toolkit is hosted at: https://sus.mixality.de/**
+**Online versions of the SUS Analysis Toolkit are hosted at: https://sus.mixality.de/ and https://analysis.sus.tools/**
 
  ![Example usage animation of the multi variable analysis](/assets/UsageExampleAnimation.gif)
 
@@ -58,7 +58,7 @@ As the SUS Analysis Toolkit is an ongoing project, we are happy to receive feedb
 Additionally, we are planning to develop the tool further towards including:
 - item-Level benchmarks for each of the 10 questions of the SUS questionnaire according to [Lewis & Sauro 2018](https://scholar.google.de/citations?view_op=view_citation&hl=de&user=rmiLIsYAAAAJ&citation_for_view=rmiLIsYAAAAJ:a9-T7VOCCH8C). This would allow to compare the achieved average of individual items of the SUS study scores to item-level benchmarks calculted from linear regressions based on comparable SUS study scores, the average SUS study score of 68 or the industry benchmark of 80.
 - more statistical data analysis tools, ranging from simple t-test and variance analysis to [more advanced statistical decision helpers](https://scholar.google.de/citations?view_op=view_citation&hl=de&user=3LeQMbkAAAAJ&citation_for_view=3LeQMbkAAAAJ:Y0pCki6q_DkC)
-- automated SUS data processing (E.g. feeding SUS questionnaire data through APIs or directly interpreting filled out questionnaires from the [SUS PDF Generator](https://jblattgerste.github.io/sus-pdf-generator/))
+- automated SUS data processing (E.g. feeding SUS questionnaire data through APIs or directly interpreting filled out questionnaires from the [SUS PDF Generator](https://pdf.sus.tools/))
 - improving its accessibility and usability.
 
 Therefore, we are happy to collaborate with developers and experts in these areas. If you are interested in working on and contributing towards one of the topics, feel free to get in touch.
