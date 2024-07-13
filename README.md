@@ -2,7 +2,7 @@
 
 The [System Usability Scale (SUS) Analysis Toolkit](https://sus.mixality.de/) is a web-based python application that provides a compilation of useful insights and contextualisation approaches based on findings from the scientific literature for the System Usability Scale questionnaire that was originally developed by John Brooke. It allows researchers and practisionaires to calculate comparative, iterative and benchmarking SUS usability study datasets. Furthermore, it provides utility to contextualize the meaning of calculated scores, compare them against scores gathered in meta-analyses, calculate SUS scores conclusiveness and analysing the contribution of specific questions of the 10-item questionnaire to the SUS study scores.
 
-An in-depth explanation of the toolkits features and their scientific basis can be found in our conference publication about the initial release and preliminary evaluation of the toolkit. It is also included in the repository: ["A Web-Based Analysis Toolkit for the System Usability Scale" - Blattgerste et al. (2022)](https://github.com/jblattgerste/sus-analysis-toolkit/blob/main/assets/Blattgerste%202022%20-%20A%20Web-Based%20Analysis%20Toolkit%20for%20the%20System%20Usability%20Scale.pdf). More exemplary use cases and visualizations are shown on the [Mixality Lab homepage](https://mixality.de/sus-analysis-toolkit/) of the University of Applied Sciences Emden/Leer, where the tool was originally developed.
+An in-depth explanation of the toolkits features and their scientific basis can be found in our conference publication about the initial release and preliminary evaluation of the toolkit. It is also included in the repository: ["A Web-Based Analysis Toolkit for the System Usability Scale" - Blattgerste et al. (2022)](https://github.com/jblattgerste/sus-analysis-toolkit/blob/main/assets/Blattgerste%202022%20-%20A%20Web-Based%20Analysis%20Toolkit%20for%20the%20System%20Usability%20Scale.pdf). More exemplary use cases and visualizations are shown on the [Mixality Lab homepage](https://mixality.de/sus-analysis-toolkit/) of the University of Applied Sciences Emden/Leer, where the tool was originally developed. Since then, the tool has developed into a more comprehensive solution, which can be found at https://sus.tools/.
 
 ### Preview: Multi-Variable SUS Analysis
 
@@ -13,7 +13,7 @@ An in-depth explanation of the toolkits features and their scientific basis can 
 ![Preview Example of the single-variable SUS usability benchmarking dashboard](/assets/PreviewSingleStudy.png)
 
 ## Using the SUS Analysis Toolkit
-**Online versions of the SUS Analysis Toolkit are hosted at: https://sus.mixality.de/ and https://analysis.sus.tools/**
+**Online versions of the toolkit are hosted at: https://sus.mixality.de/ and https://analysis.sus.tools/**
 
  ![Example usage animation of the multi variable analysis](/assets/UsageExampleAnimation.gif)
 
