@@ -2,6 +2,7 @@ import base64
 import copy
 import traceback
 import dash
+import plotly
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output, State
@@ -19,7 +20,7 @@ import styles
 import zipfile
 import tempfile
 
-VERSION = '1.0.1 – 01.23'
+VERSION = '1.0.2 – 07.24'
 
 app = dash.Dash(__name__)
 app.title = 'SUS Analysis Toolkit'
@@ -27,7 +28,7 @@ app._favicon = ("assets/favicon.ico")
 app.config.suppress_callback_exceptions = True
 app.layout = Layouts.getMainContent(app, VERSION)
 
-debugMode = True
+debugMode = False
 
 
 @app.callback(
@@ -263,16 +264,28 @@ def update_single_study(contents_single, table_data, table_columns, add_row_butt
 
 
 @app.callback(
-    Output('download-single-study-chart', 'children'),
     Output('single-study-chart', 'figure'),
     Input('sessionPlotData-single', 'data'),
-    Input('preset-single-study', 'value'),
+    Input('preset-single-study', 'value')
 )
 def update_SingleStudyMainplot(data_single, presetValue):
     df = pd.read_json(data_single, orient='split')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     fig = SingleStudyCharts.singleStudyPresetDict[presetValue](SUSData.SUSStuds[0])
-    return Helper.downloadChartContentSingleStudy(fig), fig
+    return fig
+
+@app.callback(
+    Output("download-single-study-chart", "data"),
+    Input("download-single-study-chart-button", "n_clicks"),
+    State('single-study-chart', 'figure'),
+    prevent_initial_call=True,
+)
+def download_singlestudy_chart(n_clicks, figure):
+    figure = plotly.graph_objects.Figure(figure)
+    img_bytes = figure.to_image(format="png", width=1530, height=1048)
+    return dcc.send_bytes(src=img_bytes,
+                          filename="single_study_plot.png")
+
 
 
 @app.callback(
@@ -294,16 +307,18 @@ def update_SingleStudyMainplot(data_single, presetValue):
     Input('axis-title-mainplot', 'value'),
     Input('download-type-mainplot', 'value'),
     Input('sort-by-mainplot', 'value'),
-    Input('colorize-by-scale', 'value')
+    Input('colorize-by-scale', 'value'),
+    Input('sd_type-mainplot', 'value')
 )
 def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientationValue, plotStyle, mean_sdValue,
-                    axis_title, download_format, sort_value, colorizeByScale):
+                    axis_title, download_format, sort_value, colorizeByScale, sd_type):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     SUSData.sortBy(sort_value)
 
     filteredSUSData = Helper.filterSUSStuds(SUSData, systemsToPlot)
-    mainplot_table = ChartLayouts.createMainplotTable(filteredSUSData, scaleValue)
+    mainplot_table = ChartLayouts.createMainplotTable(filteredSUSData, scaleValue,
+                                                      sd_type == 'population')
     fig = Charts.CreateMainplot(filteredSUSData, datapointsValues, scaleValue, orientationValue, plotStyle,
                                 mean_sdValue, axis_title, colorizeByScale)
     if plotStyle == 'per-question-chart':
@@ -329,7 +344,6 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
     Output('per-question-chart', 'figure'),
     Output('orientation-label', 'style'),
     Output('systems-label', 'style'),
-    Output('sort-by-label', 'style'),
     Output('per-question-context', 'style'),
     Output('systems-label-radio', 'style'),
     Output('per-item-table-div', 'children'),
@@ -340,20 +354,16 @@ def update_Mainplot(systemsToPlot, data, datapointsValues, scaleValue, orientati
     Input('orientation-per-question-chart', 'value'),
     Input('plotstyle-per-question-chart', 'value'),
     Input('download-type-perquestion', 'value'),
-    Input('sort-by-perquestion', 'value'),
     Input('systems-per-question-chart-radio', 'value'),
 )
 def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationValue, plotStyle, download_format,
-                            sort_value, systemToPlotRadio):
+                            systemToPlotRadio):
     df = pd.read_json(data, orient='split', dtype='int16')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
-    SUSData.sortBy(sort_value)
+    # SUSData.sortBy(sort_value)
     SUSData = Helper.filterSUSStuds(SUSData, systemsToPlot)
-
-    colorizeByMeaningLabelStyle = {'display': 'none'}
     orientationLabelStyle = {'display': 'none'}
     systemsLabelStyle = {'display': 'none'}
-    sortByLabelStyle = {'display': 'none'}
     perQuestionContextStyle = {'float': 'left'}
     systemsLabelRadioStyle = {'display': 'none'}
 
@@ -367,9 +377,6 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
         systemsLabelStyle = {'display': 'block',
                              'font-weight': 'bold',
                              'padding': '10px 10px 10px 10px'}
-        sortByLabelStyle = {'display': 'block',
-                            'font-weight': 'bold',
-                            'padding': '10px 10px 10px 10px'}
     elif plotStyle == 'boxplot':
         fig = Charts.CreatePerQuestionBoxPlot(SUSData, questionsTicked, systemsToPlot, orientationValue)
         orientationLabelStyle = {'display': 'block',
@@ -378,26 +385,17 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
         systemsLabelStyle = {'display': 'block',
                              'font-weight': 'bold',
                              'padding': '10px 10px 10px 10px'}
-        sortByLabelStyle = {'display': 'block',
-                            'font-weight': 'bold',
-                            'padding': '10px 10px 10px 10px'}
     elif plotStyle == 'radar':
         fig = Charts.CreateRadarChart(SUSData, questionsTicked, systemsToPlot)
         systemsLabelStyle = {'display': 'block',
                              'font-weight': 'bold',
                              'padding': '10px 10px 10px 10px'}
-        sortByLabelStyle = {'display': 'block',
-                            'font-weight': 'bold',
-                            'padding': '10px 10px 10px 10px'}
     elif plotStyle == 'likert':
         systemsLabelRadioStyle = {'display': 'block',
                                   'font-weight': 'bold',
                                   'padding': '10px 10px 10px 10px',
                                   }
         perQuestionContextStyle = {'display': 'none'}
-        colorizeByMeaningLabelStyle = {'display': 'block',
-                                       'font-weight': 'bold',
-                                       'padding': '10px 10px 10px 10px'}
         fig = Charts.CreateLikertChart(SUSData.getIndividualStudyData(systemToPlotRadio), questionsTicked)
 
     if download_format == 'customSize':
@@ -406,7 +404,7 @@ def update_PerQuestionChart(systemsToPlot, questionsTicked, data, orientationVal
                                     'padding': '10px 10px 10px 10px'}
     else:
         custom_image_label_style = {'display': 'none'}
-    return fig, orientationLabelStyle, systemsLabelStyle, sortByLabelStyle, perQuestionContextStyle, systemsLabelRadioStyle, perItemTable, custom_image_label_style
+    return fig, orientationLabelStyle, systemsLabelStyle, perQuestionContextStyle, systemsLabelRadioStyle, perItemTable, custom_image_label_style
 
 
 @app.callback(
@@ -632,7 +630,6 @@ def download_csv_per_question(n_clicks, data, questions_ticked):
     df = pd.read_json(data, orient='split')
     SUSData = SUSDataset(Helper.parseDataFrameToSUSDataset(df))
     df = ChartLayouts.createPerItemDataFrame(SUSData, questions_ticked)
-    print(df)
     return dcc.send_data_frame(df.to_csv, "per_question.csv", index=False)
 
 
