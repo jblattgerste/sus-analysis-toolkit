@@ -11,6 +11,7 @@ class SUSStud:
         self.avgScorePerQuestion, self.scoresPerQuestion = self.calcSUSScorePerQuestion()
         self.name = name
         self.standardDevPerQuestion = self.calcStandardDevPerQuestion()
+        self.popStandardDevOverall = self.calcPopulationStandardDev()
         self.standardDevOverall = self.calcStandardDev()
         self.median = self.calcMedian()
         self.rawResultPerQuestion = self.getRawResultPerQuestion()
@@ -80,16 +81,15 @@ class SUSStud:
         standardDeviations = []
         for question in self.scoresPerQuestion.values():
             try:
-                standardDeviations.append(statistics.pstdev(question))
+                standardDeviations.append(statistics.stdev(question))
             except statistics.StatisticsError:
                 standardDeviations.append(0)
 
         return standardDeviations
 
     def calcStandardDev(self):
-        standardDev = 0
         try:
-            standardDev = statistics.pstdev(self.getAllSUSScores())
+            standardDev = statistics.stdev(self.getAllSUSScores())
         except statistics.StatisticsError:
             standardDev = 0
         return standardDev
@@ -100,3 +100,10 @@ class SUSStud:
         except statistics.StatisticsError:
             median = 0
         return median
+
+    def calcPopulationStandardDev(self):
+        try:
+            standardDev = statistics.pstdev(self.getAllSUSScores())
+        except statistics.StatisticsError:
+            standardDev = 0
+        return standardDev

@@ -9,9 +9,16 @@ import styles
 import Helper
 import Layouts
 
-download_layouts = [{'label': 'Default plot format' + ' (Width: ' + str(Helper.defaultPlotSettings.width) + ' Height: ' + str(Helper.defaultPlotSettings.height) + ' Font Size: ' + str(Helper.defaultPlotSettings.fontSize) + ')', 'value': 'defaultPlot'},
-                    {'label': 'Narrow plot format' + ' (Width: ' + str(Helper.narrowPlotSettings.width) + ' Height: ' + str(Helper.narrowPlotSettings.height) + ' Font Size: ' + str(Helper.narrowPlotSettings.fontSize) + ')', 'value': 'narrowPlot'},
-                    {'label': 'Wide plot format' + ' (Width: ' + str(Helper.widePlotSettings.width) + ' Height: ' + str(Helper.widePlotSettings.height) + ' Font Size: ' + str(Helper.widePlotSettings.fontSize) + ')', 'value': 'widePlot'},
+download_layouts = [{'label': 'Default plot format' + ' (Width: ' + str(
+    Helper.defaultPlotSettings.width) + ' Height: ' + str(Helper.defaultPlotSettings.height) + ' Font Size: ' + str(
+    Helper.defaultPlotSettings.fontSize) + ')', 'value': 'defaultPlot'},
+                    {'label': 'Narrow plot format' + ' (Width: ' + str(
+                        Helper.narrowPlotSettings.width) + ' Height: ' + str(
+                        Helper.narrowPlotSettings.height) + ' Font Size: ' + str(
+                        Helper.narrowPlotSettings.fontSize) + ')', 'value': 'narrowPlot'},
+                    {'label': 'Wide plot format' + ' (Width: ' + str(Helper.widePlotSettings.width) + ' Height: ' + str(
+                        Helper.widePlotSettings.height) + ' Font Size: ' + str(Helper.widePlotSettings.fontSize) + ')',
+                     'value': 'widePlot'},
                     {'label': 'Custom format', 'value': 'customSize'}
                     ]
 
@@ -121,7 +128,8 @@ def CreateMainPlotLayout(SUSData, systemList):
     for system in systemList:
         options.append({'label': system, 'value': system})
         value.append(system)
-    fig = Charts.CreateMainplot(SUSData, 'outliers', 'adjectiveScale', 'vertical', 'mainplot', 'mean', "",'default-colors')
+    fig = Charts.CreateMainplot(SUSData, 'outliers', 'adjectiveScale', 'vertical', 'mainplot', 'mean', "",
+                                'default-colors')
     #
     tableContent = createMainplotTable(SUSData, 'adjectiveScale')
     #
@@ -160,10 +168,10 @@ def CreateMainPlotLayout(SUSData, systemList):
                 ),
                 html.Label([
                     html.Details([
-                    html.Summary("Plot type: "),
-                    html.P(id="plotstyle-info",
-                           children=[Helper.plotStyleInfoTexts['mainplot']],
-                           style=styles.editorInfoTextStyle)], open=True),
+                        html.Summary("Plot type: "),
+                        html.P(id="plotstyle-info",
+                               children=[Helper.plotStyleInfoTexts['mainplot']],
+                               style=styles.editorInfoTextStyle)], open=True),
                     dcc.Dropdown(id='plotstyle-mainplot',
                                  options=[{'label': 'Boxplot', 'value': 'mainplot'},
                                           {'label': 'Notched Boxplot', 'value': 'notched'},
@@ -180,9 +188,9 @@ def CreateMainPlotLayout(SUSData, systemList):
                 ),
                 html.Label([
                     html.Details([html.Summary("Contextualization scale: "),
-                    html.P(id="scaletype-info",
-                           children=[Helper.scaleInfoTexts['adjectiveScale']],
-                           style=styles.editorInfoTextStyle)], open=True),
+                                  html.P(id="scaletype-info",
+                                         children=[Helper.scaleInfoTexts['adjectiveScale']],
+                                         style=styles.editorInfoTextStyle)], open=True),
                     dcc.Dropdown(id='scale-mainplot',
                                  options=[{'label': 'Adjective Scale', 'value': 'adjectiveScale'},
                                           {'label': 'Grade Scale', 'value': 'gradeScale'},
@@ -208,9 +216,9 @@ def CreateMainPlotLayout(SUSData, systemList):
                 html.Label([
                     'Colorize plot according to contextualization scale:',
                     dcc.Dropdown(id='colorize-by-scale',
-                                options={'scale-colors': 'Colorize by scale',
-                                         'default-colors': 'Default Colors'},
-                                value='default-colors',
+                                 options={'scale-colors': 'Colorize by scale',
+                                          'default-colors': 'Default Colors'},
+                                 value='default-colors',
                                  style={'font-weight': 'normal',
                                         'margin-top': '10px',
                                         }
@@ -289,6 +297,25 @@ def CreateMainPlotLayout(SUSData, systemList):
                            },
                 ),
                 html.Label([
+                    "Standard Deviation Type: ",
+                    dcc.Dropdown(id='sd_type-mainplot',
+                                 options=[
+                                     {'label': 'Sample standard deviation', 'value': 'sample'},
+                                     {'label': 'Population Standard-Deviation', 'value': 'population'},
+                                 ],
+                                 value='sample',
+                                 style={'font-weight': 'normal',
+                                        'margin-top': '10px',
+                                        }
+                                 ),
+                ],
+                    id='mean_sdValue-label',
+                    style={'display': 'block',
+                           'font-weight': 'bold',
+                           'padding': '10px 10px 10px 10px'
+                           },
+                ),
+                html.Label([
                     "Plot orientation: ",
                     dcc.Dropdown(id='orientation-mainplot',
                                  options=[{'label': 'Vertical', 'value': 'vertical'},
@@ -331,7 +358,7 @@ def CreateMainPlotLayout(SUSData, systemList):
                     style=styles.download_div_style
                 ),
                 html.Div([
-                    html.Button('Download this data table', id='csv-mainplot-button', className='button1'),],
+                    html.Button('Download this data table', id='csv-mainplot-button', className='button1'), ],
                     style=styles.download_div_style
                 ),
                 html.Div([
@@ -440,22 +467,6 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
                            },
                 ),
                 html.Label([
-                    "Sort by: ",
-                    dcc.Dropdown(id='sort-by-perquestion',
-                                 options=sort_values,
-                                 value='alphabetically',
-                                 style={'font-weight': 'normal',
-                                        'margin-top': '10px',
-                                        }
-                                 ),
-                ],
-                    id='sort-by-label',
-                    style={'display': 'block',
-                           'font-weight': 'bold',
-                           'padding': '10px 10px 10px 10px'
-                           },
-                ),
-                html.Label([
                     "Show questionnaire items: ",
                     dcc.Checklist(id='questions-per-question-chart',
                                   options=questionOptions,
@@ -471,25 +482,6 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
                            'padding': '10px 10px 10px 10px'
                            },
                 ),
-                # For now depcrecated, might reuse later
-                # html.Label([
-                #     "Colorization: ",
-                #     dcc.Dropdown(id='colorize-by-meaning',
-                #                  options=[{'label': 'Regular colors', 'value': 'regular'},
-                #                           {'label': 'Colorize by meaning', 'value': 'byMeaning'}],
-                #                  value='byMeaning',
-                #                  style={'font-weight': 'normal',
-                #                         'margin-top': '10px',
-                #                         }
-                #                  ),
-                # ],
-                #     id='colorize-by-meaning-label',
-                #     style={'display': 'none',
-                #            'font-weight': 'bold',
-                #            'padding': '10px 10px 10px 10px'
-                #            },
-                # ),
-
                 html.Label([
                     "Plot type: ",
                     dcc.Dropdown(id='plotstyle-per-question-chart',
@@ -556,7 +548,6 @@ def CreatePerQuestionChartLayout(SUSData, systemList):
 
 
 def CreateCocnlusivenessChartLayout(SUSData):
-
     value = []
     options = []
 
@@ -733,27 +724,27 @@ def CreateSingleStudyChartLayout(SUSData):
             html.Label([
                 "Primary sources ",
                 html.Details([html.Summary(['Adjective Scale'], style={'font-size': 'medium',
-                                                                         'font-weight': 'normal'}),
+                                                                       'font-weight': 'normal'}),
                               html.P(Helper.scaleInfoTexts['adjectiveScale'],
                                      style=styles.editorInfoTextStyle)],
                              ),
                 html.Details([html.Summary(['Grade Scale'], style={'font-size': 'medium',
-                                                                         'font-weight': 'normal'}),
+                                                                   'font-weight': 'normal'}),
                               html.P(Helper.scaleInfoTexts['gradeScale'],
                                      style=styles.editorInfoTextStyle)],
                              ),
                 html.Details([html.Summary(['Acceptability Scale'], style={'font-size': 'medium',
-                                                                     'font-weight': 'normal'}),
+                                                                           'font-weight': 'normal'}),
                               html.P(Helper.scaleInfoTexts['acceptabilityScale'],
                                      style=styles.editorInfoTextStyle)],
                              ),
                 html.Details([html.Summary(['Percentile-Curve'], style={'font-size': 'medium',
-                                                                           'font-weight': 'normal'}),
+                                                                        'font-weight': 'normal'}),
                               html.P(Helper.percentileIntoText,
                                      style=styles.editorInfoTextStyle)],
                              ),
                 html.Details([html.Summary(['Conslusiveness Chart'], style={'font-size': 'medium',
-                                                                        'font-weight': 'normal'}),
+                                                                            'font-weight': 'normal'}),
                               html.P(Helper.conclusivenessInfoText,
                                      style=styles.editorInfoTextStyle)],
                              ),
@@ -763,8 +754,12 @@ def CreateSingleStudyChartLayout(SUSData):
                        'padding': '10px 10px 10px 10px'
                        },
             ),
-            html.Div(id="download-single-study-chart",
-                     children=[],
+            html.Div(id="download-single-study-chart-content",
+                     children=[
+                         html.Button("Download Chart", id="download-single-study-chart-button",
+                                     className="button1"),
+                         dcc.Download(id="download-single-study-chart"),
+                     ],
                      style=styles.download_div_style, ),
         ],
             className='editor'
@@ -774,7 +769,7 @@ def CreateSingleStudyChartLayout(SUSData):
     return graphContent
 
 
-def createMainplotDataframe(SUSData):
+def createMainplotDataframe(SUSData, population_standard_deviation: bool = False):
     mins = []
     firstQuartiles = []
     medians = []
@@ -814,7 +809,10 @@ def createMainplotDataframe(SUSData):
         except statistics.StatisticsError:
             thirdQuartiles.append('-')
         maxs.append(max(susScores))
-        standardDeviation.append(round(study.standardDevOverall, 2))
+        if population_standard_deviation:
+            standardDeviation.append(round(study.popStandardDevOverall, 2))
+        else:
+            standardDeviation.append(round(study.standardDevOverall, 2))
 
     data = {
         'Variable ': systemList,
@@ -838,23 +836,23 @@ def createMainplotDataframe(SUSData):
     return df
 
 
-def createMainplotTable(SUSData, scaleType):
-    df = createMainplotDataframe(SUSData)
+def createMainplotTable(SUSData, scaleType, population_standard_deviation: bool = False):
+    df = createMainplotDataframe(SUSData, population_standard_deviation)
     dataframeConditions = Helper.dataFrameConditions[scaleType]
     table = dash_table.DataTable(
-                id='main-plot-dataframe',
-                columns=[{"name": i, "id": i} for i in df.columns],
-                style_table={
-                    'overflowX': 'auto'},
-                data=df.to_dict('records'),
-                style_cell={'textAlign': 'right',
-                            },
-                style_data_conditional=dataframeConditions,
-                style_header={
-                    'backgroundColor': 'rgb(230, 230, 230)',
-                    'fontWeight': 'bold'
-                }
-            )
+        id='main-plot-dataframe',
+        columns=[{"name": i, "id": i} for i in df.columns],
+        style_table={
+            'overflowX': 'auto'},
+        data=df.to_dict('records'),
+        style_cell={'textAlign': 'right',
+                    },
+        style_data_conditional=dataframeConditions,
+        style_header={
+            'backgroundColor': 'rgb(230, 230, 230)',
+            'fontWeight': 'bold'
+        }
+    )
     return table
 
 
@@ -901,21 +899,21 @@ def createPerItemTable(SUSData, questionsTicked=None):
         questionsTicked = []
     df = createPerItemDataFrame(SUSData, questionsTicked)
     table = dash_table.DataTable(
-                columns=[{"name": str(i), "id": str(i)} for i in df.columns],
-                data=df.to_dict('records'),
-                style_table={'overflowX': 'auto'
-                             },
-                style_data_conditional=[
-                    {
-                        'if': {'row_index': 'odd'},
-                        'backgroundColor': 'rgb(248, 248, 248)'
-                    }
-                ],
-                style_header={
-                    'backgroundColor': 'rgb(230, 230, 230)',
-                    'fontWeight': 'bold'
-                }
-            )
+        columns=[{"name": str(i), "id": str(i)} for i in df.columns],
+        data=df.to_dict('records'),
+        style_table={'overflowX': 'auto'
+                     },
+        style_data_conditional=[
+            {
+                'if': {'row_index': 'odd'},
+                'backgroundColor': 'rgb(248, 248, 248)'
+            }
+        ],
+        style_header={
+            'backgroundColor': 'rgb(230, 230, 230)',
+            'fontWeight': 'bold'
+        }
+    )
     return table
 
 
@@ -937,22 +935,22 @@ def createPercentilePlotDataFrame(SUSData):
 def createPercentilePlotTable(SUSData):
     df = createPercentilePlotDataFrame(SUSData)
     table = dash_table.DataTable(
-                columns=[{"name": i, "id": i} for i in df.columns],
-                data=df.to_dict('records'),
-                style_cell={'textAlign': 'right',
-                            'width': '17%'
-                            },
-                style_data_conditional=[
-                    {
-                        'if': {'row_index': 'odd'},
-                        'backgroundColor': 'rgb(248, 248, 248)'
-                    }
-                ],
-                style_header={
-                    'backgroundColor': 'rgb(230, 230, 230)',
-                    'fontWeight': 'bold'
-                }
-            )
+        columns=[{"name": i, "id": i} for i in df.columns],
+        data=df.to_dict('records'),
+        style_cell={'textAlign': 'right',
+                    'width': '17%'
+                    },
+        style_data_conditional=[
+            {
+                'if': {'row_index': 'odd'},
+                'backgroundColor': 'rgb(248, 248, 248)'
+            }
+        ],
+        style_header={
+            'backgroundColor': 'rgb(230, 230, 230)',
+            'fontWeight': 'bold'
+        }
+    )
     return table
 
 
@@ -995,20 +993,20 @@ def CreateConclusivenessPlotDataFrame(SUSData, systems):
 def CreateConclusivenessPlotTable(SUSData, systems):
     df = CreateConclusivenessPlotDataFrame(SUSData, systems)
     table = dash_table.DataTable(
-                columns=[{"name": i, "id": i} for i in df.columns],
-                data=df.to_dict('records'),
-                style_cell={'textAlign': 'right',
-                            'width': '17%'
-                            },
-                style_data_conditional=[
-                    {
-                        'if': {'row_index': 'odd'},
-                        'backgroundColor': 'rgb(248, 248, 248)'
-                    }
-                ],
-                style_header={
-                    'backgroundColor': 'rgb(230, 230, 230)',
-                    'fontWeight': 'bold'
-                }
-            )
+        columns=[{"name": i, "id": i} for i in df.columns],
+        data=df.to_dict('records'),
+        style_cell={'textAlign': 'right',
+                    'width': '17%'
+                    },
+        style_data_conditional=[
+            {
+                'if': {'row_index': 'odd'},
+                'backgroundColor': 'rgb(248, 248, 248)'
+            }
+        ],
+        style_header={
+            'backgroundColor': 'rgb(230, 230, 230)',
+            'fontWeight': 'bold'
+        }
+    )
     return table

@@ -4,5 +4,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    image: result/latest
+    ports:
+      - "8050:8050"
+    image: sus-test
 

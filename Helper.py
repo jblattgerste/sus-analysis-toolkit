@@ -8,6 +8,7 @@ import pandas as pd
 from dash import html, dcc
 import io
 from dash.dash_table.Format import Format, Scheme
+from plotly.graph_objs import Figure
 
 import ChartLayouts
 from Result import Result
@@ -62,7 +63,7 @@ def stringListToFloat(stringList):
 
 
 def downloadChartContentSingleStudy(fig):
-    fig = copy.copy(fig)
+    fig: Figure = copy.copy(fig)
     fig.update_layout(
         paper_bgcolor='rgba(255,255,255,255)',
         font=dict(
