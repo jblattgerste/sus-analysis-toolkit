@@ -20,6 +20,7 @@ An in-depth explanation of the toolkits features and their scientific basis can 
 
 ## Quickstart - Running the SUS Analysis Toolkit locally
 
+### Run it locally using python
 1. Install [Python 3.9](https://www.python.org/downloads/). On Windows, make sure to check "Add Pythong 3.9 to PATH" during installation
 2. Clone this repository, or manually download it as a zip file and extract it
 3. Open the sus-analysis-toolkit folder
@@ -49,8 +50,12 @@ An in-depth explanation of the toolkits features and their scientific basis can 
   
 8.  To stop the toolkits local server, close the terminal window
 
+### Run it locally using Docker
+
+You can also [download the latest Docker container](https://github.com/jblattgerste/sus-analysis-toolkit/pkgs/container/sus-analysis-toolkit) and run it locally, using e.g. Docker Desktop.
+
 ## Running the SUS Analysis Toolkit on a server
-To run the SUS Analysis Toolkit on a server, we recommend [building a Docker Image and hosting it in a Docker Container](https://docs.docker.com/get-started/). The required `Dockerfile` is included in this repository.
+To run the SUS Analysis Toolkit on your own server, we recommend hosting the latest Docker container provided under [Packages](https://github.com/jblattgerste/sus-analysis-toolkit/pkgs/container/sus-analysis-toolkit) in our repository. You can also [build a Docker Image and host the Docker Container](https://docs.docker.com/get-started/) yourself. The required `Dockerfile` is included in this repository.
 
 ## Contributing to this project
 As the SUS Analysis Toolkit is an ongoing project, we are happy to receive feedback, suggestions and bug reports through Email or GitHub Issues.
