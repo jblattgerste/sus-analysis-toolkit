@@ -108,7 +108,7 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
                                download='singleStudyData.csv'),
                         ' for help. ', ]),
 
-                html.P([html.A('Refresh', href='/'), ' the page to try again.'])
+                html.P([html.A('Refresh', href=app.get_relative_path('/')), ' the page to try again.'])
             ])]
             return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, errorMessage
         except Exception:
@@ -120,7 +120,7 @@ def update_multi_study(contents_multi, table_data, table_columns, add_row_button
                                download='singleStudyData.csv'),
                         ' for help. ', ]),
 
-                html.P([html.A('Refresh', href='/'), ' the page to try again.'])
+                html.P([html.A('Refresh', href=app.get_relative_path('/')), ' the page to try again.'])
             ])]
             return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, errorMessage
     elif 'start-tool-button' == input_trigger:
@@ -208,7 +208,7 @@ def update_single_study(contents_single, table_data, table_columns, add_row_butt
                                download='singleStudyData.csv'),
                         ' for help. ', ]),
 
-                html.P([html.A('Refresh', href='/'), ' the page to try again.'])
+                html.P([html.A('Refresh', href=app.get_relative_path('/')), ' the page to try again.'])
             ])]
             return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, errorMessage
         except Exception as e:
@@ -220,7 +220,7 @@ def update_single_study(contents_single, table_data, table_columns, add_row_butt
                                download='singleStudyData.csv'),
                         ' for help. ', ]),
 
-                html.P([html.A('Refresh', href='/'), ' the page to try again.'])
+                html.P([html.A('Refresh', href=app.get_relative_path('/')), ' the page to try again.'])
             ])]
             return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, errorMessage
     elif input_trigger == 'editable-table-single':

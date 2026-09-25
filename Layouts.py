@@ -89,7 +89,7 @@ def getMainContent(app, VERSION):
                                 'color': 'white'
                             }),
                     html.Div(
-                        html.A(html.Button(['Back to Startpage'], className='button2'), href='/'),
+                        html.A(html.Button(['Back to Startpage'], className='button2'), href=app.get_relative_path('/')),
                         # html.A(html.Img(src=app.get_asset_url('home_white.png'), width='30', height='30'), href='/'),
                         style={'text-align': 'center'}),
                 ],

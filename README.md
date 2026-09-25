@@ -57,6 +57,15 @@ You can also [download the latest Docker container](https://github.com/jblattger
 ## Running the SUS Analysis Toolkit on a server
 To run the SUS Analysis Toolkit on your own server, we recommend hosting the latest Docker container provided under [Packages](https://github.com/jblattgerste/sus-analysis-toolkit/pkgs/container/sus-analysis-toolkit) in our repository. You can also [build a Docker Image and host the Docker Container](https://docs.docker.com/get-started/) yourself. The required `Dockerfile` is included in this repository.
 
+## Hosting the SUS Analysis Toolkit as a static website
+The toolkit can also run without a server: the `static_site` folder exports it as a static website that runs the unchanged Python code in the browser using [Pyodide](https://pyodide.org/). CSV files are processed on the user's device and never sent anywhere, and all files the site needs are hosted with the site itself, without any CDN. The first visit downloads the Python runtime and packages (about 54 MB), so starting takes a few seconds longer than the server version.
+
+The [GitHub Pages workflow](.github/workflows/github-pages.yml) builds it and publishes it on GitHub Pages. To build it yourself:
+  ```
+  python static_site/build.py --out _site
+  ```
+The contents of `_site` can then be served by any static web server. By default, the site is built for the root of a domain (like https://analysis.sus.tools/); to host it under a sub-path, add e.g. `--base-path /sus-analysis-toolkit/`.
+
 ## Contributing to this project
 As the SUS Analysis Toolkit is an ongoing project, we are happy to receive feedback, suggestions and bug reports through Email or GitHub Issues.
 

@@ -1,0 +1,86 @@
+/* Loading screen shown while the toolkit starts in the browser (styled like assets/body.css) */
+#static-site-loading {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+    background-color: #FAFAFA;
+    font-family: Tahoma, Verdana, sans-serif;
+    transition: opacity 0.3s;
+}
+
+#static-site-loading.static-site-loading-done {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.static-site-loading-card {
+    width: 100%;
+    max-width: 32em;
+    overflow: hidden;
+    background: #FFFFFF;
+    border-radius: 5px;
+    box-shadow: 0 1rem 1rem -.5rem rgba(0, 0, 0, .4);
+}
+
+.static-site-loading-header {
+    padding: 1rem 1.5rem;
+    background: #445262;
+    color: #FFFFFF;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.static-site-loading-body {
+    padding: 1.5rem;
+}
+
+.static-site-loading-lead {
+    margin: 0 0 1em;
+    font-weight: bold;
+}
+
+.static-site-loading-bar {
+    height: 0.6em;
+    overflow: hidden;
+    background: #EAEAF2;
+    border-radius: 5px;
+}
+
+.static-site-loading-bar-fill {
+    width: 0;
+    height: 100%;
+    background: #445262;
+    transition: width 0.2s;
+}
+
+.static-site-loading-status {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    margin: 0.6em 0 1.2em;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+.static-site-loading-size {
+    white-space: nowrap;
+}
+
+.static-site-loading-note {
+    margin: 0;
+    color: #576372;
+    font-size: 0.85em;
+    line-height: 1.4;
+}
+
+#static-site-loading.static-site-loading-failed .static-site-loading-step {
+    color: #D6002B;
+}
+
+#static-site-loading.static-site-loading-failed .static-site-loading-bar-fill {
+    background: #D6002B;
+}
