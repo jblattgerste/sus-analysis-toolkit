@@ -1,0 +1,109 @@
+name: Static Site on GitHub Pages
+
+# Builds a static version of the toolkit that runs its Python code in the browser (Pyodide), checks that it
+# behaves like the Dash server and publishes it on GitHub Pages.
+on:
+  push:
+    branches: [ main, claude/vigilant-pascal-kpoqhe ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+env:
+  BASE_PATH: /${{ github.event.repository.name }}/
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        # Same Python version as the Pyodide release used by the static site
+        python-version: '3.12'
+
+    - name: Install dependencies
+      # kaleido>=1 is only needed by the reference server in the test: the plotly version that
+      # requirements.txt currently resolves to no longer supports the pinned kaleido 0.2.1
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt "kaleido>=1" playwright
+        python -m playwright install --with-deps chromium
+
+    - name: Build static site
+      run: python static_site/build.py --out _site --base-path "$BASE_PATH"
+
+    - name: Start Dash server and static site
+      run: |
+        python -c "import dashApp; dashApp.app.run(port=8050)" > dash-server.log 2>&1 &
+        mkdir -p /tmp/www && ln -s "$PWD/_site" "/tmp/www$BASE_PATH"
+        python -m http.server 8000 --directory /tmp/www > static-server.log 2>&1 &
+        for i in $(seq 60); do curl -sf http://127.0.0.1:8050/ > /dev/null && break; sleep 1; done
+        curl -sf "http://127.0.0.1:8000$BASE_PATH" > /dev/null
+
+    - name: Compare static site with Dash server
+      run: python static_site/test_parity.py --server-url http://127.0.0.1:8050/ --static-url "http://127.0.0.1:8000$BASE_PATH" --out parity-results
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: parity-results
+        path: |
+          parity-results
+          dash-server.log
+
+    - uses: actions/upload-pages-artifact@v3
+      with:
+        path: _site
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - id: deployment
+      uses: actions/deploy-pages@v4
+
+  test-deployed-site:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt "kaleido>=1" playwright
+        python -m playwright install --with-deps chromium
+
+    - name: Start Dash server
+      run: |
+        python -c "import dashApp; dashApp.app.run(port=8050)" > dash-server.log 2>&1 &
+        for i in $(seq 60); do curl -sf http://127.0.0.1:8050/ > /dev/null && break; sleep 1; done
+
+    - name: Compare deployed site with Dash server
+      run: python static_site/test_parity.py --server-url http://127.0.0.1:8050/ --static-url "${{ needs.deploy.outputs.page_url }}" --out parity-results-deployed
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: parity-results-deployed
+        path: parity-results-deployed
