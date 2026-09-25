@@ -4,12 +4,14 @@ The exported site contains:
   - index.html: the page Dash would serve, plus a small script that routes Dash's API requests into Pyodide
   - _dash-component-suites/...: the JavaScript bundles of Dash and its components
   - assets/...: the app's assets folder
-  - pyodide/...: the app's Python sources, the pure-Python wheels it depends on and the worker running Pyodide
+  - pyodide/...: the app's Python sources, the pure-Python wheels it depends on, the worker running Pyodide and
+    the Pyodide runtime itself, so the site does not depend on any CDN
 
 Usage:
   python static_site/build.py --out _site --base-path /sus-analysis-toolkit/
 """
 import argparse
+import hashlib
 import html
 import json
 import os
@@ -18,6 +20,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import urllib.request
 import zipfile
 from urllib.parse import urlparse
 
@@ -26,7 +29,11 @@ STATIC_SITE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Pyodide release whose bundled numpy/pandas match requirements.txt (Python 3.12, pandas 2.2.x)
 PYODIDE_VERSION = '0.27.7'
-PYODIDE_INDEX_URL = f'https://cdn.jsdelivr.net/pyodide/v{PYODIDE_VERSION}/full/'
+# Only used while building: the runtime and the packages are copied into the site
+PYODIDE_DOWNLOAD_URL = f'https://cdn.jsdelivr.net/pyodide/v{PYODIDE_VERSION}/full/'
+PYODIDE_CORE_FILES = ['pyodide.js', 'pyodide.asm.js', 'pyodide.asm.wasm', 'python_stdlib.zip', 'pyodide-lock.json']
+# Used in the browser to create the zip file of "Download complete analysis"
+JSZIP_URL = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js'
 # Only needed for server-side image export, which the static site does in the browser instead
 EXCLUDED_REQUIREMENTS = ['kaleido']
 
@@ -116,6 +123,35 @@ def download_wheels(wheel_dir):
     return wheels, compiled_packages
 
 
+def download(url, path, sha256=None):
+    with urllib.request.urlopen(url) as response:
+        data = response.read()
+    if sha256 is not None and hashlib.sha256(data).hexdigest() != sha256:
+        raise RuntimeError(f'Checksum mismatch for {url}')
+    with open(path, 'wb') as f:
+        f.write(data)
+
+
+def download_pyodide(runtime_dir, packages):
+    """Copies the Pyodide runtime and the given packages (with their dependencies) into the site."""
+    os.makedirs(runtime_dir)
+    for filename in PYODIDE_CORE_FILES:
+        download(PYODIDE_DOWNLOAD_URL + filename, os.path.join(runtime_dir, filename))
+    with open(os.path.join(runtime_dir, 'pyodide-lock.json')) as f:
+        lock = json.load(f)['packages']
+    needed, todo = set(), list(packages)
+    while todo:
+        name = todo.pop()
+        if name not in needed:
+            needed.add(name)
+            todo.extend(lock[name]['depends'])
+    for name in sorted(needed):
+        package = lock[name]
+        download(PYODIDE_DOWNLOAD_URL + package['file_name'], os.path.join(runtime_dir, package['file_name']),
+                 package['sha256'])
+    return sorted(needed)
+
+
 def build(out_dir, base_path):
     if not base_path.startswith('/') or not base_path.endswith('/'):
         raise ValueError('--base-path must start and end with "/"')
@@ -131,6 +167,10 @@ def build(out_dir, base_path):
     os.makedirs(wheel_dir)
     wheels, compiled_packages = download_wheels(wheel_dir)
 
+    pyodide_packages = ['micropip'] + compiled_packages
+    runtime_packages = download_pyodide(os.path.join(pyodide_dir, 'runtime'), pyodide_packages)
+    download(JSZIP_URL, os.path.join(pyodide_dir, 'jszip.min.js'))
+
     with zipfile.ZipFile(os.path.join(pyodide_dir, 'app.zip'), 'w', zipfile.ZIP_DEFLATED) as zf:
         for relative_path in APP_SOURCES + APP_ASSETS:
             zf.write(os.path.join(REPO_ROOT, relative_path), relative_path)
@@ -140,8 +180,7 @@ def build(out_dir, base_path):
 
     config = {
         'basePath': base_path,
-        'pyodideIndexURL': PYODIDE_INDEX_URL,
-        'pyodidePackages': ['micropip'] + compiled_packages,
+        'pyodidePackages': pyodide_packages,
         'wheels': wheels,
     }
     with open(os.path.join(pyodide_dir, 'config.json'), 'w') as f:
@@ -155,7 +194,8 @@ def build(out_dir, base_path):
     # GitHub Pages must not run the site through Jekyll (it would drop files starting with "_")
     open(os.path.join(out_dir, '.nojekyll'), 'w').close()
 
-    print(f'Static site written to {out_dir} ({len(wheels)} wheels, base path {base_path})')
+    print(f'Static site written to {out_dir} (Pyodide {PYODIDE_VERSION} with {len(runtime_packages)} packages, '
+          f'{len(wheels)} wheels, base path {base_path})')
 
 
 if __name__ == '__main__':

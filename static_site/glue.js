@@ -92,7 +92,7 @@
   }
 
   async function renderImagesInZip(zipBase64) {
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', () => window.JSZip);
+    await loadScript(new URL('jszip.min.js', script.src).href, () => window.JSZip);
     const zip = await JSZip.loadAsync(zipBase64, { base64: true });
     let changed = false;
     for (const file of Object.values(zip.files)) {

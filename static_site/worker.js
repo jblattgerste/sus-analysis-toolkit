@@ -8,8 +8,9 @@ const ready = (async () => {
   const config = await (await fetch('config.json')).json();
 
   showProgress('Loading the Python runtime…');
-  importScripts(config.pyodideIndexURL + 'pyodide.js');
-  const pyodide = await loadPyodide({ indexURL: config.pyodideIndexURL });
+  const indexURL = new URL('runtime/', self.location).href;
+  importScripts(indexURL + 'pyodide.js');
+  const pyodide = await loadPyodide({ indexURL });
 
   showProgress('Loading Python packages…');
   await pyodide.loadPackage(config.pyodidePackages);

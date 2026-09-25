@@ -17,6 +17,7 @@ import struct
 import sys
 import time
 import zipfile
+from urllib.parse import urlparse
 
 from playwright.sync_api import sync_playwright
 
@@ -232,6 +233,8 @@ def main():
     args = parser.parse_args()
 
     results = {}
+    external_requests = set()
+    static_origin = '{0.scheme}://{0.netloc}'.format(urlparse(args.static_url))
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(executable_path=os.environ.get('CHROMIUM_PATH') or None)
         for name, url in [('server', args.server_url), ('static', args.static_url)]:
@@ -240,6 +243,13 @@ def main():
             page = browser.new_page(viewport={'width': 1600, 'height': 1000}, accept_downloads=True)
             page.on('console', lambda message, name=name: print(f'[{name} console] {message.text}'[:500]))
             page.on('pageerror', lambda error, name=name: print(f'[{name} page error] {error}'))
+            if name == 'static':
+                # The static site has to work without any CDN or other external server. Requests of its web
+                # worker are reported to the page's context as well.
+                def record_external_request(request):
+                    if not request.url.startswith((static_origin + '/', 'data:', 'blob:')):
+                        external_requests.add(request.url)
+                page.context.on('request', record_external_request)
             started = time.time()
             results[name] = run_scenarios(page, url, screenshot_dir)
             print(f'{name}: ran {len(results[name])} steps in {time.time() - started:.0f}s')
@@ -249,10 +259,15 @@ def main():
         browser.close()
 
     differences = compare(normalize(results['server']), normalize(results['static']))
+    if external_requests:
+        print('The static site requested resources from other servers:')
+        for url in sorted(external_requests):
+            print('  ' + url)
     if differences:
         print(f'{len(differences)} differences between the server and the static site:')
         for difference in differences[:200]:
             print('  ' + difference)
+    if external_requests or differences:
         sys.exit(1)
     print('The static site behaves like the server in all checked steps.')
 

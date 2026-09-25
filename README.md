@@ -58,7 +58,7 @@ You can also [download the latest Docker container](https://github.com/jblattger
 To run the SUS Analysis Toolkit on your own server, we recommend hosting the latest Docker container provided under [Packages](https://github.com/jblattgerste/sus-analysis-toolkit/pkgs/container/sus-analysis-toolkit) in our repository. You can also [build a Docker Image and host the Docker Container](https://docs.docker.com/get-started/) yourself. The required `Dockerfile` is included in this repository.
 
 ## Hosting the SUS Analysis Toolkit as a static website
-The toolkit can also run without a server: the `static_site` folder exports it as a static website that runs the unchanged Python code in the browser using [Pyodide](https://pyodide.org/). Uploaded data never leaves the browser. The first visit downloads the Python runtime and packages (roughly 30 MB), so starting takes a few seconds longer than the server version.
+The toolkit can also run without a server: the `static_site` folder exports it as a static website that runs the unchanged Python code in the browser using [Pyodide](https://pyodide.org/). Uploaded data never leaves the browser, and the site loads everything from its own server, without any CDN. The first visit downloads the Python runtime and packages (roughly 30 MB), so starting takes a few seconds longer than the server version.
 
 The [GitHub Pages workflow](.github/workflows/github-pages.yml) builds it, checks that it behaves like the Dash server (`static_site/test_parity.py`) and publishes it on GitHub Pages. To build it yourself:
   ```
