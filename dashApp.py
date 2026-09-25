@@ -20,7 +20,7 @@ import styles
 import zipfile
 import tempfile
 
-VERSION = '1.0.3 – 08.24'
+VERSION = '1.1.0 – 09.26'
 
 app = dash.Dash(__name__)
 app.title = 'SUS Analysis Toolkit'
