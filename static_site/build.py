@@ -8,7 +8,7 @@ The exported site contains:
     the Pyodide runtime itself, so the site does not depend on any CDN
 
 Usage:
-  python static_site/build.py --out _site --base-path /sus-analysis-toolkit/
+  python static_site/build.py --out _site [--base-path /sub/path/]
 """
 import argparse
 import hashlib
@@ -205,6 +205,6 @@ def build(out_dir, base_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--out', default='_site')
-    parser.add_argument('--base-path', default='/sus-analysis-toolkit/')
+    parser.add_argument('--base-path', default='/', help='URL path the site is hosted under')
     args = parser.parse_args()
     build(args.out, args.base_path)

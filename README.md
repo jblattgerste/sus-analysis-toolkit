@@ -62,9 +62,9 @@ The toolkit can also run without a server: the `static_site` folder exports it a
 
 The [GitHub Pages workflow](.github/workflows/github-pages.yml) builds it and publishes it on GitHub Pages. To build it yourself:
   ```
-  python static_site/build.py --out _site --base-path /sus-analysis-toolkit/
+  python static_site/build.py --out _site
   ```
-The `--base-path` is the URL path the site is hosted under. The contents of `_site` can then be served by any static web server.
+The contents of `_site` can then be served by any static web server. By default, the site is built for the root of a domain (like https://analysis.sus.tools/); to host it under a sub-path, add e.g. `--base-path /sus-analysis-toolkit/`.
 
 ## Contributing to this project
 As the SUS Analysis Toolkit is an ongoing project, we are happy to receive feedback, suggestions and bug reports through Email or GitHub Issues.
