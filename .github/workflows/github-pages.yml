@@ -45,7 +45,7 @@ jobs:
     - name: Start Dash server and static site
       run: |
         python -c "import dashApp; dashApp.app.run(port=8050)" > dash-server.log 2>&1 &
-        mkdir -p /tmp/www && ln -s "$PWD/_site" "/tmp/www$BASE_PATH"
+        mkdir -p /tmp/www && ln -s "$PWD/_site" "/tmp/www${BASE_PATH%/}"
         python -m http.server 8000 --directory /tmp/www > static-server.log 2>&1 &
         for i in $(seq 60); do curl -sf http://127.0.0.1:8050/ > /dev/null && break; sleep 1; done
         curl -sf "http://127.0.0.1:8000$BASE_PATH" > /dev/null
