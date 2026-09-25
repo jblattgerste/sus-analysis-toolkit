@@ -199,7 +199,7 @@ def build(out_dir, base_path):
         f.write(index_html)
 
     print(f'Static site written to {out_dir} (Pyodide {PYODIDE_VERSION} with {len(runtime_packages)} packages, '
-          f'{len(wheel_files)} wheels, base path {base_path})')
+          f'{len(wheel_files)} wheels, base path {base_path}, first visit downloads {download_size / 1e6:.1f} MB)')
 
 
 if __name__ == '__main__':
