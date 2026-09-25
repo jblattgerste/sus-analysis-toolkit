@@ -107,6 +107,9 @@ def download_wheels(wheel_dir):
                 shutil.copy(os.path.join(tmp, filename), wheel_dir)
                 wheels.append({'name': name, 'file': filename})
             else:
+                # Intentionally not the version from requirements.txt: the browser can only run compiled packages
+                # built for WebAssembly, which come from the Pyodide release (e.g. pandas 2.2.3 instead of 2.2.2).
+                # PYODIDE_VERSION is chosen so these versions match requirements.txt as closely as possible.
                 compiled_packages.append(name)
     return wheels, compiled_packages
 
@@ -144,9 +147,12 @@ def build(out_dir, base_path):
     if not base_path.startswith('/') or not base_path.endswith('/'):
         raise ValueError('--base-path must start and end with "/"')
     out_dir = os.path.abspath(out_dir)
-    if os.path.exists(out_dir):
+    # Only ever delete an empty folder or the output of a previous build, never e.g. the repository itself
+    if os.path.exists(out_dir) and os.listdir(out_dir):
+        if not os.path.exists(os.path.join(out_dir, 'pyodide', 'config.json')):
+            raise ValueError(f'{out_dir} is not empty and not the output of a previous build')
         shutil.rmtree(out_dir)
-    os.makedirs(out_dir)
+    os.makedirs(out_dir, exist_ok=True)
 
     index_html = export_dash_frontend(out_dir, base_path)
 

@@ -78,9 +78,9 @@
 }
 
 #static-site-loading.static-site-loading-failed .static-site-loading-step {
-    color: #FF0033;
+    color: #D6002B;
 }
 
 #static-site-loading.static-site-loading-failed .static-site-loading-bar-fill {
-    background: #FF0033;
+    background: #D6002B;
 }
