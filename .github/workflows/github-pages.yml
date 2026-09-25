@@ -4,7 +4,7 @@ name: Static Site on GitHub Pages
 # on GitHub Pages.
 on:
   push:
-    branches: [ main, claude/vigilant-pascal-kpoqhe ]
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:

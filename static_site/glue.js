@@ -8,20 +8,19 @@
   let nextRequestId = 0;
 
   // Loading screen (loading.html), shown until the Dash renderer has rendered the toolkit
-  const progress = { step: 'Loading…', downloadedBytes: 0, totalBytes: 0, error: null };
+  const progress = { step: 'Loading…', loadedBytes: 0, downloadedBytes: 0, totalBytes: 0, error: null };
 
   function showProgress() {
     const loading = document.getElementById('static-site-loading');
     if (!loading) {
       return;
     }
-    const megabytes = (bytes) => (bytes / 1e6).toFixed(1);
-    const downloaded = Math.min(progress.downloadedBytes, progress.totalBytes);
+    const loaded = Math.min(progress.loadedBytes, progress.totalBytes);
     loading.querySelector('.static-site-loading-step').textContent = progress.error || progress.step;
-    loading.querySelector('.static-site-loading-size').textContent = progress.totalBytes
-      ? `${megabytes(downloaded)} of ${megabytes(progress.totalBytes)} MB` : '';
+    loading.querySelector('.static-site-loading-size').textContent =
+      `${(progress.downloadedBytes / 1e6).toFixed(1)} MB downloaded`;
     loading.querySelector('.static-site-loading-bar-fill').style.width = progress.totalBytes
-      ? `${(100 * downloaded / progress.totalBytes).toFixed(1)}%` : '0';
+      ? `${(100 * loaded / progress.totalBytes).toFixed(1)}%` : '0';
     loading.classList.toggle('static-site-loading-failed', Boolean(progress.error));
   }
 
@@ -78,7 +77,7 @@
     if (path.startsWith('/_dash-update-component') && response.status === 200) {
       responseBody = await renderImages(responseBody);
     }
-    return new Response([204, 304].includes(response.status) ? null : responseBody, {
+    return new Response(response.status === 204 ? null : responseBody, {
       status: response.status,
       headers: { 'Content-Type': response.headers['Content-Type'] || 'application/json' },
     });
@@ -142,11 +141,8 @@
       height: spec.height || layout.height || 500,
       scale: spec.scale || 1,
     });
-    const separator = dataUrl.indexOf(',');
-    const data = dataUrl.slice(separator + 1);
-    return dataUrl.slice(0, separator).endsWith(';base64')
-      ? base64ToBytes(data)
-      : new TextEncoder().encode(decodeURIComponent(data));
+    // The app only exports PNGs, which plotly.js returns as a base64 data URL
+    return base64ToBytes(dataUrl.slice(dataUrl.indexOf(',') + 1));
   }
 
   function startsWithMarker(bytes) {

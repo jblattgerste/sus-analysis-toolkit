@@ -12,7 +12,6 @@ Usage:
 """
 import argparse
 import hashlib
-import html
 import json
 import os
 import re
@@ -39,8 +38,8 @@ EXCLUDED_REQUIREMENTS = ['kaleido']
 
 APP_SOURCES = ['Annotations.py', 'ChartLayouts.py', 'Charts.py', 'Helper.py', 'Layouts.py', 'Result.py',
                'SUSDataset.py', 'SUSStud.py', 'SingleStudyCharts.py', 'dashApp.py', 'styles.py']
-# Assets read by the Python code at runtime (e.g. the example data)
-APP_ASSETS = ['assets/studyData.csv', 'assets/singleStudyData.csv', 'assets/body.css', 'assets/favicon.ico']
+# Assets read by the Python code at runtime (the example data)
+APP_ASSETS = ['assets/studyData.csv', 'assets/singleStudyData.csv']
 
 
 def write_file(out_dir, relative_path, data):
@@ -56,7 +55,6 @@ def export_dash_frontend(out_dir, base_path):
     sys.path.insert(0, REPO_ROOT)
     os.chdir(REPO_ROOT)
     import dashApp
-    from dash.fingerprint import build_fingerprint
 
     app = dashApp.app
     client = app.server.test_client()
@@ -66,27 +64,17 @@ def export_dash_frontend(out_dir, base_path):
     # Files referenced by the index page (fingerprinted bundles, css, favicon)
     referenced = set()
     for url in re.findall(r'(?:src|href)="([^"]+)"', index_html):
-        path = urlparse(html.unescape(url)).path
+        path = urlparse(url).path
         if path.startswith(base_path):
             referenced.add(path[len(base_path):])
 
     # All files Dash registered for its component suites, including the lazily loaded chunks and plotly.js
-    fingerprinted_chunks = set()
     for namespace, paths in app.registered_paths.items():
-        package_dir = os.path.dirname(sys.modules[namespace].__file__)
-        js_paths = [path for path in paths if path.endswith('.js')]
-        for path in js_paths:
-            referenced.add(f'_dash-component-suites/{namespace}/{path}')
-            # Some bundles request their lazy chunks with a fingerprint that is baked into the bundle
-            with open(os.path.join(package_dir, path), encoding='utf-8', errors='ignore') as f:
-                baked_fingerprints = set(re.findall(r'splice\(1,0,"(v[0-9_]+m[0-9]+)"\)', f.read()))
-            for fingerprint in baked_fingerprints:
-                for chunk in js_paths:
-                    if os.path.dirname(chunk) == os.path.dirname(path):
-                        name, extension = chunk.split('.', 1)
-                        fingerprinted_chunks.add(f'_dash-component-suites/{namespace}/{name}.{fingerprint}.{extension}')
+        for path in paths:
+            if path.endswith('.js'):
+                referenced.add(f'_dash-component-suites/{namespace}/{path}')
 
-    for relative_path in sorted(referenced | fingerprinted_chunks):
+    for relative_path in sorted(referenced):
         if relative_path.startswith('assets/'):
             continue  # the whole assets folder is copied below
         response = client.get('/' + relative_path)
@@ -175,6 +163,7 @@ def build(out_dir, base_path):
     for wheel in [wheel for wheel in wheels if wheel['name'] in runtime_packages]:
         os.remove(os.path.join(wheel_dir, wheel['file']))
         wheels.remove(wheel)
+    wheel_files = [wheel['file'] for wheel in wheels]
 
     with zipfile.ZipFile(os.path.join(pyodide_dir, 'app.zip'), 'w', zipfile.ZIP_DEFLATED) as zf:
         for relative_path in APP_SOURCES + APP_ASSETS:
@@ -186,7 +175,7 @@ def build(out_dir, base_path):
     # Everything the worker fetches when starting (pyodide.js and pyodide.asm.js are loaded as scripts instead)
     fetched_files = ([os.path.join(runtime_dir, f) for f in os.listdir(runtime_dir)
                       if f not in ['pyodide.js', 'pyodide.asm.js']] +
-                     [os.path.join(wheel_dir, wheel['file']) for wheel in wheels] +
+                     [os.path.join(wheel_dir, f) for f in wheel_files] +
                      [os.path.join(pyodide_dir, f) for f in ['app.zip', 'bootstrap.py']])
     download_size = sum(os.path.getsize(path) for path in fetched_files)
 
@@ -194,7 +183,7 @@ def build(out_dir, base_path):
         'basePath': base_path,
         'downloadSize': download_size,
         'pyodidePackages': pyodide_packages,
-        'wheels': wheels,
+        'wheels': wheel_files,
     }
     with open(os.path.join(pyodide_dir, 'config.json'), 'w') as f:
         json.dump(config, f, indent=2)
@@ -208,11 +197,9 @@ def build(out_dir, base_path):
     index_html = index_html.replace('<body>', '<body>\n' + loading_html, 1)
     with open(os.path.join(out_dir, 'index.html'), 'w', encoding='utf-8') as f:
         f.write(index_html)
-    # GitHub Pages must not run the site through Jekyll (it would drop files starting with "_")
-    open(os.path.join(out_dir, '.nojekyll'), 'w').close()
 
     print(f'Static site written to {out_dir} (Pyodide {PYODIDE_VERSION} with {len(runtime_packages)} packages, '
-          f'{len(wheels)} wheels, base path {base_path})')
+          f'{len(wheel_files)} wheels, base path {base_path})')
 
 
 if __name__ == '__main__':

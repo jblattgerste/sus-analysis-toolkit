@@ -4,10 +4,19 @@ function showStep(step) {
   self.postMessage({ progress: { step } });
 }
 
-// Counts the downloaded bytes, so the loading screen can show the progress of the (large) first download
+// Progress for the loading screen: loaded bytes (from the network or the browser cache) for the progress bar, and
+// the bytes that were actually transferred over the network, as reported by the browser for each finished file
+let loadedBytes = 0;
 let downloadedBytes = 0;
 let lastReport = 0;
 const originalFetch = self.fetch.bind(self);
+
+new PerformanceObserver((entries) => {
+  for (const entry of entries.getEntries()) {
+    downloadedBytes += entry.transferSize || 0;  // not reported by every browser
+  }
+  reportProgress(true);
+}).observe({ type: 'resource', buffered: true });
 
 self.fetch = async (...args) => {
   const response = await originalFetch(...args);
@@ -20,11 +29,10 @@ self.fetch = async (...args) => {
       const { done, value } = await reader.read();
       if (done) {
         controller.close();
-        reportDownload(true);
         return;
       }
-      downloadedBytes += value.byteLength;
-      reportDownload(false);
+      loadedBytes += value.byteLength;
+      reportProgress(false);
       controller.enqueue(value);
     },
   });
@@ -35,11 +43,11 @@ self.fetch = async (...args) => {
   });
 };
 
-function reportDownload(force) {
+function reportProgress(force) {
   const now = Date.now();
   if (force || now - lastReport > 100) {
     lastReport = now;
-    self.postMessage({ progress: { downloadedBytes } });
+    self.postMessage({ progress: { loadedBytes, downloadedBytes } });
   }
 }
 
@@ -47,20 +55,16 @@ const ready = (async () => {
   const config = await (await fetch('config.json')).json();
   self.postMessage({ progress: { totalBytes: config.downloadSize } });
 
-  showStep('Downloading the Python runtime…');
+  showStep('Loading the Python runtime…');
   const indexURL = new URL('runtime/', self.location).href;
   importScripts(indexURL + 'pyodide.js');
   const pyodide = await loadPyodide({ indexURL });
 
-  showStep('Downloading Python packages…');
+  showStep('Loading Python packages…');
   await pyodide.loadPackage(config.pyodidePackages);
-  pyodide.globals.set('wheels', pyodide.toPy(
-    config.wheels.map((wheel) => [wheel.name, new URL('wheels/' + wheel.file, self.location).href])));
-  await pyodide.runPythonAsync(`
-import micropip
-installed = {name.lower().replace('_', '-') for name in micropip.list()}
-await micropip.install([url for name, url in wheels if name not in installed], deps=False)
-`);
+  const wheelURLs = config.wheels.map((file) => new URL('wheels/' + file, self.location).href);
+  pyodide.globals.set('wheels', pyodide.toPy(wheelURLs));
+  await pyodide.runPythonAsync('import micropip\nawait micropip.install(wheels, deps=False)');
 
   showStep('Starting the local server…');
   const appZip = await (await fetch('app.zip')).arrayBuffer();
