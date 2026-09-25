@@ -1,18 +1,58 @@
 // Runs the Dash app's Python code with Pyodide in a web worker, so the page stays responsive during callbacks.
 
-function showProgress(text) {
-  self.postMessage({ progress: text });
+function showStep(step) {
+  self.postMessage({ progress: { step } });
+}
+
+// Counts the downloaded bytes, so the loading screen can show the progress of the (large) first download
+let downloadedBytes = 0;
+let lastReport = 0;
+const originalFetch = self.fetch.bind(self);
+
+self.fetch = async (...args) => {
+  const response = await originalFetch(...args);
+  if (!response.body) {
+    return response;
+  }
+  const reader = response.body.getReader();
+  const countingStream = new ReadableStream({
+    async pull(controller) {
+      const { done, value } = await reader.read();
+      if (done) {
+        controller.close();
+        reportDownload(true);
+        return;
+      }
+      downloadedBytes += value.byteLength;
+      reportDownload(false);
+      controller.enqueue(value);
+    },
+  });
+  return new Response(countingStream, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: response.headers,
+  });
+};
+
+function reportDownload(force) {
+  const now = Date.now();
+  if (force || now - lastReport > 100) {
+    lastReport = now;
+    self.postMessage({ progress: { downloadedBytes } });
+  }
 }
 
 const ready = (async () => {
   const config = await (await fetch('config.json')).json();
+  self.postMessage({ progress: { totalBytes: config.downloadSize } });
 
-  showProgress('Loading the Python runtime…');
+  showStep('Downloading the Python runtime…');
   const indexURL = new URL('runtime/', self.location).href;
   importScripts(indexURL + 'pyodide.js');
   const pyodide = await loadPyodide({ indexURL });
 
-  showProgress('Loading Python packages…');
+  showStep('Downloading Python packages…');
   await pyodide.loadPackage(config.pyodidePackages);
   pyodide.globals.set('wheels', pyodide.toPy(
     config.wheels.map((wheel) => [wheel.name, new URL('wheels/' + wheel.file, self.location).href])));
@@ -22,7 +62,7 @@ installed = {name.lower().replace('_', '-') for name in micropip.list()}
 await micropip.install([url for name, url in wheels if name not in installed], deps=False)
 `);
 
-  showProgress('Starting the SUS Analysis Toolkit…');
+  showStep('Starting the local server…');
   const appZip = await (await fetch('app.zip')).arrayBuffer();
   pyodide.unpackArchive(appZip, 'zip', { extractDir: '/app' });
   pyodide.globals.set('base_path', config.basePath);
@@ -34,11 +74,11 @@ sys.path.insert(0, '/app')
 `);
   const namespace = pyodide.toPy({});
   pyodide.runPython(await (await fetch('bootstrap.py')).text(), { globals: namespace });
-  showProgress('Loading…');
+  showStep('Opening the toolkit…');
   return namespace.get('handle_request');
 })();
 
-ready.catch((error) => showProgress('The toolkit could not be started: ' + error));
+ready.catch((error) => self.postMessage({ progress: { error: 'The toolkit could not be started: ' + error } }));
 
 self.onmessage = async ({ data }) => {
   const { id, method, path, headers, body } = data;

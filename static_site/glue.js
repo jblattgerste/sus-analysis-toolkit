@@ -6,20 +6,43 @@
   const worker = new Worker(new URL('worker.js', script.src));
   const pending = new Map();
   let nextRequestId = 0;
-  let progress = 'Loading…';
+
+  // Loading screen (loading.html), shown until the Dash renderer has rendered the toolkit
+  const progress = { step: 'Loading…', downloadedBytes: 0, totalBytes: 0, error: null };
 
   function showProgress() {
-    const loading = document.querySelector('._dash-loading');
-    if (loading) {
-      loading.textContent = progress;
+    const loading = document.getElementById('static-site-loading');
+    if (!loading) {
+      return;
     }
+    const megabytes = (bytes) => (bytes / 1e6).toFixed(1);
+    const downloaded = Math.min(progress.downloadedBytes, progress.totalBytes);
+    loading.querySelector('.static-site-loading-step').textContent = progress.error || progress.step;
+    loading.querySelector('.static-site-loading-size').textContent = progress.totalBytes
+      ? `${megabytes(downloaded)} of ${megabytes(progress.totalBytes)} MB` : '';
+    loading.querySelector('.static-site-loading-bar-fill').style.width = progress.totalBytes
+      ? `${(100 * downloaded / progress.totalBytes).toFixed(1)}%` : '0';
+    loading.classList.toggle('static-site-loading-failed', Boolean(progress.error));
   }
 
-  document.addEventListener('DOMContentLoaded', showProgress);
+  document.addEventListener('DOMContentLoaded', () => {
+    showProgress();
+    const loading = document.getElementById('static-site-loading');
+    const entryPoint = document.getElementById('react-entry-point');
+    const observer = new MutationObserver(() => {
+      // On errors the loading screen stays, showing the error
+      if (!progress.error && entryPoint.firstElementChild && !entryPoint.querySelector('._dash-loading')) {
+        observer.disconnect();
+        loading.classList.add('static-site-loading-done');
+        setTimeout(() => loading.remove(), 500);
+      }
+    });
+    observer.observe(entryPoint, { childList: true, subtree: true });
+  });
 
   worker.onmessage = ({ data }) => {
     if ('progress' in data) {
-      progress = data.progress;
+      Object.assign(progress, data.progress);
       showProgress();
       return;
     }

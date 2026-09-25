@@ -168,18 +168,31 @@ def build(out_dir, base_path):
     wheels, compiled_packages = download_wheels(wheel_dir)
 
     pyodide_packages = ['micropip'] + compiled_packages
-    runtime_packages = download_pyodide(os.path.join(pyodide_dir, 'runtime'), pyodide_packages)
+    runtime_dir = os.path.join(pyodide_dir, 'runtime')
+    runtime_packages = download_pyodide(runtime_dir, pyodide_packages)
     download(JSZIP_URL, os.path.join(pyodide_dir, 'jszip.min.js'))
+    # Wheels of packages that are already part of the Pyodide distribution are not needed
+    for wheel in [wheel for wheel in wheels if wheel['name'] in runtime_packages]:
+        os.remove(os.path.join(wheel_dir, wheel['file']))
+        wheels.remove(wheel)
 
     with zipfile.ZipFile(os.path.join(pyodide_dir, 'app.zip'), 'w', zipfile.ZIP_DEFLATED) as zf:
         for relative_path in APP_SOURCES + APP_ASSETS:
             zf.write(os.path.join(REPO_ROOT, relative_path), relative_path)
 
-    for filename in ['worker.js', 'glue.js', 'bootstrap.py']:
+    for filename in ['worker.js', 'glue.js', 'bootstrap.py', 'loading.css']:
         shutil.copy(os.path.join(STATIC_SITE_DIR, filename), pyodide_dir)
+
+    # Everything the worker fetches when starting (pyodide.js and pyodide.asm.js are loaded as scripts instead)
+    fetched_files = ([os.path.join(runtime_dir, f) for f in os.listdir(runtime_dir)
+                      if f not in ['pyodide.js', 'pyodide.asm.js']] +
+                     [os.path.join(wheel_dir, wheel['file']) for wheel in wheels] +
+                     [os.path.join(pyodide_dir, f) for f in ['app.zip', 'bootstrap.py']])
+    download_size = sum(os.path.getsize(path) for path in fetched_files)
 
     config = {
         'basePath': base_path,
+        'downloadSize': download_size,
         'pyodidePackages': pyodide_packages,
         'wheels': wheels,
     }
@@ -187,8 +200,12 @@ def build(out_dir, base_path):
         json.dump(config, f, indent=2)
 
     # The glue script has to run before the Dash renderer makes its first request
-    glue_tag = f'<script src="{base_path}pyodide/glue.js" data-base-path="{base_path}"></script>'
-    index_html = index_html.replace('<head>', '<head>\n        ' + glue_tag, 1)
+    head_tags = (f'<script src="{base_path}pyodide/glue.js" data-base-path="{base_path}"></script>\n'
+                 f'        <link rel="stylesheet" href="{base_path}pyodide/loading.css">')
+    index_html = index_html.replace('<head>', '<head>\n        ' + head_tags, 1)
+    with open(os.path.join(STATIC_SITE_DIR, 'loading.html'), encoding='utf-8') as f:
+        loading_html = f.read().replace('{download_size_mb}', str(round(download_size / 1e6)))
+    index_html = index_html.replace('<body>', '<body>\n' + loading_html, 1)
     with open(os.path.join(out_dir, 'index.html'), 'w', encoding='utf-8') as f:
         f.write(index_html)
     # GitHub Pages must not run the site through Jekyll (it would drop files starting with "_")
