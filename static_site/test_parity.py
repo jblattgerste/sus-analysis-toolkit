@@ -8,6 +8,7 @@ Usage:
       --static-url http://127.0.0.1:8000/sus-analysis-toolkit/ --out parity-results
 """
 import argparse
+import base64
 import io
 import json
 import math
@@ -180,6 +181,28 @@ def run_scenarios(page, url, screenshot_dir):
     return results
 
 
+# Row order of this file comes from iterating a set of system names in dashApp.py, which depends on Python's
+# hash seed and therefore also changes between restarts of the server
+UNORDERED_ROWS_FILES = ['conclusiveness.csv']
+TYPED_ARRAY_FORMATS = {'f8': 'd', 'f4': 'f', 'i1': 'b', 'u1': 'B', 'i2': 'h', 'u2': 'H', 'i4': 'i', 'u4': 'I'}
+
+
+def normalize(value):
+    """Decodes the base64 typed arrays of plotly figures and sorts rows of files whose row order is random."""
+    if isinstance(value, dict):
+        if 'bdata' in value and value.get('dtype') in TYPED_ARRAY_FORMATS:
+            data = base64.b64decode(value['bdata'])
+            item_format = TYPED_ARRAY_FORMATS[value['dtype']]
+            return list(struct.unpack(f'<{len(data) // struct.calcsize(item_format)}{item_format}', data))
+        if value.get('file') in UNORDERED_ROWS_FILES and 'text' in value:
+            header, *rows = value['text'].splitlines()
+            return {**value, 'text': '\n'.join([header] + sorted(rows))}
+        return {key: normalize(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [normalize(item) for item in value]
+    return value
+
+
 def compare(expected, actual, path='', differences=None):
     """Deep comparison that tolerates tiny floating point differences (e.g. from other numpy builds)."""
     if differences is None:
@@ -225,7 +248,7 @@ def main():
                 json.dump(results[name], f, indent=1)
         browser.close()
 
-    differences = compare(results['server'], results['static'])
+    differences = compare(normalize(results['server']), normalize(results['static']))
     if differences:
         print(f'{len(differences)} differences between the server and the static site:')
         for difference in differences[:200]:
